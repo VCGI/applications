@@ -21,8 +21,8 @@
     <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
 
     <!-- Embedded styles for Contour Clipper App -->
-     <style>
-    /*begin embedded styles for contour clipper*/
+  <style>
+    /* begin embedded styles for contour clipper */
     html, body, #viewDiv { padding: 0; margin: 0; height: 100%; width: 100%; }
     #infoDiv { padding: 12px; width: 300px; background-color: white; }
     #infoDiv * { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
@@ -33,11 +33,11 @@
     #submitBtn { margin-top: 12px; background-color: #0079c1; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 1em; }
     #submitBtn:disabled { background-color: #cccccc; color: #666666; cursor: not-allowed; }
     #statusMessage { margin-top: 8px; font-weight: bold; min-height: 1.2em; }
-    /*end embedded styles for contour clipper*/
-    </style>
+    /* end embedded styles for contour clipper */
+  </style>
 
     <!-- Link and Embedded Scripts for Contour Clipper App Function -->
-      <script src="https://js.arcgis.com/4.29/"></script>
+  <script src="https://js.arcgis.com/4.29/"></script>
   <script>
     require([
       "esri/Map",
@@ -50,6 +50,12 @@
       "esri/geometry/projection",
       "esri/widgets/Search"
     ], (Map, MapView, VectorTileLayer, GraphicsLayer, Sketch, BasemapToggle, geometryEngine, projection, Search) => {
+
+      // == Configuration Variables ==
+      // Define constants here for easy updates
+      const apiToken = "dff926cab6beee40f876affcd53a131c11c00558";
+      const baseURL = "https://maps.vcgi.vermont.gov/fmedatastreaming/vtContourClipper/vtContourClipper.fmw";
+      // ===========================
 
       const map = new Map({
         basemap: "topo"
@@ -136,23 +142,20 @@
               const graphic = event.graphic || (event.graphics && event.graphics[0]);
               if (!graphic) return;
 
-              // Validate while drawing or reshaping
               if (event.state === "active") {
                 validateGraphic(graphic, false); 
               }
 
               if (event.state === "complete") {
-                 // Prevent new graphics from being created if one already exists
-                if(event.type === "create" && graphicsLayer.graphics.length > 1){
-                   graphicsLayer.remove(graphicsLayer.graphics.getItemAt(0));
-                }
-                validateGraphic(graphic, true); 
+                  if(event.type === "create" && graphicsLayer.graphics.length > 1){
+                      graphicsLayer.remove(graphicsLayer.graphics.getItemAt(0));
+                  }
+                  validateGraphic(graphic, true); 
               }
             });
 
             sketch.on("delete", () => {
               resetUI();
-
               sketch.create("rectangle");
             });
         });
@@ -184,7 +187,7 @@
       function resetUI() {
           areaDisplay.textContent = "Area: 0.00 sq mi";
           warningMessage.style.display = "none";
-          webhookUrlDisplay.textContent = "Draw a box to submit clipping request.";
+          if (webhookUrlDisplay) { webhookUrlDisplay.textContent = "Draw a box to submit clipping request."; }
           statusMessage.textContent = "";
           submitButton.disabled = true;
       }
@@ -208,19 +211,18 @@
       }
 
       function generateWebhookUrl(graphic) {
-        if (!graphic || !graphic.geometry) {
-          webhookUrlDisplay.textContent = "Draw a box to generate a URL.";
-          return;
+        if (webhookUrlDisplay) {
+            if (!graphic || !graphic.geometry) {
+                webhookUrlDisplay.textContent = "Draw a box to generate a URL.";
+                return;
+            }
+            const bboxGeoJson = getBboxAsGeoJson(graphic.geometry);
+            const format = formatSelector.value;
+            const encodedBbox = encodeURIComponent(bboxGeoJson);
+            
+            const webhookURL = `${baseURL}?format=${format}&bbox=${encodedBbox}&token=${apiToken}`;
+            webhookUrlDisplay.textContent = webhookURL;
         }
-
-        const bboxGeoJson = getBboxAsGeoJson(graphic.geometry);
-        const format = formatSelector.value;
-        const baseURL = "https://dev.maps.vcgi.vermont.gov/fmeserver";
-        
-        const encodedBbox = encodeURIComponent(bboxGeoJson);
-        
-        const webhookURL = `${baseURL}?format=${format}&bbox=${encodedBbox}`;
-        webhookUrlDisplay.textContent = webhookURL;
       }
       
       function submitRequest() {
@@ -232,47 +234,30 @@
 
         const graphic = graphicsLayer.graphics.getItemAt(0);
         const format = formatSelector.value;
-        const postURL = "https://dev.maps.vcgi.vermont.gov/fmeserver";
-        
         const bboxGeoJson = getBboxAsGeoJson(graphic.geometry);
+        const encodedBbox = encodeURIComponent(bboxGeoJson);
 
-        const postData = new URLSearchParams();
-        postData.append("format", format);
-        postData.append("bbox", bboxGeoJson);
+        // Construct the full URL for the download request
+        const downloadURL = `${baseURL}?format=${format}&bbox=${encodedBbox}&token=${apiToken}`;
 
-        statusMessage.textContent = "Submitting request...";
+        statusMessage.textContent = "Initiating download...";
         statusMessage.style.color = "#005a9c";
         submitButton.disabled = true;
 
-        fetch(postURL, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: postData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log("Success response:", data);
-            statusMessage.textContent = "Request submitted successfully!";
-            statusMessage.style.color = "#2E8540";
-        })
-        .catch(error => {
-            console.error("Submission error:", error);
-            statusMessage.textContent = `Submission failed. ${error.message}`;
-            statusMessage.style.color = "#D83020";
-        })
-        .finally(() => {
-            if (graphicsLayer.graphics.length > 0) {
-                 const currentArea = geometryEngine.geodesicArea(graphicsLayer.graphics.getItemAt(0).geometry, "square-miles");
-                 if (currentArea <= 1.0) {
-                     submitButton.disabled = false;
-                 }
-            }
-        });
+        // Trigger the download by navigating the browser to the URL
+        window.location.href = downloadURL;
+
+        // Re-enable the button after a short delay to prevent multiple rapid clicks
+        setTimeout(() => {
+          statusMessage.textContent = "Your download has started.";
+          statusMessage.style.color = "#2E8540";
+          if (graphicsLayer.graphics.length > 0) {
+              const currentArea = geometryEngine.geodesicArea(graphicsLayer.graphics.getItemAt(0).geometry, "square-miles");
+              if (currentArea <= 1.0) {
+                  submitButton.disabled = false;
+              }
+          }
+        }, 2500);
       }
     });
   </script>
@@ -300,31 +285,27 @@
     <div class="flex-grow-1">
         
         <!-- =================================================================== -->
-        <!-- ======================= YOUR CONTENT HERE ======================= -->
+        <!-- ======================= APP BODY CONTENT HERE ======================= -->
         <!-- =================================================================== -->
-        <!-- Contour Clipper App -->
         <div id="viewDiv"></div>
         <div id="infoDiv" class="esri-widget">
-            <h3>Vermont 1ft Contour Clipper</h3>
-            <p>Use the rectangle tool to select area to clip (1 square mile max).</p>
-            <div id="area">Area: 0.00 sq mi</div>
-            <div id="warning">Clip area is too large.</div>
-            <hr>
-            <label for="formatSelect">1. Select Data Format:</label>
-            <select id="formatSelect">
+          <h3>Vermont 1ft Contour Clipper</h3>
+          <p>Use the rectangle tool to select area to clip (1 square mile max). Use arrow tool to pan.</p>
+          <div id="area">Area: 0.00 sq mi</div>
+          <div id="warning">Clip area is too large.</div>
+          <hr>
+          <label for="formatSelect">1. Select Data Format:</label>
+          <select id="formatSelect">
             <option value="SHP">Shapefile</option>
             <option value="DWG">DWG</option>
             <option value="DXF">DXF</option>
             <option value="FGDB">File Geodatabase</option>
-            </select>
-            <label>2. Generated Webhook URL:</label>
-            <div id="webhookUrl">Draw a box to generate a URL.</div>
-            <hr>
-            <button id="submitBtn" disabled>Submit Request</button>
-            <div id="statusMessage"></div>
+          </select>
+          <button id="submitBtn" disabled>Submit Request</button>
+          <div id="statusMessage"></div>
         </div>
         <!-- =================================================================== -->
-        <!-- ===================== END YOUR CONTENT HERE ===================== -->
+        <!-- ===================== END APP BODY CONTENT HERE ===================== -->
         <!-- =================================================================== -->
 
     </div>
