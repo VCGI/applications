@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title Here</title>
+    
+    <!-- External Resources -->
+    <link rel="icon" href="https://files.vcgi.vermont.gov/logo/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uswds/2.13.3/css/uswds.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+
+    <!-- Link to current VCGI Sov-Themed stylesheet -->
+    <link rel="stylesheet" href="https://files.vcgi.vermont.gov/other/css/vcgi-sov-stylesheet-v.1.1.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- ======================= HEADER ======================= -->
+    <header class="header-top">
+        <div class="container">
+            <div class="header-top-content">
+                <div class="header-top-left">
+                    <span class="vermont-logo__text">An Official <strong>Vermont</strong> Government Website</span>
+                </div>
+                <div class="header-top-right">
+                    <a href="https://www.vermont.gov/" class="state-logo-top-right" target="_blank" rel="noopener noreferrer">
+                        <img src="https://files.vcgi.vermont.gov/logo/vermont-logo-white.png" alt="State of Vermont" onerror="this.onerror=null;this.src='https://placehold.co/128x35/003300/ffffff?text=Vermont';">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page wrapper that will grow to push footer down -->
+    <div class="flex-grow-1">
+        
+        <!-- =================================================================== -->
+        <!-- ======================= YOUR CONTENT HERE ======================= -->
+        <!-- =================================================================== -->
+        <main class="content-wrapper">
+            <h1>Page Title</h1>
+            <p>Start building your new page here.</p>
+        </main>
+        <!-- =================================================================== -->
+        <!-- ===================== END YOUR CONTENT HERE ===================== -->
+        <!-- =================================================================== -->
+
+    </div>
+
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="usa-footer usa-footer--big vcgi-footer" role="contentinfo">
+        <div class="vcgi-footer-upper">
+            <div class="grid-container">
+                <div class="grid-row grid-gap">
+                    <!-- Sidebar Column -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-sidebar-col">
+                        <h2>Vermont Center for Geographic Information</h2>
+                        <p>A Division of the <a href="https://digitalservices.vermont.gov/" class="vcgi-footer-link">Agency of Digital Services</a></p>
+                        <p><a href="mailto:vcgi@vermont.gov" class="vcgi-footer-link">Email VCGI</a></p>
+                        <p>
+                            <a href="mailto:tim.terway@vermont.gov" class="vcgi-footer-link">Tim Terway</a>, Helpful GIS Professional<br>
+                            <a href="mailto:john.e.adams@vermont.gov" class="vcgi-footer-link">John E. Adams</a>, Director
+                        </p>
+                        <ul class="vcgi-sidebar-social">
+                            <li>
+                                <a href="https://github.com/vcgi" target="_blank" rel="noreferrer" aria-label="VCGI on GitHub">
+                                    <i class="fab fa-github" style="font-size: 32px; color: #003300;" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/user/VTgeospatial" target="_blank" rel="noreferrer" aria-label="VCGI on YouTube">
+                                    <i class="fab fa-youtube" style="font-size: 32px; color: #003300;" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <hr>
+                        <p>VCGI is your source for the State of Vermont's geospatial data, information, and activities.</p>
+                    </div>
+
+                    <!-- Content Column 1 -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-footer-content-col">
+                        <h3>Standards and Guidelines</h3>
+                        <ul>
+                            <li><a href="https://vcgi.vermont.gov/resources/vermont-gis-standards-and-guidelines" class="vcgi-footer-link">Standards and Guidelines Directory</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Content Column 2 -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-footer-content-col">
+                        <h3>Popular Datasets</h3>
+                        <ul>
+                            <li><a href="https://geodata.vermont.gov/pages/parcels" class="vcgi-footer-link">Parcels</a></li>
+                            <li><a href="https://geodata.vermont.gov/pages/elevation" class="vcgi-footer-link">Elevation (Includes Lidar)</a></li>
+                            <li><a href="https://geodata.vermont.gov/pages/imagery" class="vcgi-footer-link">Imagery</a></li>
+                            <li><a href="https://geodata.vermont.gov/pages/land-cover" class="vcgi-footer-link">Land Cover</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Content Column 3 (with Return to Top) -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-footer-content-col">
+                        <h3>Map Applications</h3>
+                        <ul>
+                            <li><a href="https://maps.vermont.gov/vcgi/html5viewer/?viewer=vtmapviewer" class="vcgi-footer-link">Vermont Interactive Map Viewer</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/ParcelViewer/" class="vcgi-footer-link">Vermont Parcel Viewer</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/parcelstatus/" class="vcgi-footer-link">Municipal Parcel Map Status</a></li>
+                            <li><a href="https://vcgi.maps.arcgis.com/apps/instant/lookup/index.html?appid=bbbeff3500ed43c4a2bdb0f6f56377a1" class="vcgi-footer-link">Vermont Boundaries and Jurisdictions</a></li>
+                            <li><a href="https://landsurvey.vermont.gov/" class="vcgi-footer-link">Vermont Land Survey Library</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/OrthoFinder/" class="vcgi-footer-link">Vermont Orthoimagery Finder</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/OrthoStatus/" class="vcgi-footer-link">Vermont Orthoimagery Status</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/LidarFinder/" class="vcgi-footer-link">Vermont Lidar Finder</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/lidarstatus/" class="vcgi-footer-link">Vermont Lidar Status</a></li>
+                            <li><a href="https://vcgi.vermont.gov/maps/partner-agency-maps" class="vcgi-footer-link">See More Here</a></li>
+                        </ul>
+                        <!-- Return to top is placed inside the column -->
+                        <div class="usa-footer__return-to-top">
+                            <a href="#" id="return-to-top-link">
+                                <div class="return-to-top-icon margin-bottom-1">
+                                    <svg class="svg-inline--fa fa-circle-arrow-up" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                        <path fill="currentColor" d="M256 0C114.6 0 0 114.6 0 256c0 141.4 114.6 256 256 256s256-114.6 256-256C512 114.6 397.4 0 256 0zM382.6 254.6c-12.5 12.5-32.75 12.5-45.25 0L288 205.3V384c0 17.69-14.33 32-32 32s-32-14.31-32-32V205.3L174.6 254.6c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l103.1-103.1C241.3 97.4 251.1 96 256 96c4.881 0 14.65 1.391 22.65 9.398l103.1 103.1C395.1 221.9 395.1 242.1 382.6 254.6z"></path>
+                                    </svg>
+                                </div>
+                                Return to top
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="vcgi-footer-bottom-bar">
+            <div class="vcgi-footer-copyright">
+                <p>Copyright © <span id="copyright-year">2025</span> State of Vermont All rights reserved. |</p>
+                <ul>
+                    <li><a href="https://www.vermont.gov/policies">Policies</a></li>
+                    <li><a href="https://www.vermont.gov/policies/accessibility">Accessibility Policy</a></li>
+                    <li><a href="https://www.vermont.gov/policies/privacy">Privacy Policy</a></li>
+                    <li><a href="https://vt.accessgov.com/feedback-survey/Forms/Page/feedback-survey/1b75365f-4e67-4f58-9080-cef25029f0a6/9fc7dbed-470c-4e68-90b8-d0ced27b6111/">Feedback Survey</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ======================= SCRIPTS ======================= -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+      // Set dynamic copyright year
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+      // Smooth scroll for "Return to top" link
+      const returnToTopLink = document.getElementById('return-to-top-link');
+      if (returnToTopLink) {
+          returnToTopLink.addEventListener('click', function(event) {
+              // Prevent the default anchor link behavior (the "jump")
+              event.preventDefault();
+              
+              // Smoothly scroll to the top of the page
+              window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+              });
+          });
+      }
+    </script>
+</body>
+</html>

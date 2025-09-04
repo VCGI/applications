@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standards and Guidelines Style Demo v.1.1.1</title>
+    
+    <!-- External Resources -->
+    <link rel="icon" href="https://files.vcgi.vermont.gov/logo/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uswds/2.13.3/css/uswds.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+
+    <!-- Link to current VCGI Sov-Themed stylesheet -->
+    <link rel="stylesheet" href="https://files.vcgi.vermont.gov/other/css/vcgi-sov-stylesheet-v.1.1.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- ======================= HEADER ======================= -->
+    <header class="header-top">
+        <div class="container">
+            <div class="header-top-content">
+                <div class="header-top-left">
+                    <span class="vermont-logo__text">An Official <strong>Vermont</strong> Government Website</span>
+                </div>
+                <div class="header-top-right">
+                    <a href="https://www.vermont.gov/" class="state-logo-top-right" target="_blank" rel="noopener noreferrer">
+                        <img src="https://files.vcgi.vermont.gov/logo/vermont-logo-white.png" alt="State of Vermont" onerror="this.onerror=null;this.src='https://placehold.co/128x35/003300/ffffff?text=Vermont';">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page wrapper that will grow to push footer down -->
+    <div class="flex-grow-1">
+        
+        <!-- =================================================================== -->
+        <!-- ======================= YOUR CONTENT HERE ======================= -->
+        <!-- =================================================================== -->
+
+        <div class="content-wrapper">
+            
+            <h1 id="main-title">Main Title (H1)</h1>
+            <p class="version-info">Version 2025 | July 10, 2025 | <i>Draft for Review</i></p>
+
+            <div class="main-article-content">
+
+                <!-- Table of Contents -->
+                <aside class="table-of-contents">
+                    <h3><i class="fas fa-list-ul"></i> Table of Contents</h3>
+                    <ul>
+                        <li><a href="#headings">Headings & Typography</a></li>
+                        <li><a href="#lists">Lists</a></li>
+                        <li><a href="#interactive">Interactive Elements</a></li>
+                        <li><a href="#cards">Card System</a></li>
+                        <li><a href="#media">Media and Content</a></li>
+                        <li><a href="#markdown-guide">Markdown Guide</a></li>
+                        <li><a href="#colors">Color Palettes - SoV CMS-Based</a></li>
+                        <li><a href="#data">Data Display</a></li>
+                        <li><a href="#footnotes">Footnotes</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Headings & Typography Section -->
+                <h2 id="headings">Headings & Typography (H2)<a href="#headings" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+                <p>This is a paragraph demonstrating the default body text style. The font is "Source Sans 3", with Arial and Helvetica as fallbacks. It has a size of 12pt and a line height of 1.6 for readability. This content is inside the <code>.content-wrapper</code> class which centers it with a max-width of 800px.</p>
+                
+                <h3 id="subsection1">Subsection Title (H3)<a href="#subsection1" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h3>
+                <p>This is a subsection. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                
+                <h4>Another Level Down (H4)<a href="#h4" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h4>
+                <p>And even further down, an H4 heading. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+                <blockquote>
+                    <p>This is a blockquote, perfect for highlighting a quote or a key piece of information. It's styled with an italic font and a left border.</p>
+                </blockquote>
+
+                <h4 id="text-styles" style="margin-top: 1.5em;">Text Styles<a href="#text-styles" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h4>
+                <p>You can use standard HTML tags to style text for emphasis, clarity, or context.</p>
+                <ul>
+                    <li><strong>Bold text (using &lt;strong&gt;)</strong></li>
+                    <li><em>Italic text (using &lt;em&gt;)</em></li>
+                    <li><s>Strikethrough text (using &lt;s&gt;)</s></li>
+                    <li>This is an example of <sub>subscript</sub> text.</li>
+                    <li>This is an example of <sup>superscript</sup> text.<sup><a href="#fn1" id="fnref1">1</a></sup></li>
+                    <li>Use the &lt;mark&gt; tag to <mark>highlight text</mark>.</li>
+                    <li>For inline code, use the <code>&lt;code&gt;</code> tag.</li>
+                </ul>
+
+                <hr>
+
+                <!-- Lists Section -->
+                <h2 id="lists">Lists Demonstration<a href="#lists" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+                
+                <h4>Unordered List</h4>
+                <ul>
+                    <li>First item in an unordered list.</li>
+                    <li>Second item, demonstrating list spacing.</li>
+                    <li>A <a href="#">link within a list</a> to show styling.</li>
+                </ul>
+
+                <h4>Ordered List</h4>
+                <ol>
+                    <li>First item in an ordered list.</li>
+                    <li>Second item, which is numbered.</li>
+                    <li>Third item in the sequence.</li>
+                </ol>
+
+                <h4 style="margin-top: 1.5em;">Nested List</h4>
+                <ul>
+                    <li>First level item 1</li>
+                    <li>First level item 2
+                        <ul>
+                            <li>Second level item 1</li>
+                            <li>Second level item 2
+                                <ol>
+                                    <li>Third level, ordered item 1</li>
+                                    <li>Third level, ordered item 2</li>
+                                </ol>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>First level item 3</li>
+                </ul>
+
+                <h4 style="margin-top: 1.5em;">Task List</h4>
+                <ul class="task-list">
+                    <li>
+                        <input type="checkbox" id="task1" name="task1">
+                        <label for="task1">Draft initial document</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="task2" name="task2" checked>
+                        <label for="task2">Review with stakeholders</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="task3" name="task3" checked>
+                        <label for="task3">Incorporate feedback</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="task4" name="task4">
+                        <label for="task4">Finalize and publish</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="task5" name="task5" disabled>
+                        <label for="task5">This is a disabled task</label>
+                    </li>
+                </ul>
+                
+                <hr>
+
+                <!-- Interactive Elements Section -->
+                <h2 id="interactive">Interactive Elements<a href="#interactive" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+
+                <h3 id="buttons">Buttons<a href="#buttons" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h3>
+                <p>Buttons are styled with the <code>.btn</code> class. You can also use an optional <code>.btn-green</code> class for an alternate color. They have hover and focus states.</p>
+                <p>
+                    <button class="btn"><i class="fas fa-check"></i>Primary Button</button>
+                    <a href="#" class="btn btn-green"><i class="fas fa-download"></i>Green Button Link</a>
+                </p>
+                
+                <h4 style="margin-top: 1.5em;">Disabled Buttons</h4>
+                <p>Use the <code>disabled</code> attribute for <code>&lt;button&gt;</code> elements or add a <code>.disabled</code> class for <code>&lt;a&gt;</code> tags.</p>
+                <p>
+                    <button class="btn" disabled><i class="fas fa-check"></i>Disabled Button</button>
+                    <a href="#" class="btn btn-green disabled"><i class="fas fa-download"></i>Disabled Green Link</a>
+                </p>
+
+                <h3 id="alerts">Alerts<a href="#alerts" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h3>
+                <p>Use alerts to convey important information to users. The style reflects the context of the message.</p>
+                
+                <div class="alert alert-info">
+                    <p class="alert-title">Note</p>
+                    <p>This is an informational alert. It's useful for providing tips, notes, or non-critical information that might be helpful to the user.</p>
+                </div>
+                
+                <div class="alert alert-tip">
+                    <p class="alert-title">Tip</p>
+                    <p>This is a tip. Use it to provide helpful advice or shortcuts to the user.</p>
+                </div>
+
+                <div class="alert alert-important">
+                    <p class="alert-title">Important</p>
+                    <p>This is an important alert. Use it to convey key information that requires the user's attention.</p>
+                </div>
+    
+                <div class="alert alert-warning">
+                    <p class="alert-title">Warning</p>
+                    <p>This is a warning alert. It should be used to notify users of potential issues, errors, or actions that require caution.</p>
+                </div>
+
+                <div class="alert alert-danger">
+                    <p class="alert-title">Danger</p>
+                    <p>This is a danger alert. Use it for critical errors, security warnings, or actions that cannot be undone.</p>
+                </div>
+
+                <hr>
+
+                <!-- Card System Section -->
+                <h2 id="cards">Card System<a href="#cards" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+                <p>Use cards to feature key topics or links in a visually engaging grid.</p>
+                <div class="card-grid">
+                    <div class="card">
+                        <i class="fas fa-pen-ruler card-icon"></i>
+                        <h3 class="card-title"><a href="#">Design & Content</a></h3>
+                        <p class="card-text">Best practices for design, content strategy, and writing for the web.</p>
+                        <a href="#" class="btn">Learn More</a>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-universal-access card-icon"></i>
+                        <h3 class="card-title"><a href="#">Accessibility</a></h3>
+                        <p class="card-text">Guidelines for ensuring your content is accessible to all users.</p>
+                        <a href="#" class="btn">Learn More</a>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-sitemap card-icon"></i>
+                        <h3 class="card-title"><a href="#">Web Templates</a></h3>
+                        <p class="card-text">Information on template regions, content types, and editing options.</p>
+                        <a href="#" class="btn">Learn More</a>
+                    </div>
+                </div>
+                <p>A full list of available icons can be found at the <a href="https://fontawesome.com/v6/search?m=free&s=solid" target="_blank" rel="noopener noreferrer">Font Awesome v6 Gallery</a>.</p>
+
+                <hr>
+                
+                <!-- Media and Content Section -->
+                <h2 id="media">Media and Content<a href="#media" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+                <p>Images are responsive and will not exceed the width of their container.</p>
+                <img src="https://vcgi.vermont.gov/sites/vcgiupdate/files/images/VT%20Metadata%20Standard%20v5.0%20-%20ArcGIS%20Metadata%20Format%20Container%20Diagram%20v.1.0.svg" alt="Vermont Metadata Standard Diagram" onerror="this.onerror=null;this.src='https://placehold.co/800x400/eeeeee/cccccc?text=Image+Not+Found';">
+                <p style="margin-top: 2em;">Diagrams should be mostly grayscale and use varying line weights and types as well as grayscale fills (where applicable) to convey hierarchy. SVG's with embedded or flattened/rendered fonts are preferred.</p>
+                <img src="https://vcgi.vermont.gov/sites/vcgiupdate/files/images/VT%20Geographic%20Names%20and%20Codes%20Standard%20-%20Geographic%20Heirarchy%20Diagram-01.svg" alt="Vermont Geographic Hierarchy Diagram" onerror="this.onerror=null;this.src='https://placehold.co/800x400/eeeeee/cccccc?text=Image+Not+Found';">
+                
+                <hr>
+
+                <!-- Color Palette Section -->
+                <h2 id="colors">Color Palettes - SoV CMS-Based<a href="#colors" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+                
+                <h4>Vermont Greens</h4>
+                <div class="color-palette-grid">
+                    <div class="color-swatch"><div class="color-block bg-vt-green"><div class="color-info text-white"><p>#007834 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-vt-dark-green"><div class="color-info text-white"><p>#003300 (White Text)</p></div></div></div>
+                </div>
+
+                <h4>Primary Palette</h4>
+                <div class="color-palette-grid">
+                    <div class="color-swatch"><div class="color-block bg-vt-blue"><div class="color-info text-white"><p>#07648d (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-vt-dark-blue"><div class="color-info text-white"><p>#174a7c (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-rock-gray"><div class="color-info"><p>#999999 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-dark-gray"><div class="color-info text-white"><p>#333333 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-black"><div class="color-info text-white"><p>#000000 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-light-gray"><div class="color-info"><p>#f0f0f0 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-off-white"><div class="color-info"><p>#f8f8f8 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-white"><div class="color-info"><p>#ffffff (Black Text)</p></div></div></div>
+                </div>
+
+                <h4>Legacy VT Brand GIS Colors</h4>
+                <div class="color-palette-grid">
+                    <div class="color-swatch"><div class="color-block bg-legacy-1"><div class="color-info text-white"><p>#225d39 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-2"><div class="color-info text-white"><p>#408740 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-3"><div class="color-info"><p>#c3d600 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-4"><div class="color-info"><p>#3db5e6 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-5"><div class="color-info text-white"><p>#510c76 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-6"><div class="color-info text-white"><p>#8d0e57 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-7"><div class="color-info text-white"><p>#9c6268 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-8"><div class="color-info"><p>#d8a462 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-9"><div class="color-info"><p>#ada29a (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-10"><div class="color-info"><p>#f5b324 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-11"><div class="color-info"><p>#ee7624 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-12"><div class="color-info text-white"><p>#b12029 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-13"><div class="color-info text-white"><p>#9f912a (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-14"><div class="color-info text-white"><p>#457a7c (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-15"><div class="color-info text-white"><p>#294635 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-16"><div class="color-info text-white"><p>#2b7051 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-17"><div class="color-info text-white"><p>#007935 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-18"><div class="color-info text-white"><p>#248dc1 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-19"><div class="color-info text-white"><p>#004a88 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-20"><div class="color-info text-white"><p>#003300 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-21"><div class="color-info"><p>#f8f8f8 (Black Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-22"><div class="color-info text-white"><p>#007834 (White Text)</p></div></div></div>
+                    <div class="color-swatch"><div class="color-block bg-legacy-23"><div class="color-info"><p>#d7d2cb (Black Text)</p></div></div></div>
+                </div>
+                <p>The official State of Vermont color palettes can be found at the <a href="https://cmo.vermont.gov/brand/color-palette" target="_blank" rel="noopener noreferrer">Chief Marketing Office Brand site</a>.</p>
+            </div>
+        </div>
+
+        <!-- ======================= ADDITIONAL WRAPPERS FOR DEMO ======================= -->
+        <div class="content-wrapper-medium">
+            <h2 id="markdown-guide">Markdown to HTML Styling Guide<a href="#markdown-guide" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+            <p>This section explains how to write Markdown that will be converted into HTML styled by this stylesheet. Note that some elements require specific HTML with CSS classes.</p>
+            
+            <h3>Standard Markdown</h3>
+            <div class="example-container">
+                <div class="code-block">
+                    <pre><code class="language-markdown"># Main Title (H1)
+## Section Title (H2)
+### Subsection Title (H3)
+#### Another Level Down (H4)
+
+**Bold Text**
+
+*Italic Text*
+
+~~Strikethrough~~
+
+&gt; This is a blockquote.
+
+`Inline Code`
+
+---</code></pre>
+                </div>
+                <div class="rendered-example">
+                    <h1>Main Title (H1)</h1>
+                    <h2>Section Title (H2)</h2>
+                    <h3>Subsection Title (H3)</h3>
+                    <h4>Another Level Down (H4)</h4>
+                    <p><strong>Bold Text</strong></p>
+                    <p><em>Italic Text</em></p>
+                    <p><s>Strikethrough</s></p>
+                    <blockquote><p>This is a blockquote.</p></blockquote>
+                    <p><code>Inline Code</code></p>
+                    <hr>
+                </div>
+            </div>
+
+            <h3>Footnotes</h3>
+            <div class="example-container">
+                <div class="code-block">
+                    <pre><code class="language-markdown">Here is a sentence with a footnote.[^1] And here is another one.[^longnote]
+
+[^1]: This is the first footnote.
+
+[^longnote]: This is a longer footnote that spans multiple lines.</code></pre>
+                </div>
+                <div class="rendered-example">
+                    <p>Here is a sentence with a footnote.<sup><a href="#fn-demo-1" id="fnref-demo-1">1</a></sup> And here is another one.<sup><a href="#fn-demo-2" id="fnref-demo-2">2</a></sup></p>
+                    <div class="footnotes">
+                        <ol>
+                            <li id="fn-demo-1">This is the first footnote. <a href="#fnref-demo-1" title="Jump back to footnote 1 in the text.">↩</a></li>
+                            <li id="fn-demo-2">This is a longer footnote that spans multiple lines. <a href="#fnref-demo-2" title="Jump back to footnote 2 in the text.">↩</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <h3>HTML-Specific Components</h3>
+            <p>The following components require specific HTML markup with the correct CSS classes to be styled properly.</p>
+
+            <h4>Table of Contents</h4>
+            <p>The Table of Contents is automatically generated. Any `h2` heading with an `id` attribute will be added as a top-level item.</p>
+            <div class="example-container">
+                <div class="code-block">
+                    <pre><code class="language-html">&lt;h2 id="my-section"&gt;My Section Title&lt;/h2&gt;</code></pre>
+                </div>
+                <div class="rendered-example">
+                    <h2 id="my-section-demo">My Section Title</h2>
+                </div>
+            </div>
+
+            <h4>Heading Anchors</h4>
+            <div class="example-container">
+                <div class="code-block">
+                    <pre><code class="language-html">&lt;h2 id="section"&gt;Section Title
+  &lt;a href="#section" class="heading-permalink"&gt;
+    &lt;i class="fas fa-link"&gt;&lt;/i&gt;
+  &lt;/a&gt;
+&lt;/h2&gt;</code></pre>
+                </div>
+                <div class="rendered-example">
+                    <h2 id="section-demo">Section Title<a href="#section-demo" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+                </div>
+            </div>
+
+            <h4>Alerts & Notices</h4>
+            <div class="example-container">
+                <div class="code-block">
+                    <pre><code class="language-html">&lt;div class="alert alert-info"&gt;
+  &lt;p class="alert-title"&gt;Note&lt;/p&gt;
+  &lt;p&gt;This is an informational alert.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+                <div class="rendered-example">
+                    <div class="alert alert-info">
+                        <p class="alert-title">Note</p>
+                        <p>This is an informational alert.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h4>Task Lists</h4>
+             <div class="example-container">
+                <div class="code-block">
+                    <pre><code class="language-html">&lt;ul class="task-list"&gt;
+  &lt;li&gt;
+    &lt;input type="checkbox" id="ex-task1"&gt;
+    &lt;label for="ex-task1"&gt;A task to do.&lt;/label&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;input type="checkbox" id="ex-task2" checked&gt;
+    &lt;label for="ex-task2"&gt;A completed task.&lt;/label&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                </div>
+                <div class="rendered-example">
+                     <ul class="task-list">
+                        <li>
+                            <input type="checkbox" id="ex-task1-render" name="ex-task1-render">
+                            <label for="ex-task1-render">A task to do.</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="ex-task2-render" name="ex-task2-render" checked>
+                            <label for="ex-task2-render">A completed task.</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <h4>Cards</h4>
+            <div class="example-container">
+                <div class="code-block">
+                    <pre><code class="language-html">&lt;div class="card-grid"&gt;
+  &lt;div class="card"&gt;
+    &lt;i class="fas fa-pen-ruler card-icon"&gt;&lt;/i&gt;
+    &lt;h3 class="card-title"&gt;&lt;a href="#"&gt;Card Title&lt;/a&gt;&lt;/h3&gt;
+    &lt;p class="card-text"&gt;Card description text.&lt;/p&gt;
+    &lt;a href="#" class="btn"&gt;Learn More&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+                <div class="rendered-example">
+                    <div class="card-grid" style="margin: 0;">
+                        <div class="card">
+                            <i class="fas fa-pen-ruler card-icon"></i>
+                            <h3 class="card-title"><a href="#">Card Title</a></h3>
+                            <p class="card-text">Card description text.</p>
+                            <a href="#" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-wrapper-wide">
+            <h2 id="data">Data Display in a Wide Wrapper (100%)<a href="#data" class="heading-permalink" aria-label="Permalink to this section"><i class="fas fa-link"></i></a></h2>
+            <p>This table is inside a <code>.content-wrapper-wide</code> which spans the full width of the viewport. Tables are styled with borders, padded cells, and a distinct header row.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Header 1</th>
+                        <th>Header 2</th>
+                        <th>Header 3</th>
+                        <th>Header 4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Data Cell 1.1</td>
+                        <td>Data Cell 1.2</td>
+                        <td>Data Cell 1.3</td>
+                        <td>This cell has more content to show how the table handles wrapping and spacing.</td>
+                    </tr>
+                    <tr>
+                        <td>Data Cell 2.1</td>
+                        <td>Data Cell 2.2</td>
+                        <td>Data Cell 2.3</td>
+                        <td>Another cell with some text.</td>
+                    </tr>
+                    <tr>
+                        <td>Data Cell 3.1</td>
+                        <td>Data Cell 3.2</td>
+                        <td>Data Cell 3.3</td>
+                        <td>The last row in this example.</td>
+                    </tr>
+                    <tr>
+                        <td>Data Cell 4.1</td>
+                        <td>Data Cell 4.2</td>
+                        <td>Data Cell 4.3</td>
+                        <td>And one more row to show the alternating color.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>This is an example of an embedded large datawrapper table. These are ideal for display of large tables, are configurable to be searchable, have conditional display properties, etc. In this case, the table is best displayed within the <code>.content-wrapper-wide</code> div class.</p>
+
+            <!--Script EMBED of Datawrapper Schema Table-->
+            <div style="min-height:400px" id="datawrapper-vis-sRGz5"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/sRGz5/embed.js" charset="utf-8" data-target="#datawrapper-vis-sRGz5"></script><noscript><img src="https://datawrapper.dwcdn.net/sRGz5/full.png" alt="" /></noscript></div>
+        </div>
+
+        <!-- ======================= FOOTNOTES SECTION ======================= -->
+        <div class="content-wrapper">
+            <div class="footnotes" id="footnotes">
+                <h2>Footnotes</h2>
+                <ol>
+                    <li id="fn1">This is the footnote text. <a href="#fnref1" title="Jump back to footnote 1 in the text.">↩</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+        <!-- =================================================================== -->
+        <!-- ===================== END YOUR CONTENT HERE ===================== -->
+        <!-- =================================================================== -->
+
+    </div>
+
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="usa-footer usa-footer--big vcgi-footer" role="contentinfo">
+        <div class="vcgi-footer-upper">
+            <div class="grid-container">
+                <div class="grid-row grid-gap">
+                    <!-- Sidebar Column -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-sidebar-col">
+                        <h2>Vermont Center for Geographic Information</h2>
+                        <p>A Division of the <a href="https://digitalservices.vermont.gov/" class="vcgi-footer-link">Agency of Digital Services</a></p>
+                        <p><a href="mailto:vcgi@vermont.gov" class="vcgi-footer-link">Email VCGI</a></p>
+                        <p>
+                            <a href="mailto:tim.terway@vermont.gov" class="vcgi-footer-link">Tim Terway</a>, Helpful GIS Professional<br>
+                            <a href="mailto:john.e.adams@vermont.gov" class="vcgi-footer-link">John E. Adams</a>, Director
+                        </p>
+                        <ul class="vcgi-sidebar-social">
+                            <li>
+                                <a href="https://github.com/vcgi" target="_blank" rel="noreferrer" aria-label="VCGI on GitHub">
+                                    <i class="fab fa-github" style="font-size: 32px; color: #003300;" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/user/VTgeospatial" target="_blank" rel="noreferrer" aria-label="VCGI on YouTube">
+                                    <i class="fab fa-youtube" style="font-size: 32px; color: #003300;" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <hr>
+                        <p>VCGI is your source for the State of Vermont's geospatial data, information, and activities.</p>
+                    </div>
+
+                    <!-- Content Column 1 -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-footer-content-col">
+                        <h3>Standards and Guidelines</h3>
+                        <ul>
+                            <li><a href="https://vcgi.vermont.gov/resources/vermont-gis-standards-and-guidelines" class="vcgi-footer-link">Standards and Guidelines Directory</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Content Column 2 -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-footer-content-col">
+                        <h3>Popular Datasets</h3>
+                        <ul>
+                            <li><a href="https://geodata.vermont.gov/pages/parcels" class="vcgi-footer-link">Parcels</a></li>
+                            <li><a href="https://geodata.vermont.gov/pages/elevation" class="vcgi-footer-link">Elevation (Includes Lidar)</a></li>
+                            <li><a href="https://geodata.vermont.gov/pages/imagery" class="vcgi-footer-link">Imagery</a></li>
+                            <li><a href="https://geodata.vermont.gov/pages/land-cover" class="vcgi-footer-link">Land Cover</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Content Column 3 (with Return to Top) -->
+                    <div class="grid-col-12 desktop:grid-col-3 vcgi-footer-content-col">
+                        <h3>Map Applications</h3>
+                        <ul>
+                            <li><a href="https://maps.vermont.gov/vcgi/html5viewer/?viewer=vtmapviewer" class="vcgi-footer-link">Vermont Interactive Map Viewer</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/ParcelViewer/" class="vcgi-footer-link">Vermont Parcel Viewer</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/parcelstatus/" class="vcgi-footer-link">Municipal Parcel Map Status</a></li>
+                            <li><a href="https://vcgi.maps.arcgis.com/apps/instant/lookup/index.html?appid=bbbeff3500ed43c4a2bdb0f6f56377a1" class="vcgi-footer-link">Vermont Boundaries and Jurisdictions</a></li>
+                            <li><a href="https://landsurvey.vermont.gov/" class="vcgi-footer-link">Vermont Land Survey Library</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/OrthoFinder/" class="vcgi-footer-link">Vermont Orthoimagery Finder</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/OrthoStatus/" class="vcgi-footer-link">Vermont Orthoimagery Status</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/LidarFinder/" class="vcgi-footer-link">Vermont Lidar Finder</a></li>
+                            <li><a href="https://maps.vcgi.vermont.gov/lidarstatus/" class="vcgi-footer-link">Vermont Lidar Status</a></li>
+                            <li><a href="https://vcgi.vermont.gov/maps/partner-agency-maps" class="vcgi-footer-link">See More Here</a></li>
+                        </ul>
+                        <!-- Return to top is placed inside the column -->
+                        <div class="usa-footer__return-to-top">
+                            <a href="#" id="return-to-top-link">
+                                <div class="return-to-top-icon margin-bottom-1">
+                                    <svg class="svg-inline--fa fa-circle-arrow-up" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                        <path fill="currentColor" d="M256 0C114.6 0 0 114.6 0 256c0 141.4 114.6 256 256 256s256-114.6 256-256C512 114.6 397.4 0 256 0zM382.6 254.6c-12.5 12.5-32.75 12.5-45.25 0L288 205.3V384c0 17.69-14.33 32-32 32s-32-14.31-32-32V205.3L174.6 254.6c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l103.1-103.1C241.3 97.4 251.1 96 256 96c4.881 0 14.65 1.391 22.65 9.398l103.1 103.1C395.1 221.9 395.1 242.1 382.6 254.6z"></path>
+                                    </svg>
+                                </div>
+                                Return to top
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="vcgi-footer-bottom-bar">
+            <div class="vcgi-footer-copyright">
+                <p>Copyright © <span id="copyright-year">2025</span> State of Vermont All rights reserved. |</p>
+                <ul>
+                    <li><a href="https://www.vermont.gov/policies">Policies</a></li>
+                    <li><a href="https://www.vermont.gov/policies/accessibility">Accessibility Policy</a></li>
+                    <li><a href="https://www.vermont.gov/policies/privacy">Privacy Policy</a></li>
+                    <li><a href="https://vt.accessgov.com/feedback-survey/Forms/Page/feedback-survey/1b75365f-4e67-4f58-9080-cef25029f0a6/9fc7dbed-470c-4e68-90b8-d0ced27b6111/">Feedback Survey</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ======================= SCRIPTS ======================= -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+      // Set dynamic copyright year
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+      // Smooth scroll for "Return to top" link
+      const returnToTopLink = document.getElementById('return-to-top-link');
+      if (returnToTopLink) {
+          returnToTopLink.addEventListener('click', function(event) {
+              // Prevent the default anchor link behavior (the "jump")
+              event.preventDefault();
+              
+              // Smoothly scroll to the top of the page
+              window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+              });
+          });
+      }
+    </script>
+</body>
+</html>
