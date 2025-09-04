@@ -1,0 +1,545 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vermont Town Lotting Plans</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Avenir Next', 'Nunito Sans', sans-serif; /* Prioritize Avenir Next */
+      background-color: #f8f8f8; 
+    }
+    /* Custom scrollbar for webkit browsers for better aesthetics */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-dom/client": "https://esm.sh/react-dom@^19.1.0/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="root"></div>
+  <!-- 
+    This is a single-file HTML application. 
+    All necessary JavaScript is inlined below.
+    It does not need to fetch external index.tsx, App.tsx, FilterableSelect.tsx, or index.css files.
+    If you see errors for those files, ensure this HTML file is correctly deployed and not an older version,
+    and try clearing your browser cache.
+  -->
+  <script type="module">
+    // Import React and ReactDOM from the import map
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+
+    // --- FilterableSelect Component (Transpiled from FilterableSelect.tsx) ---
+    const FilterableSelect = ({
+      options,
+      value,
+      onChange,
+      placeholder = "-- Please choose an option --",
+      ariaLabel = "Filterable select",
+    }) => {
+      const [inputValue, setInputValue] = React.useState('');
+      const [filteredOptions, setFilteredOptions] = React.useState(options);
+      const [isOpen, setIsOpen] = React.useState(false);
+      const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
+      const wrapperRef = React.useRef(null);
+      const inputRef = React.useRef(null);
+      const listRef = React.useRef(null);
+
+      React.useEffect(() => {
+        const selectedOption = options.find(opt => opt.actualValue === value);
+        setInputValue(selectedOption ? selectedOption.displayLabel : '');
+        if (!value) {
+            setFilteredOptions(options);
+        }
+      }, [value, options]);
+
+      React.useEffect(() => {
+        if (inputValue === '' && !isOpen) {
+            setFilteredOptions(options);
+            return;
+        }
+        if (isOpen) {
+            const lowercasedInput = inputValue.toLowerCase();
+            const newFilteredOptions = options.filter(option =>
+              option.displayLabel.toLowerCase().includes(lowercasedInput)
+            );
+            setFilteredOptions(newFilteredOptions);
+        }
+      }, [inputValue, options, isOpen]);
+
+      React.useEffect(() => {
+        const handleClickOutside = (event) => {
+          if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+            setIsOpen(false);
+            const selectedOption = options.find(opt => opt.actualValue === value);
+            setInputValue(selectedOption ? selectedOption.displayLabel : '');
+          }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, [value, options]);
+
+      React.useEffect(() => {
+        if (highlightedIndex >= 0 && highlightedIndex < filteredOptions.length && listRef.current) {
+          const listItem = listRef.current.children[highlightedIndex];
+          if (listItem) {
+            listItem.scrollIntoView({ block: 'nearest', inline: 'start' });
+          }
+        }
+      }, [highlightedIndex, filteredOptions]);
+
+      const handleInputChange = (event) => {
+        const newInputValue = event.target.value;
+        setInputValue(newInputValue);
+        setIsOpen(true);
+        setHighlightedIndex(-1);
+      };
+
+      const handleOptionClick = (option) => {
+        setInputValue(option.displayLabel);
+        onChange(option.actualValue);
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+        inputRef.current?.focus();
+      };
+
+      const handleFocus = () => {
+        setIsOpen(true);
+        const selectedOption = options.find(opt => opt.actualValue === value);
+        if (selectedOption && inputValue === selectedOption.displayLabel) {
+            setFilteredOptions(options);
+        } else {
+            const lowercasedInput = inputValue.toLowerCase();
+            setFilteredOptions(options.filter(opt => opt.displayLabel.toLowerCase().includes(lowercasedInput)));
+        }
+      };
+
+      const handleKeyDown = (event) => {
+        if (!isOpen && (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Enter')) {
+            setIsOpen(true);
+            const currentSelectedOption = options.find(opt => opt.actualValue === value);
+            if (currentSelectedOption && inputValue === currentSelectedOption.displayLabel) {
+                setFilteredOptions(options);
+            } else {
+                const lowercasedInput = inputValue.toLowerCase();
+                setFilteredOptions(options.filter(opt => opt.displayLabel.toLowerCase().includes(lowercasedInput)));
+            }
+        }
+
+        switch (event.key) {
+          case 'ArrowDown':
+            event.preventDefault();
+            setHighlightedIndex(prevIndex =>
+              prevIndex < filteredOptions.length - 1 ? prevIndex + 1 : prevIndex
+            );
+            break;
+          case 'ArrowUp':
+            event.preventDefault();
+            setHighlightedIndex(prevIndex => (prevIndex > 0 ? prevIndex - 1 : 0));
+            break;
+          case 'Enter':
+            event.preventDefault();
+            if (isOpen && highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
+              handleOptionClick(filteredOptions[highlightedIndex]);
+            } else if (isOpen && filteredOptions.length === 1) {
+              handleOptionClick(filteredOptions[0]);
+            }
+            break;
+          case 'Escape':
+            setIsOpen(false);
+            const selectedOpt = options.find(opt => opt.actualValue === value);
+            setInputValue(selectedOpt ? selectedOpt.displayLabel : '');
+            setHighlightedIndex(-1);
+            break;
+          default:
+            break;
+        }
+      };
+      
+      const isOptionSelected = (option) => option.actualValue === value;
+
+      const getItemClasses = (option, index) => {
+        const classes = [
+          'cursor-pointer', 'select-none', 'relative', 'py-2', 'pl-3', 'pr-9',
+          'transition-colors', 'duration-150', 'ease-in-out',
+          'hover:bg-[#007834]', 'hover:text-white'
+        ];
+
+        if (highlightedIndex === index) {
+          classes.push('bg-[#007834]', 'text-white');
+        } else if (isOptionSelected(option)) {
+          classes.push('bg-[#003300]', 'text-white'); // Selected but not highlighted
+        } else {
+          classes.push('text-slate-900');
+        }
+        return classes.join(' ');
+      };
+
+      // Calculate aria-activedescendant value
+      let activeDescendantId = undefined;
+      if (isOpen && highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
+        activeDescendantId = `option-${highlightedIndex}`;
+      }
+
+      return React.createElement(
+        "div",
+        { className: "relative w-full", ref: wrapperRef },
+        React.createElement("input", {
+          ref: inputRef,
+          type: "text",
+          value: inputValue,
+          onChange: handleInputChange,
+          onFocus: handleFocus,
+          onKeyDown: handleKeyDown,
+          placeholder: placeholder,
+          className: "mt-1 block w-full pl-3 pr-10 py-3 text-base border-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm appearance-none bg-white hover:border-blue-500 transition duration-150 ease-in-out text-slate-900",
+          "aria-label": ariaLabel,
+          role: "combobox",
+          "aria-expanded": isOpen,
+          "aria-autocomplete": "list",
+          "aria-controls": "filterable-select-listbox",
+          "aria-activedescendant": activeDescendantId
+        }),
+        React.createElement(
+          "div",
+          { className: "absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none" },
+          React.createElement(
+            "svg",
+            { className: "h-5 w-5 text-gray-400", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", "aria-hidden": "true" },
+            React.createElement("path", { fillRule: "evenodd", d: "M10 3a.75.75 0 01.53.22l3.5 3.5a.75.75 0 01-1.06 1.06L10 4.81 6.53 8.28a.75.75 0 01-1.06-1.06l3.5-3.5A.75.75 0 0110 3zm-.53 13.56a.75.75 0 011.06 0l3.5-3.5a.75.75 0 01-1.06-1.06L10 15.19l-3.47-3.47a.75.75 0 01-1.06 1.06l3.5 3.5z", clipRule: "evenodd" })
+          )
+        ),
+        isOpen && React.createElement(
+          "ul",
+          {
+            ref: listRef,
+            id: "filterable-select-listbox",
+            role: "listbox",
+            className: "absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 overflow-auto focus:outline-none sm:text-sm border border-slate-300"
+          },
+          filteredOptions.length > 0 ? (
+            filteredOptions.map((option, index) => React.createElement(
+              "li",
+              {
+                key: option.actualValue + option.displayLabel, // Unique key
+                id: `option-${index}`, // This ID must match the one constructed for aria-activedescendant
+                role: "option",
+                "aria-selected": isOptionSelected(option),
+                onClick: () => handleOptionClick(option),
+                onMouseEnter: () => setHighlightedIndex(index),
+                className: getItemClasses(option, index)
+              },
+              React.createElement("span", { className: `block truncate ${isOptionSelected(option) ? 'font-semibold' : 'font-normal'}` }, option.displayLabel),
+              isOptionSelected(option) && React.createElement(
+                "span",
+                {
+                  className: `absolute inset-y-0 right-0 flex items-center pr-4 ${highlightedIndex === index ? 'text-white' : 'text-green-700'}`
+                },
+                React.createElement(
+                  "svg",
+                  { className: "h-5 w-5", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor" },
+                  React.createElement("path", { fillRule: "evenodd", d: "M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z", clipRule: "evenodd" })
+                )
+              )
+            ))
+          ) : (
+            React.createElement("li", { className: "cursor-default select-none relative py-2 pl-3 pr-9 text-slate-700" }, "No options found.")
+          )
+        )
+      );
+    };
+
+    // --- App Component (Transpiled from App.tsx) ---
+    const API_URL_APP = 'https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/Vermont_Lotting_Plans_Towns_Table/FeatureServer/0/query?where=1%3D1&outFields=CurrentName,URL,FormerName,OriginYear,PublicNote,Title&f=json';
+
+    const App = () => {
+      const { useState, useEffect } = React; // Destructure for convenience
+      const [allPlansData, setAllPlansData] = useState([]);
+      const [dropdownOptions, setDropdownOptions] = useState([]);
+      const [selectedCurrentName, setSelectedCurrentName] = useState('');
+      const [isLoading, setIsLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      useEffect(() => {
+        const fetchData = async () => {
+          setIsLoading(true);
+          setError(null);
+          try {
+            const response = await fetch(API_URL_APP);
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data.error) {
+              throw new Error(`API Error: ${data.error.message} (Code: ${data.error.code})`);
+            }
+            
+            if (!data.features) {
+              throw new Error('No features found in API response.');
+            }
+
+            const validFeatures = data.features.filter(
+              (feature) => feature.attributes.CurrentName && feature.attributes.CurrentName.trim() !== ''
+            );
+            
+            const sortedAllFeatures = validFeatures.sort((a, b) => {
+              const nameCompare = a.attributes.CurrentName.localeCompare(b.attributes.CurrentName);
+              if (nameCompare !== 0) return nameCompare;
+              return (a.attributes.OBJECTID || 0) - (b.attributes.OBJECTID || 0);
+            });
+            
+            setAllPlansData(sortedAllFeatures);
+
+            const newDropdownOptionsMap = new Map();
+
+            sortedAllFeatures.forEach(feature => {
+              const currentName = feature.attributes.CurrentName.trim();
+              if (!newDropdownOptionsMap.has(currentName)) {
+                newDropdownOptionsMap.set(currentName, {
+                  displayLabel: currentName,
+                  actualValue: currentName,
+                  sortKey: currentName
+                });
+              }
+            });
+            
+            let tempOptions = [];
+            
+            newDropdownOptionsMap.forEach(option => {
+                tempOptions.push(option);
+            });
+
+            sortedAllFeatures.forEach(feature => {
+              const currentName = feature.attributes.CurrentName.trim();
+              const formerName = feature.attributes.FormerName?.trim();
+
+              if (formerName && formerName !== '') {
+                const displayLabel = `${formerName} (Current Name: ${currentName})`;
+                if (!tempOptions.some(opt => opt.displayLabel === displayLabel)) {
+                     tempOptions.push({
+                        displayLabel: displayLabel,
+                        actualValue: currentName,
+                        sortKey: formerName
+                    });
+                }
+              }
+            });
+            
+            const finalOptions = tempOptions.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+            setDropdownOptions(finalOptions);
+
+          } catch (err) {
+            if (err instanceof Error) {
+              setError(err.message);
+            } else {
+              setError('An unknown error occurred while fetching data.');
+            }
+            console.error("Failed to fetch data:", err);
+          } finally {
+            setIsLoading(false);
+          }
+        };
+
+        fetchData();
+      }, []); 
+
+      const handleSelectChange = (selectedValue) => {
+        setSelectedCurrentName(selectedValue); 
+      };
+
+      const LoadingSpinner = () => React.createElement(
+        "div",
+        { className: "flex flex-col items-center justify-center h-full p-8" },
+        React.createElement(
+          "svg",
+          { className: "animate-spin -ml-1 mr-3 h-10 w-10 text-blue-600", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24" },
+          React.createElement("circle", { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+          React.createElement("path", { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })
+        ),
+        React.createElement("p", { className: "mt-4 text-lg text-slate-700" }, "Loading Town Data...")
+      );
+
+      const ErrorDisplay = ({ message }) => React.createElement(
+        "div",
+        { className: "bg-red-100 border-l-4 border-red-500 text-red-700 p-6 shadow-md", role: "alert" },
+        React.createElement("p", { className: "font-bold text-xl mb-2" }, "Oops! Something went wrong."),
+        React.createElement("p", { className: "text-md" }, message),
+        React.createElement("p", { className: "text-sm mt-2" }, "Please try refreshing the page or check the console for more details.")
+      );
+
+      const associatedPlansForSelectedCurrentName = selectedCurrentName
+        ? allPlansData.filter(plan => plan.attributes.CurrentName === selectedCurrentName)
+        : [];
+
+      const displayedFormerNames = selectedCurrentName 
+        ? Array.from(new Set(
+            associatedPlansForSelectedCurrentName
+              .map(plan => plan.attributes.FormerName?.trim())
+              .filter((name) => !!name && name !== '')
+          ))
+        : [];
+
+      const plansWithUrls = associatedPlansForSelectedCurrentName.filter(
+        plan => plan.attributes.URL && plan.attributes.URL.trim() !== ''
+      );
+
+      return React.createElement(
+        "div",
+        { className: "min-h-screen flex flex-col items-center justify-start p-4 bg-[#f8f8f8]" }, 
+        React.createElement(
+          "main",
+          { className: "bg-white p-6 sm:p-8 md:p-10 border border-[#d9d9d9] w-full transform transition-all duration-500" }, 
+          isLoading && React.createElement(LoadingSpinner, null),
+          error && !isLoading && React.createElement(ErrorDisplay, { message: error }),
+          !isLoading && !error && React.createElement(
+            React.Fragment,
+            null,
+            React.createElement(
+              "div",
+              { className: "mb-6" },
+              React.createElement(
+                "label",
+                { htmlFor: "town-select-input", className: "block text-sm font-medium text-slate-700 mb-1" },
+                "Select a Town:"
+              ),
+              React.createElement(FilterableSelect, {
+                options: dropdownOptions,
+                value: selectedCurrentName,
+                onChange: handleSelectChange,
+                placeholder: "-- Type or select a town --",
+                ariaLabel: "Select a Vermont town by current or former name to view its lotting plan URL"
+              })
+            ),
+            selectedCurrentName && associatedPlansForSelectedCurrentName.length > 0 && React.createElement(
+              "div",
+              { className: "mt-8 p-6 bg-white border border-slate-300 shadow-md transition-all duration-300 ease-in-out", role: "region", "aria-live": "polite" },
+              React.createElement(
+                "h2",
+                { className: "text-xl font-semibold text-slate-800 mb-3" },
+                "Lotting Plan Information for: ",
+                React.createElement("span", { className: "text-green-700" }, selectedCurrentName)
+              ),
+              displayedFormerNames.length > 0 && React.createElement(
+                "div",
+                { className: "mb-3" },
+                React.createElement("p", { className: "text-sm text-slate-600 mb-1" }, "Former Name(s):"),
+                React.createElement("p", { className: "text-base text-green-700" }, displayedFormerNames.join(', '))
+              ),
+              React.createElement(
+                "div",
+                { className: "mt-4" },
+                React.createElement("p", { className: "text-sm text-slate-600 mb-1" }, "Available Plan Links:"),
+                plansWithUrls.length > 0 ? React.createElement(
+                  "div",
+                  null,
+                  plansWithUrls.map((plan) => {
+                    let finalDisplayYear = "No Date";
+                    const originYearValue = plan.attributes.OriginYear; 
+                    const titleValue = plan.attributes.Title ? plan.attributes.Title.trim() : null;
+
+                    if (originYearValue && typeof originYearValue === 'string') {
+                        const trimmedOriginYear = originYearValue.trim();
+                        if (/^\d{4}$/.test(trimmedOriginYear)) { 
+                            finalDisplayYear = trimmedOriginYear;
+                        }
+                    }
+                    
+                    let linkDisplayText = "";
+                    if (finalDisplayYear !== "No Date" && titleValue) {
+                        linkDisplayText = `${finalDisplayYear} - ${titleValue}`;
+                    } else if (finalDisplayYear !== "No Date") {
+                        linkDisplayText = finalDisplayYear;
+                    } else if (titleValue) {
+                        linkDisplayText = titleValue;
+                    } else {
+                        linkDisplayText = "View Plan"; // Fallback if neither year nor title exists
+                    }
+
+                    let linkTitleAttribute = `Open plan for ${selectedCurrentName}`;
+                    if (titleValue) linkTitleAttribute += `: ${titleValue}`;
+                    if (finalDisplayYear !== "No Date") linkTitleAttribute += ` (Year: ${finalDisplayYear})`;
+                    linkTitleAttribute += ` (URL: ${plan.attributes.URL})`;
+
+
+                    const publicNote = plan.attributes.PublicNote && plan.attributes.PublicNote.trim() !== '' ? plan.attributes.PublicNote.trim() : null;
+                    
+                    return React.createElement(
+                      "div",
+                      { key: plan.attributes.URL || `plan-${plan.attributes.OBJECTID}`, className: "mb-2" }, 
+                      React.createElement(
+                        "a",
+                        {
+                          href: plan.attributes.URL,
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                          className: "text-[#136fbf] hover:text-[#0f5a99] underline font-medium transition duration-150 ease-in-out text-base",
+                          title: linkTitleAttribute
+                        },
+                        linkDisplayText
+                      ),
+                      publicNote && React.createElement(
+                        "p",
+                        { className: "text-sm text-slate-600 ml-4 mt-1" }, 
+                        publicNote
+                      )
+                     );
+                  }),
+                   React.createElement("p", { className: "text-xs text-slate-500 mt-2 italic" }, "(Links will open in a new tab.)")
+                ) : React.createElement(
+                  "p",
+                  { className: "text-slate-700 text-base" },
+                  "No plan links available for ",
+                  selectedCurrentName,
+                  "."
+                )
+              )
+            )
+          )
+        )
+      );
+    };
+
+    // --- Main Rendering Logic (Transpiled from index.tsx) ---
+    const rootElement = document.getElementById('root');
+    if (!rootElement) {
+      throw new Error("Could not find root element to mount to");
+    }
+
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      React.createElement(
+        React.StrictMode,
+        null,
+        React.createElement(App, null)
+      )
+    );
+  </script>
+</body>
+</html>
