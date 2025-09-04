@@ -1,6 +1,0 @@
-{
-  "name": "Vermont Town Lotting Plans Linker",
-  "description": "An application to select a Vermont town from a picklist and view its associated lotting plan URL. Data is sourced from ArcGIS Online, item Publisher_VCGI/APP Lotting Plans PRD/Vermont Lotting Plans Table (0ab9e37be1a9419cb6035345ae8519eb)",
-  "requestFramePermissions": [],
-  "prompt": ""
-}
