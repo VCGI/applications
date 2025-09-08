@@ -238,7 +238,7 @@
                     mapView = new MapView({
                         container: "map-view",
                         map: map,
-                        center: [-72.48, 44.17],
+                        center: [-72.5026, 44.1956], // Centered on Barre Town, VT
                         zoom: 12,
                         popup: {
                             dockEnabled: false,
@@ -367,7 +367,7 @@
         function resetMapView() {
             if (mapView) {
                 mapView.goTo({
-                    center: [-72.48, 44.17],
+                    center: [-72.5026, 44.1956], // Centered on Barre Town, VT
                     zoom: 12
                 }).catch(error => {
                     if (error.name !== "view:goto-interrupted") {
@@ -710,7 +710,7 @@
             const vectors = (dataCache['Sketch_Vector'] || []).filter(v => (v.lrsn === lrsn || v.LRSN === lrsn));
             if (vectors.length === 0) return;
 
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('d');
             const padding = 40;
 
             const segments = vectors.reduce((acc, v) => {
