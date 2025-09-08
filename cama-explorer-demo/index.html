@@ -334,8 +334,34 @@
                                 if (parcelResult) {
                                     const taxId = parcelResult.graphic.attributes.SPAN;
                                     if (taxId) {
-                                        filterByTaxId(taxId);
-                                        highlightParcel(parcelResult.graphic);
+                                        const taxIdStr = String(taxId).trim();
+                                        const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => {
+                                            const recordTaxId = p.tax_bill_id || p.TAX_BILL_ID;
+                                            return recordTaxId !== undefined && String(recordTaxId).trim() === taxIdStr;
+                                        });
+
+                                        if (parcelMainRecord) {
+                                            const lrsn = parcelMainRecord.lrsn || parcelMainRecord.LRSN;
+                                            if (lrsn) {
+                                                const lrsnStr = String(lrsn);
+                                                // Check if there is a corresponding record in the main address file
+                                                const masterRecord = masterData.find(p => String(p.LRSN) === lrsnStr || String(p.lrsn) === lrsnStr);
+                                                if (masterRecord) {
+                                                    // If a record is found, show its detail view
+                                                    showDetailView(lrsn);
+                                                } else {
+                                                    // If no main record, show an error and reset to the main table view
+                                                    showError(`No address data found for the selected parcel (Tax ID: ${taxIdStr}).`);
+                                                    showMainView();
+                                                }
+                                            } else {
+                                                showError(`Could not link selected parcel to property details (missing LRSN).`);
+                                                showMainView();
+                                            }
+                                        } else {
+                                            showError(`No detailed CAMA data found for the selected parcel (Tax ID: ${taxIdStr}).`);
+                                            showMainView();
+                                        }
                                     }
                                 }
                             });
@@ -395,54 +421,6 @@
                     }
                 });
                 clearMapHighlight();
-            }
-        }
-
-        function filterByTaxId(taxId) {
-            const taxIdStr = String(taxId).trim();
-            const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => {
-                const recordTaxId = p.tax_bill_id || p.TAX_BILL_ID;
-                return recordTaxId !== undefined && String(recordTaxId).trim() === taxIdStr;
-            });
-
-            if (parcelMainRecord) {
-                const lrsn = parcelMainRecord.lrsn || parcelMainRecord.LRSN;
-                if (lrsn) {
-                    const lrsnStr = String(lrsn);
-                    filteredData = masterData.filter(p => (String(p.LRSN) === lrsnStr || String(p.lrsn) === lrsnStr));
-                    currentPage = 1;
-                    
-                    if (filteredData.length === 0) {
-                         console.warn(`Parcel record found for Tax ID ${taxIdStr}, but no matching address in master data for LRSN ${lrsn}.`);
-                         tableWrapper.classList.add('hidden');
-                         statusMessage.classList.remove('hidden');
-                         showError(`Found parcel on map, but no matching address details are available.`);
-                         paginationControls.innerHTML = '';
-                         tableInfo.textContent = '';
-                    } else {
-                        renderMainTable();
-                    }
-                    
-                    filterStatus.classList.remove('hidden');
-                    searchInput.value = '';
-                } else {
-                    console.warn(`Record found for Tax ID ${taxIdStr}, but it has no LRSN.`, parcelMainRecord);
-                    tableWrapper.classList.add('hidden');
-                    statusMessage.classList.remove('hidden');
-                    showError(`Could not link selected parcel to property details (missing LRSN).`);
-                    paginationControls.innerHTML = '';
-                    tableInfo.textContent = '';
-                }
-            } else {
-                console.warn(`No record found in Parcel_Main for Tax ID: ${taxIdStr}`);
-                filteredData = [];
-                currentPage = 1;
-                tableWrapper.classList.add('hidden');
-                statusMessage.classList.remove('hidden');
-                showError(`No detailed CAMA data found for the selected parcel (Tax ID: ${taxIdStr}).`);
-                paginationControls.innerHTML = '';
-                tableInfo.textContent = '';
-                filterStatus.classList.add('hidden');
             }
         }
 
