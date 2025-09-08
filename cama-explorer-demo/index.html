@@ -339,6 +339,16 @@
                 console.error("Failed to query or zoom to feature:", error);
             }
         }
+        
+        function resetMapView() {
+            if (mapView) {
+                mapView.goTo({
+                    center: [-72.48, 44.17],
+                    zoom: 12
+                });
+                clearMapHighlight();
+            }
+        }
 
         function filterByTaxId(taxId) {
             const taxIdStr = String(taxId).trim();
@@ -394,7 +404,7 @@
             renderMainTable();
             filterStatus.classList.add('hidden');
             searchInput.value = '';
-            clearMapHighlight();
+            resetMapView(); // Return map to default extent and clear highlight
             statusMessage.classList.add('hidden');
             tableWrapper.classList.remove('hidden');
         }
@@ -511,6 +521,7 @@
         function showMainView() {
             detailView.classList.add('hidden');
             mainView.classList.remove('hidden');
+            resetMapView(); // Return map to default extent
         }
 
         // --- UI RENDERING ---
