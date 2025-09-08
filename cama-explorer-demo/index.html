@@ -16,7 +16,24 @@
         #map-view {
             height: 500px;
             width: 100%;
+            outline: none;
         }
+
+        /* This new rule specifically removes the focus outline from the map container */
+        #map-view:focus-within {
+            outline: none;
+        }
+
+        /* Remove blue highlight on tap/click for all div elements */
+        div {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Remove default focus outline for div elements */
+        div:focus {
+            outline: none;
+        }
+
         .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .table-container::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
@@ -36,7 +53,7 @@
         }
         .detail-card {
             background-color: #f9fafb; /* gray-50 */
-            border-left: 4px solid #4f46e5; /* indigo-600 */
+            border-left: 4px solid #003300; /* Updated from indigo-600 */
             padding: 0.75rem 1rem;
             border-radius: 0.25rem;
         }
@@ -68,7 +85,7 @@
 
             <div class="bg-white p-4 rounded-lg shadow-md mb-6">
                 <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Search by Address or LRSN</label>
-                <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#003300] focus:border-[#003300]">
             </div>
 
             <main id="data-container" class="bg-white p-4 rounded-lg shadow-md min-h-[400px]">
@@ -93,7 +110,7 @@
 
         <!-- Detail View Section (Initially Hidden) -->
         <div id="detail-view" class="hidden">
-            <button id="back-button" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button id="back-button" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#003300] hover:bg-[#002a00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#003300]">
                 &larr; Back to Search Results
             </button>
             <div id="detail-content" class="space-y-8">
@@ -441,7 +458,7 @@
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
-                            <p class="text-lg text-indigo-600">${parcelData.FreeFormAddr || 'Address not available'}</p>
+                            <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
                             <p class="text-sm text-gray-500">LRSN: ${lrsn}</p>
                         </div>`;
 
