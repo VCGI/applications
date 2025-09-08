@@ -325,6 +325,10 @@
         
         async function zoomToParcelByTaxId(taxId) {
             if (!parcelLayer || !taxId) return;
+            if (highlightHandle) {
+                highlightHandle.remove();
+                highlightHandle = null;
+            }
             const query = parcelLayer.createQuery();
             query.where = `SPAN = '${taxId}'`;
             query.returnGeometry = true;
