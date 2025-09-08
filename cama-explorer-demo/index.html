@@ -398,7 +398,7 @@
                 const { features } = await parcelLayer.queryFeatures(query);
                 if (features.length > 0) {
                     const feature = features[0];
-                    mapView.goTo({ target: feature.geometry, zoom: 19 }).catch(error => {
+                    mapView.goTo(feature.geometry).catch(error => {
                         if (error.name !== "view:goto-interrupted") {
                             console.error(error);
                         }
