@@ -6,6 +6,8 @@
     <title>VT CAMA Sample Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- ArcGIS Map CSS -->
     <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
     <style>
@@ -72,7 +74,7 @@
 
     <div class="flex h-screen">
         <!-- Left Pane (Scrollable Content) -->
-        <div class="w-3/5 h-screen overflow-y-auto" id="left-pane">
+        <div class="w-3/5 h-screen overflow-y-auto relative" id="left-pane">
             <div class="container mx-auto p-4 sm:p-6 lg:p-8">
                 <!-- Header Section -->
                 <header class="mb-8 text-center">
@@ -128,6 +130,10 @@
                     <p>CAMA data are dynamic and sourced from individual Vermont municipalities. Spot an error? Contact the municipality.</p>
                 </div>
             </div>
+             <!-- Return to Top Button -->
+            <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
+                <i class="fa-solid fa-circle-arrow-up"></i>
+            </button>
         </div>
 
         <!-- Right Pane (Fixed Map) -->
@@ -184,6 +190,7 @@
         const filterStatus = document.getElementById('filter-status');
         const clearFilterBtn = document.getElementById('clear-filter-btn');
         const leftPane = document.getElementById('left-pane');
+        const toTopBtn = document.getElementById('to-top-btn');
 
         // --- INITIALIZATION ---
         async function initialize() {
@@ -196,6 +203,19 @@
             searchInput.addEventListener('input', handleSearch);
             backButton.addEventListener('click', showMainView);
             clearFilterBtn.addEventListener('click', clearMapFilter);
+            
+            // "Return to Top" button logic
+            toTopBtn.addEventListener('click', () => {
+                leftPane.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            leftPane.addEventListener('scroll', () => {
+                if (leftPane.scrollTop > 200) {
+                    toTopBtn.classList.remove('opacity-0', 'invisible');
+                } else {
+                    toTopBtn.classList.add('opacity-0', 'invisible');
+                }
+            });
         }
 
         // --- MAP LOGIC ---
@@ -710,7 +730,7 @@
             const vectors = (dataCache['Sketch_Vector'] || []).filter(v => (v.lrsn === lrsn || v.LRSN === lrsn));
             if (vectors.length === 0) return;
 
-            const ctx = canvas.getContext('d');
+            const ctx = canvas.getContext('2d');
             const padding = 40;
 
             const segments = vectors.reduce((acc, v) => {
