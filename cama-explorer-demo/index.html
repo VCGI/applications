@@ -16,12 +16,14 @@
         #map-view {
             height: 500px;
             width: 100%;
-            outline: none;
         }
 
-        /* This new rule specifically removes the focus outline from the map container */
-        #map-view:focus-within {
-            outline: none;
+        /* More specific rules to remove the focus outline from the map and its children */
+        #map-view:focus,
+        #map-view:focus-within,
+        .esri-view-surface--is-focused {
+            outline: none !important;
+            box-shadow: none !important;
         }
 
         /* Remove blue highlight on tap/click for all div elements */
@@ -41,7 +43,7 @@
         .loader { border-top-color: #3498db; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .main-table-row { cursor: pointer; }
-        .main-table-row:hover { background-color: #eff6ff; } /* blue-50 */
+        .main-table-row:hover { background-color: #e6f0e6; } /* Updated from blue-50 */
         .related-section h3 {
             border-bottom: 2px solid #e5e7eb; /* gray-200 */
             padding-bottom: 0.5rem;
@@ -78,7 +80,7 @@
         <!-- Search and Main Table Section -->
         <div id="main-view">
             <!-- Filter Status -->
-            <div id="filter-status" class="hidden mb-4 p-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 rounded-md flex justify-between items-center">
+            <div id="filter-status" class="hidden mb-4 p-4 bg-[#e6f0e6] border-l-4 border-[#003300] text-[#003300] rounded-md flex justify-between items-center">
                 <p>Showing data for parcel selected on map.</p>
                 <button id="clear-filter-btn" class="font-bold hover:underline">Clear Map Filter</button>
             </div>
