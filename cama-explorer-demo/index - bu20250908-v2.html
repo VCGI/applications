@@ -9,15 +9,12 @@
     <!-- ArcGIS Map CSS -->
     <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
     <style>
-        html, body {
-            overflow: hidden; /* Prevent body scrolling */
-        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
         }
         #map-view {
-            height: 100%; /* Make map fill its container */
+            height: 500px;
             width: 100%;
         }
 
@@ -70,71 +67,64 @@
 </head>
 <body class="antialiased text-gray-800">
 
-    <div class="flex h-screen">
-        <!-- Left Pane (Scrollable Content) -->
-        <div class="w-3/5 h-screen overflow-y-auto">
-            <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-                <!-- Header Section -->
-                <header class="mb-8 text-center">
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">VT CAMA Sample Explorer</h1>
-                    <p class="mt-2 text-md text-gray-600">Click a parcel on the map or search below to explore property data. <b>For demo purposes only.</b></p>
-                </header>
+    <!-- Map Container -->
+    <div id="map-view" class="shadow-lg"></div>
 
-                <!-- Search and Main Table Section -->
-                <div id="main-view">
-                    <!-- Filter Status -->
-                    <div id="filter-status" class="hidden mb-4 p-4 bg-[#e6f0e6] border-l-4 border-[#003300] text-[#003300] rounded-md flex justify-between items-center">
-                        <p>Showing data for parcel selected on map.</p>
-                        <button id="clear-filter-btn" class="font-bold hover:underline">Clear Map Filter</button>
-                    </div>
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header Section -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">VT CAMA Sample Explorer</h1>
+            <p class="mt-2 text-md text-gray-600">Click a parcel on the map or search below to explore property data. <b>For demo purposes only.</b></p>
+        </header>
 
-                    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
-                        <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Search by Address or LRSN</label>
-                        <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#003300] focus:border-[#003300]">
-                    </div>
+        <!-- Search and Main Table Section -->
+        <div id="main-view">
+            <!-- Filter Status -->
+            <div id="filter-status" class="hidden mb-4 p-4 bg-[#e6f0e6] border-l-4 border-[#003300] text-[#003300] rounded-md flex justify-between items-center">
+                <p>Showing data for parcel selected on map.</p>
+                <button id="clear-filter-btn" class="font-bold hover:underline">Clear Map Filter</button>
+            </div>
 
-                    <main id="data-container" class="bg-white p-4 rounded-lg shadow-md min-h-[400px]">
-                        <div id="status-message" class="flex items-center justify-center h-full">
-                            <!-- Status message will be rendered here -->
-                        </div>
-                        <div id="table-wrapper" class="hidden">
-                            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                                <h2 class="text-xl font-semibold text-gray-800">Properties</h2>
-                                <div id="table-info" class="text-sm text-gray-600"></div>
-                            </div>
-                            <div class="overflow-x-auto table-container">
-                                <table id="data-table" class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50"></thead>
-                                    <tbody class="bg-white divide-y divide-gray-200"></tbody>
-                                </table>
-                            </div>
-                            <div id="pagination-controls" class="mt-4 flex justify-between items-center"></div>
-                        </div>
-                    </main>
+            <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Search by Address or LRSN</label>
+                <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#003300] focus:border-[#003300]">
+            </div>
+
+            <main id="data-container" class="bg-white p-4 rounded-lg shadow-md min-h-[400px]">
+                <div id="status-message" class="flex items-center justify-center h-full">
+                    <!-- Status message will be rendered here -->
                 </div>
-
-                <!-- Detail View Section (Initially Hidden) -->
-                <div id="detail-view" class="hidden">
-                    <button id="back-button" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#003300] hover:bg-[#002a00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#003300]">
-                        &larr; Back to Search Results
-                    </button>
-                    <div id="detail-content" class="space-y-8">
-                        <!-- Details will be loaded here -->
+                <div id="table-wrapper" class="hidden">
+                    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                        <h2 class="text-xl font-semibold text-gray-800">Properties</h2>
+                        <div id="table-info" class="text-sm text-gray-600"></div>
                     </div>
+                    <div class="overflow-x-auto table-container">
+                        <table id="data-table" class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50"></thead>
+                            <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                    <div id="pagination-controls" class="mt-4 flex justify-between items-center"></div>
                 </div>
+            </main>
+        </div>
 
-                <!-- Disclaimer Section -->
-                <div class="mt-8 text-center text-sm text-gray-500 border-t pt-4">
-                    <p>CAMA data are dynamic and sourced from individual Vermont municipalities. Spot an error? Contact the municipality.</p>
-                </div>
+        <!-- Detail View Section (Initially Hidden) -->
+        <div id="detail-view" class="hidden">
+            <button id="back-button" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#003300] hover:bg-[#002a00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#003300]">
+                &larr; Back to Search Results
+            </button>
+            <div id="detail-content" class="space-y-8">
+                <!-- Details will be loaded here -->
             </div>
         </div>
 
-        <!-- Right Pane (Fixed Map) -->
-        <div class="w-2/5 h-screen">
-            <!-- Map Container -->
-            <div id="map-view" class="shadow-lg"></div>
+        <!-- Disclaimer Section -->
+        <div class="mt-8 text-center text-sm text-gray-500 border-t pt-4">
+            <p>CAMA data are dynamic and sourced from individual Vermont municipalities. Spot an error? Contact the municipality.</p>
         </div>
+
     </div>
     
     <!-- ArcGIS Map JS -->
