@@ -136,6 +136,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
         const S3_BASE_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/sample/';
+        // NEW - URL for property class codes
+        const PROPERTY_CLASS_CODES_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json';
         const MASTER_FILE = 'Site_Address';
         const ESSENTIAL_FILES = ['Site_Address', 'Parcel_Main']; // Files needed for initial load
         const RELATED_FILES = {
@@ -157,6 +159,7 @@
         let masterData = [];
         let filteredData = [];
         let dataCache = {};
+        let propertyClassCodes = {}; // NEW - To store the property class codes
         let currentPage = 1;
         let mapView = null;
         let parcelLayer = null;
@@ -179,9 +182,11 @@
         const toTopBtn = document.getElementById('to-top-btn');
 
         // --- INITIALIZATION ---
+        // MODIFIED - Added call to load property class codes
         async function initialize() {
             showLoading('Loading property data...');
             await initializeMap();
+            await loadPropertyClassCodes(); // NEW
             await loadInitialData();
             renderMainTable();
             loadRelatedDataInBackground();
@@ -422,6 +427,25 @@
         }
 
         // --- DATA FETCHING & HANDLING ---
+        // NEW - Function to load and process the property class codes
+        async function loadPropertyClassCodes() {
+            try {
+                const response = await fetch(PROPERTY_CLASS_CODES_URL);
+                if (!response.ok) throw new Error('Failed to load property class codes');
+                const data = await response.json();
+                // Transform the array into an object for faster lookup by code
+                data.forEach(item => {
+                    propertyClassCodes[item.code] = {
+                        primary: item.primary_type,
+                        secondary: item.secondary_type
+                    };
+                });
+            } catch (error) {
+                console.error(error);
+                // The app can continue without this, but property types won't be displayed.
+            }
+        }
+        
         async function loadInitialData() {
             try {
                 await Promise.all(ESSENTIAL_FILES.map(async (file) => {
@@ -473,6 +497,7 @@
         }
 
         // --- HIERARCHICAL VIEW LOGIC ---
+        // MODIFIED - Updated to include property type lookup and display
         function showDetailView(lrsn) {
             const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => (p.lrsn === lrsn || p.LRSN === lrsn));
             if (parcelMainRecord && (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID)) {
@@ -485,10 +510,24 @@
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             const spanId = parcelMainRecord ? (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID || 'N/A') : 'N/A';
             
+            // NEW - Logic to get property type description
+            let propertyTypeHtml = '';
+            if (parcelMainRecord) {
+                const propClassCode = parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS;
+                if (propClassCode && propertyClassCodes[propClassCode]) {
+                    const codeInfo = propertyClassCodes[propClassCode];
+                    if (codeInfo.primary && codeInfo.secondary) {
+                        const typeDescription = `${codeInfo.primary} - ${codeInfo.secondary}`;
+                        propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
+                    }
+                }
+            }
+
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
                             <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
-                            <p class="text-sm text-gray-500">LRSN: ${lrsn}</p>
+                            ${propertyTypeHtml}
+                            <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
                         </div>`;
 
