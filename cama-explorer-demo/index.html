@@ -117,7 +117,7 @@
                 </div>
 
                 <div class="mt-8 text-left text-xs text-gray-500 border-t pt-4">
-                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
+                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
                 </div>
             </div>
              <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
@@ -498,17 +498,15 @@
             // CORRECTED - Logic to get property type description
             let propertyTypeHtml = '';
             if (parcelMainRecord) {
-                // Get the raw code value
                 const propClassCodeValue = parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS;
                 
-                // Check if the code exists
                 if (propClassCodeValue !== undefined && propClassCodeValue !== null) {
-                    // Convert the code to a string to ensure the lookup works
-                    const propClassCodeStr = String(propClassCodeValue);
+                    // Clean the data: convert to string, trim whitespace, and pad with leading zeros to 3 digits.
+                    const propClassCodeClean = String(propClassCodeValue).trim().padStart(3, '0');
                     
-                    // Now perform the lookup with the string version
-                    if (propertyClassCodes[propClassCodeStr]) {
-                        const codeInfo = propertyClassCodes[propClassCodeStr];
+                    // Now perform the lookup with the cleaned string
+                    if (propertyClassCodes[propClassCodeClean]) {
+                        const codeInfo = propertyClassCodes[propClassCodeClean];
                         if (codeInfo.primary && codeInfo.secondary) {
                             const typeDescription = `${codeInfo.primary} - ${codeInfo.secondary}`;
                             propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
@@ -732,7 +730,8 @@
             const vectors = (dataCache['Sketch_Vector'] || []).filter(v => (v.lrsn === lrsn || v.LRSN === lrsn));
             if (vectors.length === 0) return;
 
-            const ctx = canvas.getContext('d');
+            // CORRECTED - Typo 'd' changed to '2d'
+            const ctx = canvas.getContext('2d');
             const padding = 40;
 
             const segments = vectors.reduce((acc, v) => {
