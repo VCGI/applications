@@ -1,0 +1,170 @@
+﻿PCCODE,PCLASS,ORDER
+0,Unknown,Primary
+100,Primary Year Round Residence,Primary
+101,Single Family,Secondary
+102,Two Unit,Secondary
+103,Three Unit,Secondary
+104,Four Unit,Secondary
+130,Condo/Co-Op,Secondary
+131,Condo < 6 ac,Secondary
+132,Condo > 6 ac,Secondary
+135,Co-op Apt,Secondary
+150,Mobile Home,Secondary
+200,Secondary Residence,Primary
+201,Single Family,Secondary
+202,Two family,Secondary
+203,Three family,Secondary
+204,Four family,Secondary
+230,Condo/Co-Op,Secondary
+231,Common Land < 6 Ac,Secondary
+232,Secondary,Secondary
+235,Co-Op Apt,Secondary
+250,Mobile Home,Secondary
+300,Commercial,Primary
+310,Auto Sales/Related,Secondary
+311,Auto/Truck/Bus Sales,Secondary
+312,Gas Station/Grg,Secondary
+313,Auto Repair,Secondary
+314,Car Wash,Secondary
+315,Auto/Truck Rental,Secondary
+316,Truck Terminals,Secondary
+320,Trans/Comm,Secondary
+321,Apts/Bldg/Sales/Ser,Secondary
+322,Railroad/Assoc.Fac,Secondary
+323,Ferry/Barges/Docks,Secondary
+324,Marinas/Boat Sales,Secondary
+325,TV Studio/Broadcast,Secondary
+326,Radio Studio/Brdcst,Secondary
+327,Cable TV,Secondary
+328,Telephone/Telegraph,Secondary
+330,Rentals,Secondary
+331,Business Blocks,Secondary
+332,Office Bldgs,Secondary
+333,Yr-Rnd Residence,Secondary
+334,Bank Building,Secondary
+335,Shopping Centers,Secondary
+336,Buildings,Secondary
+337,Mobile Home Parks,Secondary
+340,Warehouses/Distr,Secondary
+341,Beverage Warehouse,Secondary
+342,Grocery Warehouse,Secondary
+343,Gas/Diesel/Heating,Secondary
+344,Auto Parts Distr,Secondary
+347,General Warehouse,Secondary
+348,Boat Storage,Secondary
+350,Travel Accom./Rest,Secondary
+351,Hotel,Secondary
+352,Motel,Secondary
+353,Inn/Overnight Cabins,Secondary
+354,Lodges,Secondary
+355,Snack Bars/Fast Food,Secondary
+356,Restaurants,Secondary
+360,Service/Health,Secondary
+361,Hospitals,Secondary
+362,Nursing Home/Clinic,Secondary
+363,Funeral Home/Morgue,Secondary
+364,Cemeteries,Secondary
+365,Laundry/Dry Clean,Secondary
+380,Sales,Secondary
+381,Sm Retail Shop/Store,Secondary
+382,Supermarkets,Secondary
+383,Bldg Sup/Lumber Yd,Secondary
+384,Propane/Heating Oil,Secondary
+385,Feed/Grain/Seed,Secondary
+386,Farm Mach/Equip,Secondary
+387,Sm Groc Stores,Secondary
+390,Misc / Multi-Use,Secondary
+391,Office Bldg/Apts,Secondary
+392,Motel/Restaurant,Secondary
+393,Store/Apts,Secondary
+395,Lodge/Restaurant,Secondary
+400,Industrial,Primary
+402,Gas/Oil Pipe/Prod,Secondary
+405,Other Energy Prod,Secondary
+410,Electric,Secondary
+411,CVPS,Secondary
+412,Green Mtn Power,Secondary
+413,VT Elect Power Co,Secondary
+414,New Eng Power Co,Secondary
+415,VT Electric Co-Op,Secondary
+416,Other,Secondary
+420,Mining/Quarries,Secondary
+421,Granite,Secondary
+422,Marble,Secondary
+423,Limestone,Secondary
+424,Sand / Gravel,Secondary
+425,Magnesium / Talc,Secondary
+426,Asbestos,Secondary
+427,Other,Secondary
+430,Wood Manufacturer,Secondary
+431,Pulp/Paper Mills,Secondary
+432,Plywood/Veneer Mills,Secondary
+433,Sawmills/Finish Mill,Secondary
+434,Wood Consm Prod,Secondary
+440,Creameries /Dairies,Secondary
+450,Other Industry,Secondary
+451,Heavy Industry,Secondary
+454,Medium Industry,Secondary
+455,Light Industry,Secondary
+500,Operating Farm/Ag,Primary
+511,Dairy Farm/Prod,Secondary
+512,Beef/Dairy Replace,Secondary
+513,Horses / Ponies,Secondary
+514,Sheep/Wool,Secondary
+515,Hogs,Secondary
+519,Animals over 100#,Secondary
+520,Birds/Assoc. Prod,Secondary
+521,Chickens/Eggs,Secondary
+522,Turkeys/Eggs,Secondary
+523,Aquatic Fowl,Secondary
+524,Game/Show Birds,Secondary
+530,Ag Ent /Living Cre,Secondary
+531,Rabbits meat/fur,Secondary
+532,Fur Farm,Secondary
+533,Bees / Products,Secondary
+534,Aquatic Fowl,Secondary
+540,Field Crops,Secondary
+550,Truck Crops,Secondary
+560,Orchards,Secondary
+561,Apple,Secondary
+563,Sugar Bush,Secondary
+565,Other Fruits/Nuts,Secondary
+570,Fruits/Berries,Secondary
+580,Nursery/Greenhouse,Secondary
+590,Wildlife Preserves,Secondary
+600,Timberland,Primary
+700,Government Use,Primary
+710,Federal,Secondary
+720,State,Secondary
+730,County,Secondary
+740,Local,Secondary
+750,School District,Secondary
+800,Open Land/Misc,Primary
+810,Yr-Rnd Residence,Secondary
+811,Rural,Secondary
+812,Urban,Secondary
+820,Development,Secondary
+821,Rural,Secondary
+822,Urban,Secondary
+830,Recreation,Secondary
+831,Rural,Secondary
+832,Urban,Secondary
+840,Industrial,Secondary
+841,Rural,Secondary
+842,Urban,Secondary
+850,Commercial,Secondary
+851,Rural,Secondary
+852,Urban,Secondary
+856,Parking Lot,Secondary
+860,Farm Use,Secondary
+870,Governmental,Secondary
+880,Vacation,Secondary
+890,Other,Secondary
+891,Right of Way,Secondary
+892,Establish Bound Line,Secondary
+894,Water Rights,Secondary
+900,Other,Primary
+910,Religious,Secondary
+920,Fraternal,Secondary
+930,Non-Profit Org,Secondary
+940,Mineral Rights,Secondary
