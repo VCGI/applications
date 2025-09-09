@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VT CAMA Sample Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- ArcGIS Map CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
     <style>
         html, body {
@@ -73,18 +71,14 @@
 <body class="antialiased text-gray-800">
 
     <div class="flex h-screen">
-        <!-- Left Pane (Scrollable Content) -->
         <div class="w-3/5 h-screen overflow-y-auto relative" id="left-pane">
             <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-                <!-- Header Section -->
                 <header class="mb-8 text-left">
                     <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Vermont CAMA Sample Explorer</h1>
                     <p class="mt-2 text-md text-gray-600">Click a parcel on the map or search below to explore property data. <b>For demo purposes only.</b></p>
                 </header>
 
-                <!-- Search and Main Table Section -->
                 <div id="main-view">
-                    <!-- Filter Status -->
                     <div id="filter-status" class="hidden mb-4 p-4 bg-[#e6f0e6] border-l-4 border-[#003300] text-[#003300] rounded-md flex justify-between items-center">
                         <p>Showing data for parcel selected on map.</p>
                         <button id="clear-filter-btn" class="font-bold hover:underline">Clear Map Filter</button>
@@ -97,8 +91,7 @@
 
                     <main id="data-container" class="bg-white p-4 rounded-lg shadow-md min-h-[400px]">
                         <div id="status-message" class="flex items-center justify-center h-full">
-                            <!-- Status message will be rendered here -->
-                        </div>
+                            </div>
                         <div id="table-wrapper" class="hidden">
                             <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
                                 <h2 class="text-xl font-semibold text-gray-800">Properties</h2>
@@ -115,35 +108,28 @@
                     </main>
                 </div>
 
-                <!-- Detail View Section (Initially Hidden) -->
                 <div id="detail-view" class="hidden">
                     <button id="back-button" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#003300] hover:bg-[#002a00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#003300]">
                         &larr; Back to Search Results
                     </button>
                     <div id="detail-content" class="space-y-8">
-                        <!-- Details will be loaded here -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Disclaimer Section -->
                 <div class="mt-8 text-left text-xs text-gray-500 border-t pt-4">
                     <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
                 </div>
             </div>
-             <!-- Return to Top Button -->
-            <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
+             <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
                 <i class="fa-solid fa-circle-arrow-up"></i>
             </button>
         </div>
 
-        <!-- Right Pane (Fixed Map) -->
         <div class="w-2/5 h-screen">
-            <!-- Map Container -->
             <div id="map-view" class="shadow-lg"></div>
         </div>
     </div>
     
-    <!-- ArcGIS Map JS -->
     <script src="https://js.arcgis.com/4.29/"></script>
 
     <script>
@@ -468,7 +454,10 @@
         }
 
         function handleSearch() {
-            clearMapFilter();
+            // A text search should reset any map selection, but not clear the text input.
+            resetMapView();
+            filterStatus.classList.add('hidden');
+            
             const searchTerm = searchInput.value.toLowerCase();
             if(!searchTerm) {
                 filteredData = masterData;
