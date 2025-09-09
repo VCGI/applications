@@ -136,7 +136,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
         const S3_BASE_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/sample/';
-        // NEW - URL for property class codes
         const PROPERTY_CLASS_CODES_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json';
         const MASTER_FILE = 'Site_Address';
         const ESSENTIAL_FILES = ['Site_Address', 'Parcel_Main']; // Files needed for initial load
@@ -159,7 +158,7 @@
         let masterData = [];
         let filteredData = [];
         let dataCache = {};
-        let propertyClassCodes = {}; // NEW - To store the property class codes
+        let propertyClassCodes = {};
         let currentPage = 1;
         let mapView = null;
         let parcelLayer = null;
@@ -182,11 +181,10 @@
         const toTopBtn = document.getElementById('to-top-btn');
 
         // --- INITIALIZATION ---
-        // MODIFIED - Added call to load property class codes
         async function initialize() {
             showLoading('Loading property data...');
             await initializeMap();
-            await loadPropertyClassCodes(); // NEW
+            await loadPropertyClassCodes();
             await loadInitialData();
             renderMainTable();
             loadRelatedDataInBackground();
@@ -217,17 +215,14 @@
                     "esri/views/MapView",
                     "esri/layers/FeatureLayer"
                 ], (Map, MapView, FeatureLayer) => {
-                    // --- UPDATED RENDERER ---
-                    // Use a solid, but fully transparent fill. This makes the
-                    // interior of the polygon clickable without being visible.
                     const parcelRenderer = {
                         type: "simple",
                         symbol: {
                             type: "simple-fill",
                             style: "solid",
-                            color: [0, 0, 0, 0], // RGBA color, Alpha=0 is fully transparent
+                            color: [0, 0, 0, 0], 
                             outline: {
-                                color: [211, 211, 211, 0.9], // Light grey outline
+                                color: [211, 211, 211, 0.9], 
                                 width: "2px"
                             }
                         }
@@ -237,7 +232,7 @@
                         url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
                         definitionExpression: "TOWN = 'BARRE TOWN'",
                         outFields: ["SPAN"],
-                        popupEnabled: false, // We will control popups manually
+                        popupEnabled: false, 
                         renderer: parcelRenderer
                     });
 
@@ -249,7 +244,7 @@
                     mapView = new MapView({
                         container: "map-view",
                         map: map,
-                        center: [-72.485, 44.187], // Centered on Barre Town, VT
+                        center: [-72.485, 44.187],
                         zoom: 13,
                         popup: {
                             dockEnabled: false,
@@ -265,7 +260,6 @@
                     mapView.when(() => {
                         let lastHoveredGraphic = null;
 
-                        // Hover Popup Logic
                         mapView.on("pointer-move", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 const parcelResult = response.results.find(result => result.graphic && result.graphic.layer === parcelLayer);
@@ -313,7 +307,6 @@
                             });
                         });
 
-                        // Click to Filter Logic
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 if (highlightHandle) {
@@ -335,13 +328,10 @@
                                             const lrsn = parcelMainRecord.lrsn || parcelMainRecord.LRSN;
                                             if (lrsn) {
                                                 const lrsnStr = String(lrsn);
-                                                // Check if there is a corresponding record in the main address file
                                                 const masterRecord = masterData.find(p => String(p.LRSN) === lrsnStr || String(p.lrsn) === lrsnStr);
                                                 if (masterRecord) {
-                                                    // If a record is found, show its detail view
                                                     showDetailView(lrsn);
                                                 } else {
-                                                    // If no main record, show an error and reset to the main table view
                                                     showError(`No address data found for the selected parcel (Tax ID: ${taxIdStr}).`);
                                                     showMainView();
                                                 }
@@ -404,8 +394,8 @@
         function resetMapView() {
             if (mapView) {
                 mapView.goTo({
-                    center: [-72.485, 44.187], // Centered roughly on Barre Town, VT
-                    zoom: 13 // orig 12
+                    center: [-72.485, 44.187],
+                    zoom: 13
                 }).catch(error => {
                     if (error.name !== "view:goto-interrupted") {
                         console.error(error);
@@ -421,19 +411,17 @@
             renderMainTable();
             filterStatus.classList.add('hidden');
             searchInput.value = '';
-            resetMapView(); // Return map to default extent and clear highlight
+            resetMapView();
             statusMessage.classList.add('hidden');
             tableWrapper.classList.remove('hidden');
         }
 
         // --- DATA FETCHING & HANDLING ---
-        // NEW - Function to load and process the property class codes
         async function loadPropertyClassCodes() {
             try {
                 const response = await fetch(PROPERTY_CLASS_CODES_URL);
                 if (!response.ok) throw new Error('Failed to load property class codes');
                 const data = await response.json();
-                // Transform the array into an object for faster lookup by code
                 data.forEach(item => {
                     propertyClassCodes[item.code] = {
                         primary: item.primary_type,
@@ -442,7 +430,6 @@
                 });
             } catch (error) {
                 console.error(error);
-                // The app can continue without this, but property types won't be displayed.
             }
         }
         
@@ -478,7 +465,6 @@
         }
 
         function handleSearch() {
-            // A text search should reset any map selection, but not clear the text input.
             resetMapView();
             filterStatus.classList.add('hidden');
             
@@ -497,7 +483,6 @@
         }
 
         // --- HIERARCHICAL VIEW LOGIC ---
-        // MODIFIED - Updated to include property type lookup and display
         function showDetailView(lrsn) {
             const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => (p.lrsn === lrsn || p.LRSN === lrsn));
             if (parcelMainRecord && (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID)) {
@@ -510,15 +495,24 @@
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             const spanId = parcelMainRecord ? (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID || 'N/A') : 'N/A';
             
-            // NEW - Logic to get property type description
+            // CORRECTED - Logic to get property type description
             let propertyTypeHtml = '';
             if (parcelMainRecord) {
-                const propClassCode = parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS;
-                if (propClassCode && propertyClassCodes[propClassCode]) {
-                    const codeInfo = propertyClassCodes[propClassCode];
-                    if (codeInfo.primary && codeInfo.secondary) {
-                        const typeDescription = `${codeInfo.primary} - ${codeInfo.secondary}`;
-                        propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
+                // Get the raw code value
+                const propClassCodeValue = parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS;
+                
+                // Check if the code exists
+                if (propClassCodeValue !== undefined && propClassCodeValue !== null) {
+                    // Convert the code to a string to ensure the lookup works
+                    const propClassCodeStr = String(propClassCodeValue);
+                    
+                    // Now perform the lookup with the string version
+                    if (propertyClassCodes[propClassCodeStr]) {
+                        const codeInfo = propertyClassCodes[propClassCodeStr];
+                        if (codeInfo.primary && codeInfo.secondary) {
+                            const typeDescription = `${codeInfo.primary} - ${codeInfo.secondary}`;
+                            propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
+                        }
                     }
                 }
             }
@@ -579,7 +573,6 @@
 
             detailContent.innerHTML = html;
             
-            // Add smooth scrolling for nav buttons
             document.querySelectorAll('#detail-nav a').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -605,7 +598,7 @@
         function showMainView() {
             detailView.classList.add('hidden');
             mainView.classList.remove('hidden');
-            resetMapView(); // Return map to default extent
+            resetMapView();
         }
 
         // --- UI RENDERING ---
@@ -739,7 +732,7 @@
             const vectors = (dataCache['Sketch_Vector'] || []).filter(v => (v.lrsn === lrsn || v.LRSN === lrsn));
             if (vectors.length === 0) return;
 
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('d');
             const padding = 40;
 
             const segments = vectors.reduce((acc, v) => {
