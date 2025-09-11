@@ -132,7 +132,7 @@
             "Parcel & Legal": ["Parcel_Main", "Legal"],
             "Valuation": ["Valuation_History", "Valuation_Detail", "Cap_Distributions", "Influence_Mods"],
             "Sales & Transfers": ["Transfer"],
-            "Buildings & Improvements": ["Improvements", "Imp_Ext_Features", "Permits"],
+            "Buildings & Improvements": ["Improvements", "Imp_Ext_Features", "Permits", "CI_Building"],
             "Commercial Buildings": ["CI_Building", "CI_Floors", "CI_Plumbing", "CI_Special", "CI_Unit_Cost", "CI_Uses"],
             "Residential Buildings": ["R_Floor", "R_Man_Housing"],
             "Land Details": ["Land_Site", "Land_Detail", "Land_Influence"],
@@ -450,12 +450,29 @@
                     }
                 }
             }
+
+            // --- START: Added Number of Structures calculation ---
+            const improvements = dataCache['Improvements'] || [];
+            const ciBuildings = dataCache['CI_Building'] || [];
+
+            const relatedImprovements = improvements.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+            const relatedCiBuildings = ciBuildings.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+
+            const extensionSet = new Set();
+            relatedImprovements.forEach(r => extensionSet.add(r.extension));
+            relatedCiBuildings.forEach(r => extensionSet.add(r.extension));
+            
+            const numStructures = extensionSet.size;
+            // --- END: Added Number of Structures calculation ---
+
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
+            const numStructuresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Structures:</strong> ${numStructures}</p>`;
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
                             <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
                             ${propertyTypeHtml}
+                            ${numStructuresHtml}
                             <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
                         </div>`;
