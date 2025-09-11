@@ -248,7 +248,7 @@
                         zoom: 13,
                         highlightOptions: {
                             color: "#c3d600",
-                            fillOpacity: 0.5
+                            fillOpacity: 0.4
                         },
                         popup: {
                             dockEnabled: false,
@@ -444,62 +444,25 @@
             const legalDesc = legalRecord ? (legalRecord.leg_description || legalRecord.LEG_DESCRIPTION || 'N/A') : 'N/A';
             const acres = parcelMainRecord ? (parcelMainRecord.legal_acreage || 'N/A') : 'N/A';
             
-            const relatedImprovements = (dataCache['Improvements'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
-            const numImprovements = relatedImprovements.length;
+            const improvements = dataCache['Improvements'] || [];
+            const ciBuildings = dataCache['CI_Building'] || [];
 
-            // --- MODIFICATION START: Advanced dwelling calculation ---
-            let calculatedDwellings = 0;
-            let isUncertain = false;
+            const relatedImprovements = improvements.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+            const relatedCiBuildings = ciBuildings.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
 
-            if (relatedImprovements.length > 0) {
-                // 1. Attempt to get a direct unit count from commercial building data first.
-                const ciRecords = (dataCache['CI_Building'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
-                const directUnitCount = ciRecords.reduce((sum, record) => {
-                    const units = record.number_units || record.NUMBER_UNITS;
-                    return sum + (parseInt(units) || 0);
-                }, 0);
+            const numImprovements = relatedImprovements.length + relatedCiBuildings.length;
 
-                if (directUnitCount > 0) {
-                    // If we find a direct unit count, we consider it the most reliable source.
-                    calculatedDwellings = directUnitCount;
-                } else {
-                    // 2. If no direct count, analyze each improvement record by its type.
-                    const singleUnitTypes = ['DWELL', 'MHOME', 'MHPARK2'];
-                    const multiUnitTypes = ['APARTRES'];
+            const dwellingTypes = ['DWELL', 'MHOME', 'APARTRES', 'MHPARK2'];
+            const dwellings = relatedImprovements.filter(r => dwellingTypes.includes(r.imp_type));
 
-                    relatedImprovements.forEach(imp => {
-                        const impType = imp.imp_type || imp.IMP_TYPE;
-                        if (singleUnitTypes.includes(impType)) {
-                            calculatedDwellings += 1;
-                        } else if (multiUnitTypes.includes(impType)) {
-                            // 3. For multi-unit types, estimate using a proxy (kitchen count from R_Floor).
-                            const rFloorRecords = (dataCache['R_Floor'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
-                            const kitchenCount = rFloorRecords.reduce((sum, record) => {
-                                const count = record.kit_count || record.KIT_COUNT;
-                                return sum + (parseInt(count) || 0);
-                            }, 0);
-
-                            if (kitchenCount > 0) {
-                                calculatedDwellings += kitchenCount;
-                                isUncertain = true; // Mark as uncertain because it's an estimate.
-                            } else {
-                                // Fallback: We know it's multi-unit but have no data, count as 1 and mark uncertain.
-                                calculatedDwellings += 1;
-                                isUncertain = true;
-                            }
-                        }
-                    });
-                }
-            }
-            const numDwellings = calculatedDwellings;
-            // --- MODIFICATION END ---
+            const numDwellings = dwellings.length;
 
             let yearBuilt = 'N/A';
             let effYearBuilt = 'N/A';
-            const dwellingsForYear = relatedImprovements.filter(r => (r.imp_type === 'DWELL' || r.imp_type === 'APARTRES'));
-            if (dwellingsForYear.length > 0) {
-                yearBuilt = dwellingsForYear[0].year_built;
-                effYearBuilt = dwellingsForYear[0].eff_year_built;
+
+            if (dwellings.length > 0) {
+                yearBuilt = dwellings[0].year_built;
+                effYearBuilt = dwellings[0].eff_year_built;
             } else if (relatedImprovements.length > 0) {
                 yearBuilt = relatedImprovements[0].year_built;
                 effYearBuilt = relatedImprovements[0].eff_year_built;
@@ -530,7 +493,7 @@
             const legalDescHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Description:</strong> ${legalDesc}</p>`;
             const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Acres:</strong> ${acres}</p>`;
             const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
-            const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${isUncertain ? '~' : ''}${numDwellings.toLocaleString()}</p>`;
+            const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${numDwellings}</p>`;
             const yearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Year Built:</strong> ${yearBuilt}</p>`;
             const effYearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Effective Year Built:</strong> ${effYearBuilt}</p>`;
 
