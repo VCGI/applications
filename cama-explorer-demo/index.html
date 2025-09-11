@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>VT CAMA Sample Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -468,7 +468,8 @@
             
             // --- MODIFICATION START: Corrected calculation for residential areas ---
             const finishedArea = rFloorRecords.reduce((sum, record) => {
-                const area = record.finished_living_area || record.FINISHED_LIVING_AREA;
+                // Corrected the field name from "finished_living_area" to "finish_living_area"
+                const area = record.finish_living_area || record.FINISH_LIVING_AREA;
                 return sum + (parseFloat(area) || 0);
             }, 0);
             
