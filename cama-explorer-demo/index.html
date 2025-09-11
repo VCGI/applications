@@ -436,8 +436,7 @@
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             const spanId = parcelMainRecord ? (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID || 'N/A') : 'N/A';
             
-            // MODIFIED: Handle cases where property type is not found
-            let typeDescription = "Not Defined"; // Default value
+            let typeDescription = "Not Defined"; 
             if (parcelMainRecord) {
                 const propClassCodeValue = parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS;
                 
@@ -451,19 +450,15 @@
                 }
             }
 
-            // --- START: Added Number of Structures calculation ---
+            // --- START: Modified Number of Structures calculation ---
             const improvements = dataCache['Improvements'] || [];
             const ciBuildings = dataCache['CI_Building'] || [];
 
             const relatedImprovements = improvements.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
             const relatedCiBuildings = ciBuildings.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
 
-            const extensionSet = new Set();
-            relatedImprovements.forEach(r => extensionSet.add(r.extension));
-            relatedCiBuildings.forEach(r => extensionSet.add(r.extension));
-            
-            const numStructures = extensionSet.size;
-            // --- END: Added Number of Structures calculation ---
+            const numStructures = relatedImprovements.length + relatedCiBuildings.length;
+            // --- END: Modified Number of Structures calculation ---
 
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
             const numStructuresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Structures:</strong> ${numStructures}</p>`;
