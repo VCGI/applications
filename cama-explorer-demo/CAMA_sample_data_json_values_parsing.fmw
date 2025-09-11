@@ -1,0 +1,1759 @@
+#! <?xml version="1.0" encoding="UTF-8" ?>
+#! <WORKSPACE
+#    Command line to run this workspace:
+#        "C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\fme.exe" C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo\CAMA_sample_data_json_values_parsing.fmw
+#          --SourceDataset_JSON "https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/Improvements.json"
+#          --SourceDataset_JSON_3 "https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/CI_Building.json"
+#          --FME_LAUNCH_VIEWER_APP "YES"
+#    
+#!   A0_PREVIEW_IMAGE="data:image/png;base64,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"
+#!   ARCGIS_COMPATIBILITY="ARCGISPRO"
+#!   ATTR_TYPE_ENCODING="SDF"
+#!   BEGIN_PYTHON=""
+#!   BEGIN_TCL=""
+#!   CATEGORY=""
+#!   DESCRIPTION=""
+#!   DESTINATION="NONE"
+#!   DESTINATION_ROUTING_FILE=""
+#!   DOC_EXTENTS="1655.64 1037.51"
+#!   DOC_TOP_LEFT="-318.288 -1148.13"
+#!   END_PYTHON=""
+#!   END_TCL=""
+#!   EXPLICIT_BOOKMARK_ORDER="false"
+#!   FME_BUILD_NUM="24202"
+#!   FME_BULK_MODE_THRESHOLD="2000"
+#!   FME_DOCUMENT_GUID="27f6336b-4ab2-4907-b875-e240d5c2d0b8"
+#!   FME_DOCUMENT_PRIORGUID="a97cfeea-bd27-451e-85be-afbbffe7be05"
+#!   FME_GEOMETRY_HANDLING="Enhanced"
+#!   FME_IMPLICIT_CSMAP_REPROJECTION_MODE="Auto"
+#!   FME_NAMES_ENCODING="UTF-8"
+#!   FME_REPROJECTION_ENGINE="ESRI"
+#!   FME_SERVER_SERVICES=""
+#!   FME_STROKE_MAX_DEVIATION="0"
+#!   HISTORY=""
+#!   IGNORE_READER_FAILURE="No"
+#!   LAST_SAVE_BUILD="FME(R) 2024.0.1.0 (20240328 - Build 24202 - WIN64)"
+#!   LAST_SAVE_DATE="2025-09-11T11:40:25"
+#!   LOG_FILE=""
+#!   LOG_MAX_RECORDED_FEATURES="200"
+#!   MARKDOWN_DESCRIPTION=""
+#!   MARKDOWN_USAGE=""
+#!   MAX_LOG_FEATURES="200"
+#!   MULTI_WRITER_DATASET_ORDER="BY_ID"
+#!   PASSWORD=""
+#!   PYTHON_COMPATIBILITY="ArcGISPro33"
+#!   REDIRECT_TERMINATORS="NONE"
+#!   SAVE_ON_PROMPT_AND_RUN="Yes"
+#!   SHOW_ANNOTATIONS="true"
+#!   SHOW_INFO_NODES="true"
+#!   SOURCE="NONE"
+#!   SOURCE_ROUTING_FILE=""
+#!   TERMINATE_REJECTED="YES"
+#!   TITLE=""
+#!   USAGE=""
+#!   USE_MARKDOWN=""
+#!   VIEW_POSITION="-1006.26 62.5006"
+#!   WARN_INVALID_XFORM_PARAM="Yes"
+#!   WORKSPACE_VERSION="1"
+#!   ZOOM_SCALE="100"
+#! >
+#! <DATASETS>
+#! <DATASET
+#!   IS_SOURCE="true"
+#!   ROLE="READER"
+#!   FORMAT="JSON"
+#!   DATASET="$(SourceDataset_JSON)"
+#!   KEYWORD="JSON_1"
+#!   MULTI_GEOM_ALLOWED="false"
+#!   ATTR_MAX_LENGTH="0"
+#!   ATTR_CASE="ANY"
+#!   ALLOWED_FEAT_TYPES=""
+#!   WRITE_DEFS="true"
+#!   DEFLINE_TEMPLATE=""
+#!   DEFLINE_ATTRS="true"
+#!   EXPOSABLE_ATTRS="fme_basename string fme_color string fme_dataset string fme_feature_type string fme_fill_color string fme_geometry string fme_primary_axis float fme_rotation float fme_secondary_axis float fme_start_angle float fme_sweep_angle float fme_text_size float fme_text_string string fme_type string multi_reader_full_id int multi_reader_id int multi_reader_keyword string multi_reader_type string"
+#!   DEFLINE_PARMS=""
+#!   ATTR_INDEX_TYPES=""
+#!   ATTR_NAME_INVALID_CHARS=""
+#!   SUPPORTS_FEATURE_TYPE_FANOUT="true"
+#!   ENABLED="true"
+#!   DYNAMIC_FEATURE_TYPES_LIST_ON_MERGE="true"
+#!   DATASET_TYPE="FILE"
+#!   FTTR_TYPE="LISTBOX_ENCODED"
+#!   GENERATE_FME_BUILD_NUM="24202"
+#!   COORDSYS=""
+#!   FEATURE_TYPES=""
+#!   MAX_FEATURES=""
+#!   MAX_FEATURES_PER_FEATURE_TYPE=""
+#!   MIN_FEATURES=""
+#!   START_FEATURE=""
+#! >
+#! <METAFILE_PARAMETER
+#!   NAME="MIME_TYPE"
+#!   VALUE="application/json ADD_DISPOSITION"
+#! />
+#! <METAFILE_PARAMETER
+#!   NAME="READER_DATASET_HINT"
+#!   VALUE="Select the JSON file(s) or Specify the JSON URL"
+#! />
+#! <METAFILE_PARAMETER
+#!   NAME="WRITER_DATASET_HINT"
+#!   VALUE="Specify a name for the JSON file"
+#! />
+#! </DATASET>
+#! <DATASET
+#!   IS_SOURCE="true"
+#!   ROLE="READER"
+#!   FORMAT="JSON"
+#!   DATASET="$(SourceDataset_JSON_3)"
+#!   KEYWORD="JSON_2"
+#!   MULTI_GEOM_ALLOWED="false"
+#!   ATTR_MAX_LENGTH="0"
+#!   ATTR_CASE="ANY"
+#!   ALLOWED_FEAT_TYPES=""
+#!   WRITE_DEFS="true"
+#!   DEFLINE_TEMPLATE=""
+#!   DEFLINE_ATTRS="true"
+#!   EXPOSABLE_ATTRS="fme_basename string fme_color string fme_dataset string fme_feature_type string fme_fill_color string fme_geometry string fme_primary_axis float fme_rotation float fme_secondary_axis float fme_start_angle float fme_sweep_angle float fme_text_size float fme_text_string string fme_type string multi_reader_full_id int multi_reader_id int multi_reader_keyword string multi_reader_type string"
+#!   DEFLINE_PARMS=""
+#!   ATTR_INDEX_TYPES=""
+#!   ATTR_NAME_INVALID_CHARS=""
+#!   SUPPORTS_FEATURE_TYPE_FANOUT="true"
+#!   ENABLED="true"
+#!   DYNAMIC_FEATURE_TYPES_LIST_ON_MERGE="true"
+#!   DATASET_TYPE="FILE"
+#!   FTTR_TYPE="LISTBOX_ENCODED"
+#!   GENERATE_FME_BUILD_NUM="24202"
+#!   COORDSYS=""
+#!   FEATURE_TYPES=""
+#!   MAX_FEATURES=""
+#!   MAX_FEATURES_PER_FEATURE_TYPE=""
+#!   MIN_FEATURES=""
+#!   START_FEATURE=""
+#! >
+#! <METAFILE_PARAMETER
+#!   NAME="MIME_TYPE"
+#!   VALUE="application/json ADD_DISPOSITION"
+#! />
+#! <METAFILE_PARAMETER
+#!   NAME="READER_DATASET_HINT"
+#!   VALUE="Select the JSON file(s) or Specify the JSON URL"
+#! />
+#! <METAFILE_PARAMETER
+#!   NAME="WRITER_DATASET_HINT"
+#!   VALUE="Specify a name for the JSON file"
+#! />
+#! </DATASET>
+#! </DATASETS>
+#! <DATA_TYPES>
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_buffer"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_binarybuffer"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_xml"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_varchar(width)"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_varbinary(width)"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="boolean"
+#!   FME_TYPE="fme_boolean"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_char(width)"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_binary(width)"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_datetime"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_time"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_date"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="float"
+#!   FME_TYPE="fme_real64"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="float"
+#!   FME_TYPE="fme_real32"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="int"
+#!   FME_TYPE="fme_int64"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_uint64"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="int"
+#!   FME_TYPE="fme_int32"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="int"
+#!   FME_TYPE="fme_uint32"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="int"
+#!   FME_TYPE="fme_int16"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="int"
+#!   FME_TYPE="fme_uint16"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="int"
+#!   FME_TYPE="fme_int8"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="int"
+#!   FME_TYPE="fme_uint8"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="string"
+#!   FME_TYPE="fme_decimal(width,decimal)"
+#!   FORMAT="JSON"
+#! />
+#! <DATA_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json"
+#!   FME_TYPE="fme_json"
+#!   FORMAT="JSON"
+#! />
+#! </DATA_TYPES>
+#! <GEOM_TYPES>
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_point"
+#!   FME_TYPE="fme_point"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_line"
+#!   FME_TYPE="fme_line"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_polygon"
+#!   FME_TYPE="fme_area"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_text"
+#!   FME_TYPE="fme_text"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_ellipse"
+#!   FME_TYPE="fme_ellipse"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_arc"
+#!   FME_TYPE="fme_arc"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_rectangle"
+#!   FME_TYPE="fme_rectangle"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_rounded_rectangle"
+#!   FME_TYPE="fme_rounded_rectangle"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_raster"
+#!   FME_TYPE="fme_raster"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_no_geom"
+#!   FME_TYPE="fme_no_geom"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_collection"
+#!   FME_TYPE="fme_collection"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_line"
+#!   FME_TYPE="fme_surface"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_line"
+#!   FME_TYPE="fme_solid"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_polygon"
+#!   FME_TYPE="fme_point_cloud"
+#!   FORMAT="JSON"
+#! />
+#! <GEOM_TYPE
+#!   IS_SOURCE="true"
+#!   FORMAT_TYPE="json_polygon"
+#!   FME_TYPE="fme_voxel_grid"
+#!   FORMAT="JSON"
+#! />
+#! </GEOM_TYPES>
+#! <FEATURE_TYPES>
+#! <FEATURE_TYPE
+#!   IS_SOURCE="true"
+#!   NODE_NAME="JSONFeature"
+#!   FEATURE_TYPE_NAME=""
+#!   FEATURE_TYPE_NAME_QUALIFIER=""
+#!   IS_EDITABLE="false"
+#!   IDENTIFIER="2"
+#!   FEAT_GEOMTYPE="json_no_geom"
+#!   POSITION="-141.1385624793748 -401.87671876718764"
+#!   BOUNDING_RECT="-141.1385624793748 -401.87671876718764 447.390625 65"
+#!   ORDER="500000000000000"
+#!   COLLAPSED="true"
+#!   KEYWORD="JSON_1"
+#!   PARMS_EDITED="true"
+#!   ENABLED="true"
+#!   HIDDEN_USER_ATTRS=""
+#!   MERGE_FILTER=""
+#!   MERGE_FILTER_TYPE="FILTER_TYPE_GLOB"
+#!   MERGE_FILTER_CASE_SENSITIVE="true"
+#!   DYNAMIC_SCHEMA="false"
+#! >
+#!     <FEAT_ATTRIBUTE ATTR_NAME="lrsn" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="extension" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="dwelling_number" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_line_number" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="improvement_id" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="status" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="last_update" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_type" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="attached_flag" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_height" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_width" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_length" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_capacity" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="construction_type" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="grade" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="year_built" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="eff_year_built" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="year_remodeled" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="condition" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_base_rate1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_adj_rate1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_size" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="unit_type" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="reproduction_cost1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="phys_depreciation1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="ovrride_phys_depr" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="obs_depreciation" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="funct_depreciation" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="pct_complete" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="rem_value1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="true_tax_value1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_eff_perim" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_par" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="finish_code" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="calc_obs_dep" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="location_adj1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="location_adj3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="sketch_code" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="eff_year" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="sound_value_code" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="bldg_section" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="effective_age_calc_flag" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_base_rate3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="imp_adj_rate3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="reproduction_cost3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="phys_depreciation3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="rem_value3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="true_tax_value3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="number_items" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="import_imp_id" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="import_card_number" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="misc_imp_type" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="import_dwell_id" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="ext_cover" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="sound_value_reason" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="OtherImpFlag" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#! </FEATURE_TYPE>
+#! <FEATURE_TYPE
+#!   IS_SOURCE="true"
+#!   NODE_NAME="JSONFeature"
+#!   FEATURE_TYPE_NAME=""
+#!   FEATURE_TYPE_NAME_QUALIFIER=""
+#!   IS_EDITABLE="false"
+#!   IDENTIFIER="7"
+#!   FEAT_GEOMTYPE="json_no_geom"
+#!   POSITION="-318.28827147646507 -1083.1335313353134"
+#!   BOUNDING_RECT="-318.28827147646507 -1083.1335313353134 800.00700007000091 65"
+#!   ORDER="500000000000000"
+#!   COLLAPSED="true"
+#!   KEYWORD="JSON_2"
+#!   PARMS_EDITED="true"
+#!   ENABLED="true"
+#!   HIDDEN_USER_ATTRS=""
+#!   MERGE_FILTER=""
+#!   MERGE_FILTER_TYPE="FILTER_TYPE_GLOB"
+#!   MERGE_FILTER_CASE_SENSITIVE="true"
+#!   DYNAMIC_SCHEMA="false"
+#! >
+#!     <FEAT_ATTRIBUTE ATTR_NAME="lrsn" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="extension" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="bldg_section" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="last_update" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="status" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="pricing_key" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="number_floors" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="total_area" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="party_walls" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="sqft_rate1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="subtotal1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="plumb_value1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="spfeat_value1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="exfeat_value1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="base_value1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="reproduction_cost1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="deprec_tbl" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="eff_year" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_code1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_pct1" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_code2" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_pct2" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_code3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_pct3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_code4" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_pct4" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="roof_ins_pct" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="wall_ins_pct" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="number_units" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="avg_unit_size" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="sqft_rate3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="subtotal3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="plumb_value3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="spfeat_value3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="exfeat_value3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="base_value3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="reproduction_cost3" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#!     <FEAT_ATTRIBUTE ATTR_NAME="mkt_bldg_type" ATTR_TYPE="string" ATTR_HAS_PORT="true" ATTR_VALUE=""/>
+#! </FEATURE_TYPE>
+#! </FEATURE_TYPES>
+#! <FMESERVER>
+#! <READER_DATASETS>
+#! <DATASET
+#!   NAME="JSON_2"
+#!   OVERRIDE="-JSON_2_DATASET"
+#!   DATASET="JSON_2/CI_Building.json"
+#! />
+#! <DATASET
+#!   NAME="JSON_1"
+#!   OVERRIDE="-JSON_1_DATASET"
+#!   DATASET="JSON_1/Improvements.json"
+#! />
+#! </READER_DATASETS>
+#! </FMESERVER>
+#! <GLOBAL_PARAMETERS>
+#! <GLOBAL_PARAMETER
+#!   GUI_LINE="GUI FILE_OR_URL SourceDataset_JSON INCLUDE_WEB_BROWSER%JSON_Documents(*.json)|*.json|Archive_Files(*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx)|*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx|Compressed_Files(*.bz2;*.gz)|*.bz2;*.gz|All_Files(*)|* Source JSON (JavaScript Object Notation) File or URL:"
+#!   DEFAULT_VALUE="https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/Improvements.json"
+#!   IS_STAND_ALONE="false"
+#! />
+#! <GLOBAL_PARAMETER
+#!   GUI_LINE="GUI FILE_OR_URL SourceDataset_JSON_3 INCLUDE_WEB_BROWSER%JSON_Documents(*.json)|*.json|Archive_Files(*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx)|*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx|Compressed_Files(*.bz2;*.gz)|*.bz2;*.gz|All_Files(*)|* Source JSON (JavaScript Object Notation) File or URL:"
+#!   DEFAULT_VALUE="https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/CI_Building.json"
+#!   IS_STAND_ALONE="false"
+#! />
+#! </GLOBAL_PARAMETERS>
+#! <USER_PARAMETERS
+#!   FORM="eyJwYXJhbWV0ZXJzIjpbeyJhY2Nlc3NNb2RlIjoicmVhZCIsImFsbG93VVJMIjp0cnVlLCJkZWZhdWx0VmFsdWUiOiJodHRwczovL3Z0b3BlbmRhdGEtcHJkLnMzLnVzLWVhc3QtMi5hbWF6b25hd3MuY29tL19PdGhlci9DQU1BL3NhbXBsZS9JbXByb3ZlbWVudHMuanNvbiIsImZpbHRlcnMiOlt7ImRlc2NyaXB0aW9uIjoiSlNPTiBEb2N1bWVudHMiLCJmaWx0ZXIiOlsiKi5qc29uIl19LHsiZGVzY3JpcHRpb24iOiJBcmNoaXZlIEZpbGVzIiwiZmlsdGVyIjpbIiouN3oiLCIqLjd6aXAiLCIqLnJhciIsIioucnZ6IiwiKi50YXIiLCIqLnRhci5iejIiLCIqLnRhci5neiIsIioudGd6IiwiKi56aXAiLCIqLnppcHgiXX0seyJkZXNjcmlwdGlvbiI6IkNvbXByZXNzZWQgRmlsZXMiLCJmaWx0ZXIiOlsiKi5iejIiLCIqLmd6Il19LHsiZGVzY3JpcHRpb24iOiJBbGwgRmlsZXMiLCJmaWx0ZXIiOlsiKiJdfV0sImluY2x1ZGVXZWJCcm93c2VyIjp0cnVlLCJpdGVtc1RvU2VsZWN0IjoiZmlsZXMiLCJuYW1lIjoiU291cmNlRGF0YXNldF9KU09OIiwicHJvbXB0IjoiU291cmNlIEpTT04gKEphdmFTY3JpcHQgT2JqZWN0IE5vdGF0aW9uKSBGaWxlIG9yIFVSTDoiLCJyZXF1aXJlZCI6dHJ1ZSwic2VsZWN0TXVsdGlwbGUiOnRydWUsInN1cHBvcnRlZFZhbHVlVHlwZXMiOlsiZ2xvYmFsUGFyYW1ldGVyIl0sInR5cGUiOiJmaWxlIiwidmFsaWRhdGVFeGlzdGVuY2UiOmZhbHNlLCJ2YWx1ZVR5cGUiOiJzdHJpbmcifSx7ImFjY2Vzc01vZGUiOiJyZWFkIiwiYWxsb3dVUkwiOnRydWUsImRlZmF1bHRWYWx1ZSI6Imh0dHBzOi8vdnRvcGVuZGF0YS1wcmQuczMudXMtZWFzdC0yLmFtYXpvbmF3cy5jb20vX090aGVyL0NBTUEvc2FtcGxlL0NJX0J1aWxkaW5nLmpzb24iLCJmaWx0ZXJzIjpbeyJkZXNjcmlwdGlvbiI6IkpTT04gRG9jdW1lbnRzIiwiZmlsdGVyIjpbIiouanNvbiJdfSx7ImRlc2NyaXB0aW9uIjoiQXJjaGl2ZSBGaWxlcyIsImZpbHRlciI6WyIqLjd6IiwiKi43emlwIiwiKi5yYXIiLCIqLnJ2eiIsIioudGFyIiwiKi50YXIuYnoyIiwiKi50YXIuZ3oiLCIqLnRneiIsIiouemlwIiwiKi56aXB4Il19LHsiZGVzY3JpcHRpb24iOiJDb21wcmVzc2VkIEZpbGVzIiwiZmlsdGVyIjpbIiouYnoyIiwiKi5neiJdfSx7ImRlc2NyaXB0aW9uIjoiQWxsIEZpbGVzIiwiZmlsdGVyIjpbIioiXX1dLCJpbmNsdWRlV2ViQnJvd3NlciI6dHJ1ZSwiaXRlbXNUb1NlbGVjdCI6ImZpbGVzIiwibmFtZSI6IlNvdXJjZURhdGFzZXRfSlNPTl8zIiwicHJvbXB0IjoiU291cmNlIEpTT04gKEphdmFTY3JpcHQgT2JqZWN0IE5vdGF0aW9uKSBGaWxlIG9yIFVSTDoiLCJyZXF1aXJlZCI6dHJ1ZSwic2VsZWN0TXVsdGlwbGUiOnRydWUsInR5cGUiOiJmaWxlIiwidmFsaWRhdGVFeGlzdGVuY2UiOmZhbHNlLCJ2YWx1ZVR5cGUiOiJzdHJpbmcifV19"
+#! >
+#! <PARAMETER_INFO>
+#!     <INFO NAME="SourceDataset_JSON" 
+#!   DEFAULT_VALUE="https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/Improvements.json"
+#!   SCOPE="DEPENDENT"
+#!   GENERATED_GUI_LINE="true"
+#!   GUI_LINE="GUI FILE_OR_URL SourceDataset_JSON INCLUDE_WEB_BROWSER%JSON_Documents(*.json)|*.json|Archive_Files(*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx)|*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx|Compressed_Files(*.bz2;*.gz)|*.bz2;*.gz|All_Files(*)|* Source JSON (JavaScript Object Notation) File or URL:"
+#! />
+#!     <INFO NAME="SourceDataset_JSON_3" 
+#!   DEFAULT_VALUE="https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/CI_Building.json"
+#!   SCOPE="DEPENDENT"
+#!   GENERATED_GUI_LINE="true"
+#!   GUI_LINE="GUI FILE_OR_URL SourceDataset_JSON_3 INCLUDE_WEB_BROWSER%JSON_Documents(*.json)|*.json|Archive_Files(*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx)|*.7z;*.7zip;*.rar;*.rvz;*.tar;*.tar.bz2;*.tar.gz;*.tgz;*.zip;*.zipx|Compressed_Files(*.bz2;*.gz)|*.bz2;*.gz|All_Files(*)|* Source JSON (JavaScript Object Notation) File or URL:"
+#! />
+#! </PARAMETER_INFO>
+#! </USER_PARAMETERS>
+#! <COMMENTS>
+#! <COMMENT
+#!   IDENTIFIER="3"
+#!   COMMENT_VALUE="&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&#10;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;&#10;p, li { white-space: pre-wrap; }&#10;hr { height: 1px; border-width: 0; }&#10;li.unchecked::marker { content: &quot;\2610&quot;; }&#10;li.checked::marker { content: &quot;\2612&quot;; }&#10;&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Segoe UI&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;&#10;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;JSONFeature: Improvements [JSON]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="-219.26434373718743 -160.62490624906246"
+#!   TOP_LEFT="-219.26434373718743 -160.62490624906246"
+#!   BOTTOM_RIGHT="481.71872859353584 -161.62490624906246"
+#!   BOUNDING_RECT="-219.26434373718743 -160.62490624906246 700.9830723307233 1"
+#!   ORDER="500000000000001"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{ac521c4c-9665-432d-8e11-7c1e37d816a5}"
+#!   COLOUR="0.59999999999999998,0.47058823529411764,0,0.90196078431372551"
+#!   SIZE_POLICY="10"
+#!   ANCHORED_NODE="2"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="6"
+#!   COMMENT_VALUE="&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&#10;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;&#10;p, li { white-space: pre-wrap; }&#10;hr { height: 1px; border-width: 0; }&#10;li.unchecked::marker { content: &quot;\2610&quot;; }&#10;li.checked::marker { content: &quot;\2612&quot;; }&#10;&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Segoe UI&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;&#10;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Count Unique Values for IMPTYPE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="896.9191270037702 -110.62440624406241"
+#!   TOP_LEFT="896.9191270037702 -110.62440624406241"
+#!   BOTTOM_RIGHT="1337.3527188396886 -111.62440624406241"
+#!   BOUNDING_RECT="896.9191270037702 -110.62440624406241 440.43359183591838 1"
+#!   ORDER="500000000000003"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{0529dc82-dc04-4b22-a9a5-5c91d09e8e6e}"
+#!   COLOUR="0.59999999999999998,0.47058823529411764,0,0.90196078431372551"
+#!   SIZE_POLICY="10"
+#!   ANCHORED_NODE="4"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="8"
+#!   COMMENT_VALUE="&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&#10;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;&#10;p, li { white-space: pre-wrap; }&#10;hr { height: 1px; border-width: 0; }&#10;li.unchecked::marker { content: &quot;\2610&quot;; }&#10;li.checked::marker { content: &quot;\2612&quot;; }&#10;&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Segoe UI&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;&#10;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;JSONFeature: CI_Building [JSON]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="-106.29830267052708 -826.25656256562581"
+#!   TOP_LEFT="-106.29830267052708 -826.25656256562581"
+#!   BOTTOM_RIGHT="539.65492248672456 -827.25656256562581"
+#!   BOUNDING_RECT="-106.29830267052708 -826.25656256562581 645.95322515725161 1"
+#!   ORDER="500000000000004"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{a35b3934-d150-469a-ac8a-bcfb9764918f}"
+#!   COLOUR="0.59999999999999998,0.47058823529411764,0,0.90196078431372551"
+#!   SIZE_POLICY="10"
+#!   ANCHORED_NODE="7"
+#! />
+#! </COMMENTS>
+#! <CONSTANTS>
+#! </CONSTANTS>
+#! <BOOKMARKS>
+#! </BOOKMARKS>
+#! <TRANSFORMERS>
+#! <TRANSFORMER
+#!   IDENTIFIER="4"
+#!   TYPE="SubDocumentTransformer"
+#!   VERSION="3"
+#!   POSITION="896.88396883968858 -466.87671876718764"
+#!   BOUNDING_RECT="896.88396883968858 -466.87671876718764 440.46875 65"
+#!   ORDER="500000000000002"
+#!   PARMS_EDITED="true"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="24202"
+#! >
+#!     <OUTPUT_FEAT NAME="Output"/>
+#!     <XFORM_ATTR ATTR_NAME="_count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="SUB_DOC_NAME" PARM_VALUE="UniqueValueLogger"/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="VAL" PARM_VALUE="&lt;at&gt;Value&lt;openparen&gt;imp_type&lt;closeparen&gt;"/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="UniqueValueLogger"/>
+#!     <XFORM_PARM PARM_NAME="__COMPOUND_PARAMETERS" PARM_VALUE=""/>
+#! </TRANSFORMER>
+#! </TRANSFORMERS>
+#! <FEAT_LINKS>
+#! <FEAT_LINK
+#!   IDENTIFIER="5"
+#!   SOURCE_NODE="2"
+#!   TARGET_NODE="4"
+#!   SOURCE_PORT_DESC="-1"
+#!   TARGET_PORT_DESC="fi 0 Input"
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! </FEAT_LINKS>
+#! <BREAKPOINTS>
+#! </BREAKPOINTS>
+#! <ATTR_LINKS>
+#! </ATTR_LINKS>
+#! <SUBDOCUMENTS>
+#! <SUBDOCUMENT
+#!   NAME="UniqueValueLogger"
+#!   ARCGIS_COMPATIBILITY=""
+#!   CATEGORY="Workflows"
+#!   DESCRIPTION="&lt;h3&gt;Description&lt;/h3&gt;&#10;&lt;p&gt;This transformer lists all of the unique values for a chosen attribute alongside  a count attribute of the number of occurrences of each of these values. The information is logged in both the Translation Window / Workspace log file, and stored in attributes.&lt;/p&gt;&#10;&lt;p&gt;This transformer is useful when you are creating a workspace and need to know the possible values to use in a filter. &lt;/p&gt;"
+#!   DOC_DYNAMIC_INPUT_ATTRS="0"
+#!   DOC_EXTENTS="4120.92 1136.11"
+#!   DOC_TOP_LEFT="2231.25 -1847.23"
+#!   FME_DOCUMENT_GUID="225ee66d-193f-4980-b6e7-4ffbcedb9ae9"
+#!   FME_DOCUMENT_PRIORGUID="988cddf8-25ea-49bf-9070-e616c0c685c0"
+#!   FME_NAMES_ENCODING="UTF-8"
+#!   FME_PROCESS_COUNT="NO_PARALLELISM"
+#!   FME_PROCESS_GROUPS_ORDERED="No"
+#!   FME_PROCESS_GROUP_BY=""
+#!   FME_PROCESS_PRESERVE_GROUP_ATTR="No"
+#!   FMX_ATTRIBUTE_PROPOGATION_MODE="AUTO"
+#!   GUID="225ee66d-193f-4980-b6e7-4ffbcedb9ae9"
+#!   HISTORY="2012-01-31,Aaron&lt;space&gt;Koning,Created,2013-08-01,Arash&lt;space&gt;Ouji,Made&lt;space&gt;CSV&lt;space&gt;friendly&lt;space&gt;again,2016-02-25,Rylan&lt;space&gt;Maschak,Updated&lt;space&gt;for&lt;space&gt;FME&lt;space&gt;Hub.&lt;space&gt;Added&lt;space&gt;Output&lt;space&gt;port.,2019-07-30,Holly&lt;space&gt;Coxon,Updated&lt;space&gt;to&lt;space&gt;2019.1&lt;space&gt;for&lt;space&gt;FME&lt;space&gt;Hub."
+#!   IS_VISIBLE="false"
+#!   LAST_SAVE_BUILD="FME(R) 2019.1.0.0 (20190710 - Build 19608 - macosx)"
+#!   LAST_SAVE_DATE="2019-07-30T11:07:31"
+#!   MARKDOWN_DESCRIPTION="###Description&#10;&#10;This transformer lists all of the unique values for a chosen attribute alongside  a count attribute of the number of occurrences of each of these values. The information is logged in both the Translation Window / Workspace log file, and stored in attributes.&#10;&#10;This transformer is useful when you are creating a workspace and need to know the possible values to use in a filter. &#10;"
+#!   MARKDOWN_USAGE="###Input Ports &#10;Input: This transformer accepts any features with an attribute.&#10;&#10;###Output Ports &#10;Output: Features are output with the attribute selected as the unique value to filter, and a new attribute containing the number of occurrences of each unique value. All other attributes are removed. &#10;&#10;_count: Number of occurrences of each unique value.&#10;_value: Unique values of selected attribute.&#10;&#10;###Parameters&#10;Attribute to Analyze: Select the attribute for the transformer to run analysis on. &#10;&#10;###Notes&#10;&#10;####Transformer alternatives: &#10;- Duplicate Filter - Consider using this transformer if you are looking to get a list of unique values and do not need a _count attribute &#10;- StatisticsCalculator - Setting the Group By mode to the attribute to analyze will produce the same result as this transformer, it may beuse If you would like to gather other statistics as well as count of the unique attributes. "
+#!   PYTHON_COMPATIBILITY=""
+#!   REPLACED_BY=""
+#!   SUPPRESS_UPGRADE="false"
+#!   TITLE="UniqueValueLogger"
+#!   USAGE="&lt;h3&gt;Input Ports&lt;/h3&gt;&#10;&lt;p&gt;Input: This transformer accepts any features with an attribute.&lt;/p&gt;&#10;&lt;h3&gt;Output Ports&lt;/h3&gt;&#10;&lt;p&gt;Output: Features are output with the attribute selected as the unique value to filter, and a new attribute containing the number of occurrences of each unique value. All other attributes are removed. &lt;/p&gt;&#10;&lt;p&gt;_count: Number of occurrences of each unique value.&#10;_value: Unique values of selected attribute.&lt;/p&gt;&#10;&lt;h3&gt;Parameters&lt;/h3&gt;&#10;&lt;p&gt;Attribute to Analyze: Select the attribute for the transformer to run analysis on. &lt;/p&gt;&#10;&lt;h3&gt;Notes&lt;/h3&gt;&#10;&lt;h4&gt;Transformer alternatives:&lt;/h4&gt;&#10;&lt;ul&gt;&#10;&lt;li&gt;Duplicate Filter - Consider using this transformer if you are looking to get a list of unique values and do not need a _count attribute &lt;/li&gt;&#10;&lt;li&gt;StatisticsCalculator - Setting the Group By mode to the attribute to analyze will produce the same result as this transformer, it may beuse If you would like to gather other statistics as well as count of the unique attributes. &lt;/li&gt;&#10;&lt;/ul&gt;"
+#!   USE_MARKDOWN="YES"
+#!   VIEW_POSITION="-266.669 208.335"
+#!   XFORM_DEPRECATED="No"
+#!   ZOOM_SCALE="72"
+#! >
+#! <GLOBAL_PARAMETERS>
+#! <GLOBAL_PARAMETER
+#!   GUI_LINE="GUI STRING_ENCODED_OR_ATTR VAL Attribute to Analyze:"
+#!   DEFAULT_VALUE=""
+#!   IS_STAND_ALONE="false"
+#! />
+#! </GLOBAL_PARAMETERS>
+#! <USER_PARAMETERS
+#!   FORM="eyJwYXJhbWV0ZXJzIjpbeyJkZWZhdWx0VmFsdWUiOiIiLCJkZXByZWNhdGVkRmxhZ3MiOlsibm9uZSJdLCJlZGl0b3IiOiJwbGFpbnRleHQiLCJuYW1lIjoiVkFMIiwicHJvbXB0IjoiQXR0cmlidXRlIHRvIEFuYWx5emU6IiwicmVxdWlyZWQiOnRydWUsInNob3dFZGl0QnV0dG9uIjpmYWxzZSwic3VwcG9ydGVkVmFsdWVUeXBlcyI6WyJleHByZXNzaW9uIiwiZ2xvYmFsUGFyYW1ldGVyIl0sInR5cGUiOiJ0ZXh0IiwidmFsdWVUeXBlIjoic3RyaW5nRW5jb2RlZCJ9XX0="
+#! >
+#! <PARAMETER_INFO>
+#!     <INFO NAME="VAL" 
+#!   DEFAULT_VALUE=""
+#!   SCOPE="DEPENDENT"
+#!   GENERATED_GUI_LINE="false"
+#!   GUI_LINE="GUI STRING_ENCODED_OR_ATTR VAL Attribute to Analyze:"
+#! />
+#! </PARAMETER_INFO>
+#! </USER_PARAMETERS>
+#! <COMMENTS>
+#! <COMMENT
+#!   IDENTIFIER="27"
+#!   COMMENT_VALUE="&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&#10;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;&#10;p, li { white-space: pre-wrap; }&#10;&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;helvetica neue&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;&#10;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remove unwanted &lt;br /&gt;attributes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="3399.6744219430466 -858.77346090265769"
+#!   TOP_LEFT="3399.6744219430466 -858.77346090265769"
+#!   BOTTOM_RIGHT="3399.6744219430466 -857.77346090265769"
+#!   BOUNDING_RECT="3399.6744219430466 -858.77346090265769 0 -1"
+#!   ORDER="15"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{c05934ae-5644-48a7-bc84-7808b764ae89}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="4"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="28"
+#!   COMMENT_VALUE="&lt;html&gt;&lt;body&gt;Create aggregates of&#13;&lt;br&gt;features, grouped by&#13;&lt;br&gt;the target attribute value&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="3891.1644219430468 -810.77346090265769"
+#!   TOP_LEFT="3891.1644219430468 -810.77346090265769"
+#!   BOTTOM_RIGHT="3891.1644219430468 -809.77346090265769"
+#!   BOUNDING_RECT="3891.1644219430468 -810.77346090265769 0 -1"
+#!   ORDER="17"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{06ff71d5-b1d6-4693-a563-767799bca5de}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="5"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="29"
+#!   COMMENT_VALUE="&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&#10;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;&#10;p, li { white-space: pre-wrap; }&#10;&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;helvetica neue&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;&#10;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sort output based on &lt;br /&gt;occurrence count and &lt;br /&gt;attribute value&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="5038.6244219430464 -810.77346090265769"
+#!   TOP_LEFT="5038.6244219430464 -810.77346090265769"
+#!   BOTTOM_RIGHT="5038.6244219430464 -809.77346090265769"
+#!   BOUNDING_RECT="5038.6244219430464 -810.77346090265769 0 -1"
+#!   ORDER="18"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{a94b4510-e0ef-48ca-9f45-360e27bed75d}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="6"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="30"
+#!   COMMENT_VALUE="&lt;html&gt;&lt;body&gt;Turn all input features&#13;&lt;br&gt;Into a single list&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="2881.0994219430468 -1585.2444609026577"
+#!   TOP_LEFT="2881.0994219430468 -1585.2444609026577"
+#!   BOTTOM_RIGHT="2881.0994219430468 -1584.2444609026577"
+#!   BOUNDING_RECT="2881.0994219430468 -1585.2444609026577 0 -1"
+#!   ORDER="20"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{43eb8829-c034-4d22-afe9-17d43989f372}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="9"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="31"
+#!   COMMENT_VALUE="&lt;html&gt;&lt;body&gt;Concatenate values of&#13;&lt;br&gt;the list into an attribute&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="3406.6744219430466 -1585.7144609026577"
+#!   TOP_LEFT="3406.6744219430466 -1585.7144609026577"
+#!   BOTTOM_RIGHT="3406.6744219430466 -1584.7144609026577"
+#!   BOUNDING_RECT="3406.6744219430466 -1585.7144609026577 0 -1"
+#!   ORDER="21"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{1b5d8a60-aff1-4ef1-b82d-33b2b6ccebcd}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="7"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="32"
+#!   COMMENT_VALUE="&lt;html&gt;&lt;body&gt;Remote the list&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="4530.0144219430467 -1589.2444609026577"
+#!   TOP_LEFT="4530.0144219430467 -1589.2444609026577"
+#!   BOTTOM_RIGHT="4530.0144219430467 -1588.2444609026577"
+#!   BOUNDING_RECT="4530.0144219430467 -1589.2444609026577 0 -1"
+#!   ORDER="22"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{14c67297-1080-4af0-8556-05e670562c21}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="8"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="33"
+#!   COMMENT_VALUE="&lt;html&gt;&lt;body&gt;Log the single feature&#13;&lt;br&gt;that contains the&#13;&lt;br&gt;output attribute&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="5052.8944219430468 -1561.7154609026577"
+#!   TOP_LEFT="5052.8944219430468 -1561.7154609026577"
+#!   BOTTOM_RIGHT="5052.8944219430468 -1560.7154609026577"
+#!   BOUNDING_RECT="5052.8944219430468 -1561.7154609026577 0 -1"
+#!   ORDER="23"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{d56cf12d-d534-4f23-b833-c8c22f2c504b}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="10"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="34"
+#!   COMMENT_VALUE="&lt;html&gt;&lt;body&gt;Add header&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="4016.194421943047 -1585.2444609026577"
+#!   TOP_LEFT="4016.194421943047 -1585.2444609026577"
+#!   BOTTOM_RIGHT="4016.194421943047 -1584.2444609026577"
+#!   BOUNDING_RECT="4016.194421943047 -1585.2444609026577 0 -1"
+#!   ORDER="26"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{8fd130b0-d24e-4d4a-bc0d-e394ba630848}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="12"
+#! />
+#! <COMMENT
+#!   IDENTIFIER="35"
+#!   COMMENT_VALUE="&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&#10;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;&#10;p, li { white-space: pre-wrap; }&#10;&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;helvetica neue&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;&#10;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Concatenate unique values &lt;br /&gt;with their occurrence counts&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"
+#!   POSITION="4416.4244219430466 -858.77346090265769"
+#!   TOP_LEFT="4416.4244219430466 -858.77346090265769"
+#!   BOTTOM_RIGHT="4416.4244219430466 -857.77346090265769"
+#!   BOUNDING_RECT="4416.4244219430466 -858.77346090265769 0 -1"
+#!   ORDER="16"
+#!   FOLLOW_ANCHOR="true"
+#!   INFO_NODE="false"
+#!   CUSTOM_USER_COLOR="false"
+#!   UUID="{c949459d-54e9-4e01-8982-133dfe4659fb}"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   SIZE_POLICY="8"
+#!   ANCHORED_NODE="13"
+#! />
+#! </COMMENTS>
+#! <CONSTANTS>
+#! </CONSTANTS>
+#! <BOOKMARKS>
+#! <BOOKMARK
+#!   IDENTIFIER="36"
+#!   NAME="Count unique attribute values"
+#!   DESCRIPTION=""
+#!   TOP_LEFT="2808.0144219430467 -711.12687090265774"
+#!   ORDER="500000000000001.13"
+#!   PALETTE_COLOR=""
+#!   BOTTOM_RIGHT="5555.1044219430469 -1251.0832526239083"
+#!   BOUNDING_RECT="2808.0144219430467 -711.12687090265774 2747.0900000000001 539.95638172125052"
+#!   STICKY="true"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   CONTENTS="29 5 17 27 11 4 16 28 6 25 23 35 13 "
+#! >
+#! </BOOKMARK>
+#! <BOOKMARK
+#!   IDENTIFIER="37"
+#!   NAME="Create output"
+#!   DESCRIPTION=""
+#!   TOP_LEFT="5772.7144219430465 -905.9364609026577"
+#!   ORDER="500000000000000"
+#!   PALETTE_COLOR=""
+#!   BOTTOM_RIGHT="6352.1724219430462 -1419.9574609026577"
+#!   BOUNDING_RECT="5772.7144219430465 -905.9364609026577 579.45799999999997 514.02099999999996"
+#!   STICKY="true"
+#!   COLOUR="0.61176470588235299,0.60392156862745094,0.22352941176470589,0.39215686274509803"
+#!   CONTENTS="3 14 26 "
+#! >
+#! </BOOKMARK>
+#! <BOOKMARK
+#!   IDENTIFIER="38"
+#!   NAME="Log unique attribute values"
+#!   DESCRIPTION=""
+#!   TOP_LEFT="2808.0144219430467 -1307.2784609026576"
+#!   ORDER="500000000000001.13"
+#!   PALETTE_COLOR=""
+#!   BOTTOM_RIGHT="5555.1044219430469 -1847.2348426239082"
+#!   BOUNDING_RECT="2808.0144219430467 -1307.2784609026576 2747.0900000000001 539.95638172125052"
+#!   STICKY="true"
+#!   COLOUR="0.2627450980392157,0.46666666666666667,0.18431372549019609,0.39215686274509803"
+#!   CONTENTS="22 21 10 20 33 30 32 24 31 9 7 8 12 34 "
+#! >
+#! </BOOKMARK>
+#! </BOOKMARKS>
+#! <TRANSFORMERS>
+#! <TRANSFORMER
+#!   IDENTIFIER="4"
+#!   TYPE="AttributeKeeper"
+#!   VERSION="3"
+#!   POSITION="3423.6744219430466 -1035.7734609026577"
+#!   BOUNDING_RECT="3423.6744219430466 -1035.7734609026577 430 71"
+#!   ORDER="19"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="ADVANCED_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="CREATE_BULK_MODE_FEATURES" PARM_VALUE="NO"/>
+#!     <XFORM_PARM PARM_NAME="KEEP_ATTRS" PARM_VALUE="_value"/>
+#!     <XFORM_PARM PARM_NAME="KEEP_LIST" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="OUTPUT_ON_ATTRIBUTE_CHANGE" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="PARAMETERS_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="AttributeKeeper"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="5"
+#!   TYPE="Aggregator"
+#!   VERSION="15"
+#!   POSITION="3950.7244219430468 -1035.7734609026577"
+#!   BOUNDING_RECT="3950.7244219430468 -1035.7734609026577 430 71"
+#!   ORDER="11"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="AGGREGATE"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="ACCUM_ATTRS_NAME" PARM_VALUE="Merge Incoming Attributes"/>
+#!     <XFORM_PARM PARM_NAME="AGGREGATE_TYPE" PARM_VALUE="Homogeneous Collection (If Possible)"/>
+#!     <XFORM_PARM PARM_NAME="ASSEMBLE_HIERARCHY_GROUP" PARM_VALUE="FME_DISCLOSURE_CLOSED"/>
+#!     <XFORM_PARM PARM_NAME="ASSEMBLE_ONE_LEVEL_GROUP" PARM_VALUE="FME_DISCLOSURE_CLOSED"/>
+#!     <XFORM_PARM PARM_NAME="ATTR_ACCUM_GROUP" PARM_VALUE="FME_DISCLOSURE_OPEN"/>
+#!     <XFORM_PARM PARM_NAME="ATTR_TO_TRAIT" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="AV" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="CHILD_ID_ATTR" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="CONCAT_ATTRS" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="COUNT_ATTR" PARM_VALUE="_count"/>
+#!     <XFORM_PARM PARM_NAME="CYCLE_ID_ERROR_ATTR" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="GENERATE_LIST_GROUP" PARM_VALUE="NO"/>
+#!     <XFORM_PARM PARM_NAME="GEOM_NAME_FIELD" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="GROUP_BY" PARM_VALUE="_value"/>
+#!     <XFORM_PARM PARM_NAME="GROUP_BY_MODE" PARM_VALUE="No"/>
+#!     <XFORM_PARM PARM_NAME="GROUP_PROCESSING_GROUP" PARM_VALUE="Yes"/>
+#!     <XFORM_PARM PARM_NAME="ID_ATTR" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="ID_SELECTION" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="LIST_ATTRS_TO_INCLUDE" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="LIST_ATTRS_TO_INCLUDE_MODE" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="LIST_NAME" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="MODE" PARM_VALUE="Geometry - Assemble One Level"/>
+#!     <XFORM_PARM PARM_NAME="OAN_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="PARAMETERS_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="PARENT_ID_ATTR" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="PRESERVE_ID" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="SEP" PARM_VALUE="&lt;comma&gt;"/>
+#!     <XFORM_PARM PARM_NAME="SUM" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="WEIGHT" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="Aggregator"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="6"
+#!   TYPE="Sorter"
+#!   VERSION="2"
+#!   POSITION="5052.8944219430468 -1035.7734609026577"
+#!   BOUNDING_RECT="5052.8944219430468 -1035.7734609026577 430 71"
+#!   ORDER="27"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="SORTED"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_concatenated" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="GROUP_BY" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="GROUP_BY_MODE" PARM_VALUE="No"/>
+#!     <XFORM_PARM PARM_NAME="SORT_GRP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="SORT_PARM" PARM_VALUE="_count NUMERIC DESCENDING _value ALPHA ASCENDING"/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="Sorter"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="7"
+#!   TYPE="ListConcatenator"
+#!   VERSION="3"
+#!   POSITION="3423.6744219430466 -1390.7154609026577"
+#!   BOUNDING_RECT="3423.6744219430466 -1390.7154609026577 430 71"
+#!   ORDER="13"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_list{}._value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_list{}._count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_list{}._concatenated" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="UNIQUE VALUES" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="DROP_EMPTY_PARTS" PARM_VALUE="No"/>
+#!     <XFORM_PARM PARM_NAME="LIST_ATTR" PARM_VALUE="_list&lt;opencurly&gt;&lt;closecurly&gt;._concatenated"/>
+#!     <XFORM_PARM PARM_NAME="OAN_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="PARAMETERS_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="SEP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="VAL_ATTR" PARM_VALUE="UNIQUE VALUES"/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="ListConcatenator"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="8"
+#!   TYPE="AttributeRemover"
+#!   VERSION="1"
+#!   POSITION="4481.0144219430467 -1388.2444609026577"
+#!   BOUNDING_RECT="4481.0144219430467 -1388.2444609026577 430 71"
+#!   ORDER="24"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="16174"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="UNIQUE VALUES" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="LIST_ATTRS" PARM_VALUE="_list&lt;opencurly&gt;&lt;closecurly&gt;"/>
+#!     <XFORM_PARM PARM_NAME="PARAMETERS_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="REMOVE_ATTRS" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="AttributeRemover_2"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="9"
+#!   TYPE="ListBuilder"
+#!   VERSION="3"
+#!   POSITION="2898.8384219430468 -1396.5974609026575"
+#!   BOUNDING_RECT="2898.8384219430468 -1396.5974609026575 430 71"
+#!   ORDER="14"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_list{}._value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_list{}._count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_list{}._concatenated" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="GROUP_BY" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="GROUP_BY_MODE" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="GROUP_PROCESSING_GROUP" PARM_VALUE="No"/>
+#!     <XFORM_PARM PARM_NAME="LIST_ATTRS_TO_INCLUDE" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="LIST_ATTRS_TO_INCLUDE_MODE" PARM_VALUE="All Attributes"/>
+#!     <XFORM_PARM PARM_NAME="LIST_NAME" PARM_VALUE="_list"/>
+#!     <XFORM_PARM PARM_NAME="PARAMETERS_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="ListBuilder"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="10"
+#!   TYPE="Logger"
+#!   VERSION="4"
+#!   POSITION="5052.8944219430468 -1390.7154609026577"
+#!   BOUNDING_RECT="5052.8944219430468 -1390.7154609026577 430 71"
+#!   ORDER="28"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="LOGGED"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="UNIQUE VALUES" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="FEATURE_TYPE" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="LOG_FEATURE" PARM_VALUE="LOG_RECORD"/>
+#!     <XFORM_PARM PARM_NAME="MAXCOORDS" PARM_VALUE="1"/>
+#!     <XFORM_PARM PARM_NAME="MAXFEATS" PARM_VALUE="1"/>
+#!     <XFORM_PARM PARM_NAME="MESSAGE" PARM_VALUE="Unique&lt;space&gt;values:"/>
+#!     <XFORM_PARM PARM_NAME="MSG_GRP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="PARAMETERS_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="SEVERITY" PARM_VALUE="INFO"/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="Logger"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="11"
+#!   TYPE="AttributeCreator"
+#!   VERSION="9"
+#!   POSITION="2890.0144219430467 -1035.7734609026577"
+#!   BOUNDING_RECT="2890.0144219430467 -1035.7734609026577 430 71"
+#!   ORDER="29"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="ATTRIBUTE_GRP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="ATTRIBUTE_HANDLING" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="ATTR_TABLE" PARM_VALUE="&quot;&quot; _value SET_TO $(VAL)"/>
+#!     <XFORM_PARM PARM_NAME="MULTI_FEATURE_MODE" PARM_VALUE="NO"/>
+#!     <XFORM_PARM PARM_NAME="NULL_ATTR_MODE_DISPLAY" PARM_VALUE="No Substitution"/>
+#!     <XFORM_PARM PARM_NAME="NULL_ATTR_VALUE" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="NUM_PRIOR_FEATURES" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="NUM_SUBSEQUENT_FEATURES" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="AttributeCreator"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="12"
+#!   TYPE="StringConcatenator"
+#!   VERSION="7"
+#!   POSITION="3950.7244219430468 -1388.2444609026577"
+#!   BOUNDING_RECT="3950.7244219430468 -1388.2444609026577 430 71"
+#!   ORDER="25"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_list{}._value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_list{}._count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_list{}._concatenated" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="UNIQUE VALUES" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="ACTION" PARM_VALUE="Create New Attribute"/>
+#!     <XFORM_PARM PARM_NAME="ATTRLIST" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="PARAM_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="PARM_LINE" PARM_VALUE="&lt;lf&gt;&lt;lf&gt;VALUE&lt;comma&gt;&lt;space&gt;COUNT&lt;lf&gt;&lt;at&gt;Value&lt;openparen&gt;UNIQUE&lt;space&gt;VALUES&lt;closeparen&gt;&lt;lf&gt;"/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="VAL_ATTR" PARM_VALUE="UNIQUE&lt;space&gt;VALUES"/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="StringConcatenator_2"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="13"
+#!   TYPE="StringConcatenator"
+#!   VERSION="7"
+#!   POSITION="4481.0144219430467 -1035.7734609026577"
+#!   BOUNDING_RECT="4481.0144219430467 -1035.7734609026577 430 71"
+#!   ORDER="12"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_concatenated" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="ACTION" PARM_VALUE="Create New Attribute"/>
+#!     <XFORM_PARM PARM_NAME="ATTRLIST" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="PARAM_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="PARM_LINE" PARM_VALUE="fme_basicstring:14%1%14%1:&lt;at&gt;Value&lt;openparen&gt;_value&lt;closeparen&gt;&lt;comma&gt;&lt;at&gt;Value&lt;openparen&gt;_count&lt;closeparen&gt;&lt;lf&gt;"/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="VAL_ATTR" PARM_VALUE="_concatenated"/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="StringConcatenator"/>
+#! </TRANSFORMER>
+#! <TRANSFORMER
+#!   IDENTIFIER="14"
+#!   TYPE="AttributeManager"
+#!   VERSION="2"
+#!   POSITION="5846.7144219430465 -1004.5149780603782"
+#!   BOUNDING_RECT="5846.7144219430465 -1004.5149780603782 431 71"
+#!   ORDER="500000000000000"
+#!   PARMS_EDITED="false"
+#!   ENABLED="true"
+#!   LAST_PARM_EDIT="19608"
+#!   SHOW_BLANK_INPUT_FT="false"
+#! >
+#!     <OUTPUT_FEAT NAME="OUTPUT"/>
+#!     <FEAT_COLLAPSED COLLAPSED="0"/>
+#!     <XFORM_ATTR ATTR_NAME="_count" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_ATTR ATTR_NAME="_value" IS_USER_CREATED="false" FEAT_INDEX="0" />
+#!     <XFORM_PARM PARM_NAME="ATTRIBUTE_GRP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="ATTRIBUTE_HANDLING" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="ATTR_TABLE" PARM_VALUE="_count _count  NO_OP _value _value  NO_OP _concatenated _concatenated  REMOVE"/>
+#!     <XFORM_PARM PARM_NAME="MULTI_FEATURE_MODE" PARM_VALUE="NO"/>
+#!     <XFORM_PARM PARM_NAME="NULL_ATTR_MODE_DISPLAY" PARM_VALUE="No Substitution"/>
+#!     <XFORM_PARM PARM_NAME="NULL_ATTR_VALUE" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="NUM_PRIOR_FEATURES" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="NUM_SUBSEQUENT_FEATURES" PARM_VALUE="&lt;Unused&gt;"/>
+#!     <XFORM_PARM PARM_NAME="TRANSFORMER_GROUP" PARM_VALUE=""/>
+#!     <XFORM_PARM PARM_NAME="XFORMER_NAME" PARM_VALUE="AttributeManager"/>
+#! </TRANSFORMER>
+#! </TRANSFORMERS>
+#! <SUBDOCUMENT_IOS>
+#! <SUBDOCUMENT_IO
+#!   IDENTIFIER="2"
+#!   NAME="Input"
+#!   POSITION="2231.2496219430468 -1035.7734609026577"
+#!   BOUNDING_RECT="2231.2496219430468 -1035.7734609026577 430 71"
+#!   COLLAPSED="false"
+#!   PUBLISHED="true"
+#!   IS_SOURCE="true"
+#!   ATTR_MODE="0"
+#! >
+#! </SUBDOCUMENT_IO>
+#! <SUBDOCUMENT_IO
+#!   IDENTIFIER="3"
+#!   NAME="Output"
+#!   POSITION="5846.7144219430465 -1197.2784609026576"
+#!   BOUNDING_RECT="5846.7144219430465 -1197.2784609026576 431 71"
+#!   COLLAPSED="false"
+#!   IS_SOURCE="false"
+#!   ATTR_MODE="0"
+#! >
+#! </SUBDOCUMENT_IO>
+#! </SUBDOCUMENT_IOS>
+#! <FEAT_LINKS>
+#! <FEAT_LINK
+#!   IDENTIFIER="15"
+#!   SOURCE_NODE="2"
+#!   TARGET_NODE="11"
+#!   SOURCE_PORT_DESC="0"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="16"
+#!   SOURCE_NODE="4"
+#!   TARGET_NODE="5"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="17"
+#!   SOURCE_NODE="5"
+#!   TARGET_NODE="13"
+#!   SOURCE_PORT_DESC="fo 0 AGGREGATE"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="18"
+#!   SOURCE_NODE="6"
+#!   TARGET_NODE="9"
+#!   SOURCE_PORT_DESC="fo 0 SORTED"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="19"
+#!   SOURCE_NODE="6"
+#!   TARGET_NODE="14"
+#!   SOURCE_PORT_DESC="fo 0 SORTED"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="1"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="20"
+#!   SOURCE_NODE="7"
+#!   TARGET_NODE="12"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="21"
+#!   SOURCE_NODE="8"
+#!   TARGET_NODE="10"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="22"
+#!   SOURCE_NODE="9"
+#!   TARGET_NODE="7"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="23"
+#!   SOURCE_NODE="11"
+#!   TARGET_NODE="4"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="24"
+#!   SOURCE_NODE="12"
+#!   TARGET_NODE="8"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="25"
+#!   SOURCE_NODE="13"
+#!   TARGET_NODE="6"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="fi 0 "
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! <FEAT_LINK
+#!   IDENTIFIER="26"
+#!   SOURCE_NODE="14"
+#!   TARGET_NODE="3"
+#!   SOURCE_PORT_DESC="fo 0 OUTPUT"
+#!   TARGET_PORT_DESC="0"
+#!   ENABLED="true"
+#!   EXECUTION_IDX="0"
+#!   HIDDEN="false"
+#!   COLOUR="0.95686274509803926,0.95294117647058818,0.92941176470588238,1"
+#!   PEN_WIDTH="4"
+#!   PEN_STYLE="1"
+#!   LINK_STYLE_NAME="&lt;Default&gt;"
+#!   EXTRA_POINTS=""
+#! />
+#! </FEAT_LINKS>
+#! <BREAKPOINTS>
+#! </BREAKPOINTS>
+#! <ATTR_LINKS>
+#! </ATTR_LINKS>
+#! </SUBDOCUMENT>
+#! </SUBDOCUMENTS>
+#! <LOOKUP_TABLES>
+#! </LOOKUP_TABLES>
+#! </WORKSPACE>
+
+FME_PYTHON_VERSION ArcGISPro33
+ARCGIS_COMPATIBILITY ARCGISPRO
+GUI IGNORE SourceDataset_JSON_1,JSON_IN_FME_GROUP_NAMED1_JSON_1,JSON_IN_SCAN_MODE_JSON_1,JSON_IN_QUERY_TABLE_JSON_1,JSON_IN_FME_GROUP_NAMED2_JSON_1,JSON_IN_FEATURE_TYPE_KEY_JSON_1,JSON_IN_GEOMETRY_FORMAT_JSON_1,JSON_IN_GEOMETRY_KEY_JSON_1,JSON_IN_COORDINATE_SYSTEM_KEY_JSON_1,JSON_IN_SAVE_FRAGMENTS_JSON_1,JSON_IN_USE_SEARCH_ENVELOPE_JSON_1,JSON_IN_SEARCH_ENVELOPE_MINX_JSON_1,JSON_IN_SEARCH_ENVELOPE_MINY_JSON_1,JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_1,JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_1,JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_1,JSON_IN_CLIP_TO_ENVELOPE_JSON_1,JSON_IN_NETWORK_AUTHENTICATION_JSON_1,SourceDataset_JSON_2,JSON_IN_FME_GROUP_NAMED1_JSON_2,JSON_IN_SCAN_MODE_JSON_2,JSON_IN_QUERY_TABLE_JSON_2,JSON_IN_FME_GROUP_NAMED2_JSON_2,JSON_IN_FEATURE_TYPE_KEY_JSON_2,JSON_IN_GEOMETRY_FORMAT_JSON_2,JSON_IN_GEOMETRY_KEY_JSON_2,JSON_IN_COORDINATE_SYSTEM_KEY_JSON_2,JSON_IN_SAVE_FRAGMENTS_JSON_2,JSON_IN_USE_SEARCH_ENVELOPE_JSON_2,JSON_IN_SEARCH_ENVELOPE_MINX_JSON_2,JSON_IN_SEARCH_ENVELOPE_MINY_JSON_2,JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_2,JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_2,JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_2,JSON_IN_CLIP_TO_ENVELOPE_JSON_2,JSON_IN_NETWORK_AUTHENTICATION_JSON_2
+# ============================================================================
+DEFAULT_MACRO SourceDataset_JSON https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/Improvements.json
+
+DEFAULT_MACRO SourceDataset_JSON_3 https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/CI_Building.json
+
+# ============================================================================
+INCLUDE [ if {{$(SourceDataset_JSON$encode)} == {}} { puts_real {Parameter 'SourceDataset_JSON' must be given a value.}; exit 1; }; ]
+INCLUDE [ if {{$(SourceDataset_JSON_3$encode)} == {}} { puts_real {Parameter 'SourceDataset_JSON_3' must be given a value.}; exit 1; }; ]
+#! START_HEADER
+#! START_WB_HEADER
+READER_TYPE MULTI_READER
+MULTI_READER_TYPE{0} JSON
+MULTI_READER_KEYWORD{0} JSON_1
+MULTI_READER_GEN_DIRECTIVES{0} FEATURE_TYPE_KEY,json_featuretype,USE_BASENAME_AS_DEFAULT_FEATURE_TYPE,No,CLIP_TO_ENVELOPE,NO,SAVE_FRAGMENTS,NO,SEARCH_ENVELOPE_MAXX,0,SCAN_MODE,AUTO,SEARCH_ENVELOPE_MAXY,0,JSON_EXPOSE_FORMAT_ATTRS,,NETWORK_AUTHENTICATION,,DECODE_TEXT_STRINGS,Yes,EXPOSE_ATTRS_GROUP,FME_DISCLOSURE_CLOSED,GEOMETRY_KEY,<lt>Unused<gt>,SEARCH_ENVELOPE_COORDINATE_SYSTEM,,_MERGE_SCHEMAS,YES,QUERY_TABLE,<lt>Unused<gt>,FLATTEN_MODE,ALL_LEVELS,GEOMETRY_FORMAT,None,SEARCH_ENVELOPE_MINX,0,USE_SEARCH_ENVELOPE,NO,SEARCH_ENVELOPE_MINY,0,COORDINATE_SYSTEM_KEY,<lt>Unused<gt>
+MULTI_READER_TYPE{1} JSON
+MULTI_READER_KEYWORD{1} JSON_2
+MULTI_READER_GEN_DIRECTIVES{1} FEATURE_TYPE_KEY,json_featuretype,USE_BASENAME_AS_DEFAULT_FEATURE_TYPE,No,CLIP_TO_ENVELOPE,NO,SAVE_FRAGMENTS,NO,SEARCH_ENVELOPE_MAXX,0,SCAN_MODE,AUTO,SEARCH_ENVELOPE_MAXY,0,JSON_EXPOSE_FORMAT_ATTRS,,NETWORK_AUTHENTICATION,,DECODE_TEXT_STRINGS,Yes,EXPOSE_ATTRS_GROUP,FME_DISCLOSURE_CLOSED,GEOMETRY_KEY,<lt>Unused<gt>,SEARCH_ENVELOPE_COORDINATE_SYSTEM,,_MERGE_SCHEMAS,YES,QUERY_TABLE,<lt>Unused<gt>,FLATTEN_MODE,ALL_LEVELS,GEOMETRY_FORMAT,None,SEARCH_ENVELOPE_MINX,0,USE_SEARCH_ENVELOPE,NO,SEARCH_ENVELOPE_MINY,0,COORDINATE_SYSTEM_KEY,<lt>Unused<gt>
+WRITER_TYPE MULTI_WRITER
+WRITER_KEYWORD MULTI_DEST
+MULTI_DEST_DATASET null
+#! END_WB_HEADER
+#! START_WB_HEADER
+MACRO WB_KEYWORD "JSON_1"
+#! END_WB_HEADER
+#! START_SOURCE_HEADER JSON JSON_1
+# The dataset this mapping file was generated from was:
+#! END_SOURCE_HEADER
+#! START_WB_HEADER
+DEFAULT_MACRO SourceDataset
+INCLUDE [ if {{$(SourceDataset)} != ""} {                        \
+ puts {DEFAULT_MACRO SourceDataset_JSON_1 $(SourceDataset)}     \
+ } ]
+#! END_WB_HEADER
+#! START_SOURCE_HEADER JSON JSON_1
+DEFAULT_MACRO SourceDataset_JSON_1 $(SourceDataset_JSON)
+GUI FILE_OR_URL SourceDataset_JSON_1 JSON_Documents(*.json)|*.json|All_Files(*)|* Source JSON (JavaScript Object Notation) File or URL:
+DEFAULT_MACRO JSON_IN_FME_GROUP_NAMED1_JSON_1 
+GUI OPTIONAL DISCLOSUREGROUP JSON_IN_FME_GROUP_NAMED1_JSON_1 JSON_IN_SCAN_MODE_JSON_1%JSON_IN_QUERY_TABLE_JSON_1%JSON_IN_FLATTEN_MODE Schema Scan
+DEFAULT_MACRO JSON_IN_SCAN_MODE_JSON_1 AUTO
+JSON_1_SCAN_MODE "$(JSON_IN_SCAN_MODE_JSON_1)"
+GUI ACTIVECHOICE_LOOKUP JSON_IN_SCAN_MODE_JSON_1 Auto,AUTO,JSON_IN_QUERY_TABLE_JSON_1%JSON<space>Query,QUERY Schema Scan Mode
+DEFAULT_MACRO JSON_IN_QUERY_TABLE_JSON_1 <Unused>
+JSON_1_QUERY_TABLE "$(JSON_IN_QUERY_TABLE_JSON_1)"
+GUI GUI_LINE_TABLE JSON_IN_QUERY_TABLE_JSON_1 NO_LABEL%NOT_OK_IF_INVALID%START_NUM_ROWS:1%"Feature Type"%"STRING_ENCODED FTYPE"%Query%"DYNAMIC_SINGLE_SELECT_ENCODED QUERY $[SourceDataset_JSON_1],_FORMAT_OVERRIDE_,JSON,_GET_ATTRIBUTE_VALUES_,,JSON_SCAN_FOR_QUERIES,YES,FME_DELIM,<u001F>,FME_PARENT_SELECTION,root_node,FME_READ_SCHEMA,NO,FME_DN_ATTR,display_value,FME_PATH_ATTR,query_string,FME_EXPAND,json" JSON Queries for Feature Objects:
+DEFAULT_MACRO JSON_IN_FLATTEN_MODE_JSON_1 ALL_LEVELS
+JSON_1_FLATTEN_MODE "$(JSON_IN_FLATTEN_MODE_JSON_1)"
+DEFAULT_MACRO JSON_IN_FME_GROUP_NAMED2_JSON_1 
+GUI OPTIONAL DISCLOSUREGROUP JSON_IN_FME_GROUP_NAMED2_JSON_1 JSON_IN_FEATURE_TYPE_KEY_JSON_1%JSON_IN_GEOMETRY_FORMAT_JSON_1%JSON_IN_GEOMETRY_KEY_JSON_1%JSON_IN_COORDINATE_SYSTEM_KEY_JSON_1%JSON_IN_SAVE_FRAGMENTS_JSON_1 Feature Parameters
+DEFAULT_MACRO JSON_IN_FEATURE_TYPE_KEY_JSON_1 json_featuretype
+JSON_1_FEATURE_TYPE_KEY "$(JSON_IN_FEATURE_TYPE_KEY_JSON_1)"
+GUI OPTIONAL TEXT JSON_IN_FEATURE_TYPE_KEY_JSON_1 Feature Type Key Name:
+DEFAULT_MACRO JSON_IN_GEOMETRY_FORMAT_JSON_1 None
+JSON_1_GEOMETRY_FORMAT "$(JSON_IN_GEOMETRY_FORMAT_JSON_1)"
+GUI ACTIVECHOICE JSON_IN_GEOMETRY_FORMAT_JSON_1 GeoJSON%OGC-WKT%None,JSON_IN_GEOMETRY_KEY_JSON_1,JSON_IN_COORDINATE_SYSTEM_KEY_JSON_1 Geometry Format:
+DEFAULT_MACRO JSON_IN_GEOMETRY_KEY_JSON_1 <Unused>
+JSON_1_GEOMETRY_KEY "$(JSON_IN_GEOMETRY_KEY_JSON_1)"
+GUI OPTIONAL TEXT JSON_IN_GEOMETRY_KEY_JSON_1 Geometry Key Name:
+DEFAULT_MACRO JSON_IN_COORDINATE_SYSTEM_KEY_JSON_1 <Unused>
+JSON_1_COORDINATE_SYSTEM_KEY "$(JSON_IN_COORDINATE_SYSTEM_KEY_JSON_1)"
+GUI TEXT JSON_IN_COORDINATE_SYSTEM_KEY_JSON_1 Coordinate System Key Name:
+DEFAULT_MACRO JSON_IN_SAVE_FRAGMENTS_JSON_1 NO
+JSON_1_SAVE_FRAGMENTS "$(JSON_IN_SAVE_FRAGMENTS_JSON_1)"
+GUI LOOKUP_CHOICE JSON_IN_SAVE_FRAGMENTS_JSON_1 Yes,YES%No,NO Read Entire Feature as JSON Fragment:
+DEFAULT_MACRO JSON_IN_DECODE_TEXT_STRINGS_JSON_1 Yes
+JSON_1_DECODE_TEXT_STRINGS "$(JSON_IN_DECODE_TEXT_STRINGS_JSON_1)"
+DEFAULT_MACRO JSON_IN_EXPOSE_ATTRS_GROUP_JSON_1 FME_DISCLOSURE_CLOSED
+JSON_1_EXPOSE_ATTRS_GROUP "$(JSON_IN_EXPOSE_ATTRS_GROUP_JSON_1)"
+DEFAULT_MACRO JSON_IN_USE_BASENAME_AS_DEFAULT_FEATURE_TYPE_JSON_1 No
+JSON_1_USE_BASENAME_AS_DEFAULT_FEATURE_TYPE "$(JSON_IN_USE_BASENAME_AS_DEFAULT_FEATURE_TYPE_JSON_1)"
+# Include this file in source setting section to add external search envelope processing
+# Zero as a default means we don't do any search -- this makes workbench happier
+DEFAULT_MACRO JSON_IN_USE_SEARCH_ENVELOPE_JSON_1 NO
+JSON_1_USE_SEARCH_ENVELOPE "$(JSON_IN_USE_SEARCH_ENVELOPE_JSON_1)"
+GUI ACTIVEDISCLOSUREGROUP JSON_IN_USE_SEARCH_ENVELOPE_JSON_1 JSON_IN_SEARCH_ENVELOPE_MINX_JSON_1%JSON_IN_SEARCH_ENVELOPE_MINY_JSON_1%JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_1%JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_1%JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_1%JSON_IN_CLIP_TO_ENVELOPE_JSON_1%JSON_IN_SEARCH_METHOD%JSON_IN_SEARCH_METHOD_FILTER%JSON_IN_SEARCH_ORDER%JSON_IN_SEARCH_FEATURE%JSON_IN_DUMMY_SEARCH_ENVELOPE_PARAMETER Use Search Envelope
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MINX_JSON_1 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MINX_JSON_1 0
+JSON_1_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MINX_JSON_1)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MINX_JSON_1 Minimum X:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MINY_JSON_1 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MINY_JSON_1 0
+JSON_1_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MINY_JSON_1)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MINY_JSON_1 Minimum Y:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_1 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_1 0
+JSON_1_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_1)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_1 Maximum X:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_1 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_1 0
+JSON_1_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_1)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_1 Maximum Y:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_1 <Unused>, 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_1 
+JSON_1_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_1)"
+GUI OPTIONAL COORDSYS JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_1 Search Envelope Coordinate System:
+# ===========================================================================
+# BUG18999: We now have a soft clip to fall back on like native spatial index
+# thus we are reintroducing the clip to envelop as an option for users.
+# Defualt to soft clip as per the existing database readers we are emulating
+GUI LOOKUP JSON_IN_CLIP_TO_ENVELOPE_JSON_1 <Unused>,NO 
+DEFAULT_MACRO JSON_IN_CLIP_TO_ENVELOPE_JSON_1 NO
+JSON_1_CLIP_TO_ENVELOPE "$(JSON_IN_CLIP_TO_ENVELOPE_JSON_1)"
+GUI OPTIONAL CHECKBOX JSON_IN_CLIP_TO_ENVELOPE_JSON_1 YES%NO Clip to Search Envelope
+# ===========================================================================
+DEFAULT_MACRO JSON_IN_NETWORK_AUTHENTICATION_JSON_1 
+JSON_1_NETWORK_AUTHENTICATION "$(JSON_IN_NETWORK_AUTHENTICATION_JSON_1)"
+GUI OPTIONAL AUTHENTICATOR JSON_IN_NETWORK_AUTHENTICATION_JSON_1 CONTAINER%GROUP%CONTAINER_TITLE%"Network Authentication"%PROMPT_TYPE%NETWORK Network Authentication
+# ============================================================================
+DEFAULT_MACRO JSON_IN_ATTRIBUTE_READING_JSON_1 ALL
+JSON_1_ATTRIBUTE_READING "$(JSON_IN_ATTRIBUTE_READING_JSON_1)"
+# ============================================================================
+JSON_1_GENERATE_FME_BUILD_NUM 24202
+JSON_1_DATASET "$(SourceDataset_JSON_1)"
+#! END_SOURCE_HEADER
+#! START_WB_HEADER
+MACRO WB_KEYWORD "JSON_2"
+#! END_WB_HEADER
+#! START_SOURCE_HEADER JSON JSON_2
+# The dataset this mapping file was generated from was:
+#! END_SOURCE_HEADER
+#! START_WB_HEADER
+DEFAULT_MACRO SourceDataset
+INCLUDE [ if {{$(SourceDataset)} != ""} {                        \
+ puts {DEFAULT_MACRO SourceDataset_JSON_2 $(SourceDataset)}     \
+ } ]
+#! END_WB_HEADER
+#! START_SOURCE_HEADER JSON JSON_2
+DEFAULT_MACRO SourceDataset_JSON_2 $(SourceDataset_JSON_3)
+GUI FILE_OR_URL SourceDataset_JSON_2 JSON_Documents(*.json)|*.json|All_Files(*)|* Source JSON (JavaScript Object Notation) File or URL:
+DEFAULT_MACRO JSON_IN_FME_GROUP_NAMED1_JSON_2 
+GUI OPTIONAL DISCLOSUREGROUP JSON_IN_FME_GROUP_NAMED1_JSON_2 JSON_IN_SCAN_MODE_JSON_2%JSON_IN_QUERY_TABLE_JSON_2%JSON_IN_FLATTEN_MODE Schema Scan
+DEFAULT_MACRO JSON_IN_SCAN_MODE_JSON_2 AUTO
+JSON_2_SCAN_MODE "$(JSON_IN_SCAN_MODE_JSON_2)"
+GUI ACTIVECHOICE_LOOKUP JSON_IN_SCAN_MODE_JSON_2 Auto,AUTO,JSON_IN_QUERY_TABLE_JSON_2%JSON<space>Query,QUERY Schema Scan Mode
+DEFAULT_MACRO JSON_IN_QUERY_TABLE_JSON_2 <Unused>
+JSON_2_QUERY_TABLE "$(JSON_IN_QUERY_TABLE_JSON_2)"
+GUI GUI_LINE_TABLE JSON_IN_QUERY_TABLE_JSON_2 NO_LABEL%NOT_OK_IF_INVALID%START_NUM_ROWS:1%"Feature Type"%"STRING_ENCODED FTYPE"%Query%"DYNAMIC_SINGLE_SELECT_ENCODED QUERY $[SourceDataset_JSON_2],_FORMAT_OVERRIDE_,JSON,_GET_ATTRIBUTE_VALUES_,,JSON_SCAN_FOR_QUERIES,YES,FME_DELIM,<u001F>,FME_PARENT_SELECTION,root_node,FME_READ_SCHEMA,NO,FME_DN_ATTR,display_value,FME_PATH_ATTR,query_string,FME_EXPAND,json" JSON Queries for Feature Objects:
+DEFAULT_MACRO JSON_IN_FLATTEN_MODE_JSON_2 ALL_LEVELS
+JSON_2_FLATTEN_MODE "$(JSON_IN_FLATTEN_MODE_JSON_2)"
+DEFAULT_MACRO JSON_IN_FME_GROUP_NAMED2_JSON_2 
+GUI OPTIONAL DISCLOSUREGROUP JSON_IN_FME_GROUP_NAMED2_JSON_2 JSON_IN_FEATURE_TYPE_KEY_JSON_2%JSON_IN_GEOMETRY_FORMAT_JSON_2%JSON_IN_GEOMETRY_KEY_JSON_2%JSON_IN_COORDINATE_SYSTEM_KEY_JSON_2%JSON_IN_SAVE_FRAGMENTS_JSON_2 Feature Parameters
+DEFAULT_MACRO JSON_IN_FEATURE_TYPE_KEY_JSON_2 json_featuretype
+JSON_2_FEATURE_TYPE_KEY "$(JSON_IN_FEATURE_TYPE_KEY_JSON_2)"
+GUI OPTIONAL TEXT JSON_IN_FEATURE_TYPE_KEY_JSON_2 Feature Type Key Name:
+DEFAULT_MACRO JSON_IN_GEOMETRY_FORMAT_JSON_2 None
+JSON_2_GEOMETRY_FORMAT "$(JSON_IN_GEOMETRY_FORMAT_JSON_2)"
+GUI ACTIVECHOICE JSON_IN_GEOMETRY_FORMAT_JSON_2 GeoJSON%OGC-WKT%None,JSON_IN_GEOMETRY_KEY_JSON_2,JSON_IN_COORDINATE_SYSTEM_KEY_JSON_2 Geometry Format:
+DEFAULT_MACRO JSON_IN_GEOMETRY_KEY_JSON_2 <Unused>
+JSON_2_GEOMETRY_KEY "$(JSON_IN_GEOMETRY_KEY_JSON_2)"
+GUI OPTIONAL TEXT JSON_IN_GEOMETRY_KEY_JSON_2 Geometry Key Name:
+DEFAULT_MACRO JSON_IN_COORDINATE_SYSTEM_KEY_JSON_2 <Unused>
+JSON_2_COORDINATE_SYSTEM_KEY "$(JSON_IN_COORDINATE_SYSTEM_KEY_JSON_2)"
+GUI TEXT JSON_IN_COORDINATE_SYSTEM_KEY_JSON_2 Coordinate System Key Name:
+DEFAULT_MACRO JSON_IN_SAVE_FRAGMENTS_JSON_2 NO
+JSON_2_SAVE_FRAGMENTS "$(JSON_IN_SAVE_FRAGMENTS_JSON_2)"
+GUI LOOKUP_CHOICE JSON_IN_SAVE_FRAGMENTS_JSON_2 Yes,YES%No,NO Read Entire Feature as JSON Fragment:
+DEFAULT_MACRO JSON_IN_DECODE_TEXT_STRINGS_JSON_2 Yes
+JSON_2_DECODE_TEXT_STRINGS "$(JSON_IN_DECODE_TEXT_STRINGS_JSON_2)"
+DEFAULT_MACRO JSON_IN_EXPOSE_ATTRS_GROUP_JSON_2 FME_DISCLOSURE_CLOSED
+JSON_2_EXPOSE_ATTRS_GROUP "$(JSON_IN_EXPOSE_ATTRS_GROUP_JSON_2)"
+DEFAULT_MACRO JSON_IN_USE_BASENAME_AS_DEFAULT_FEATURE_TYPE_JSON_2 No
+JSON_2_USE_BASENAME_AS_DEFAULT_FEATURE_TYPE "$(JSON_IN_USE_BASENAME_AS_DEFAULT_FEATURE_TYPE_JSON_2)"
+# Include this file in source setting section to add external search envelope processing
+# Zero as a default means we don't do any search -- this makes workbench happier
+DEFAULT_MACRO JSON_IN_USE_SEARCH_ENVELOPE_JSON_2 NO
+JSON_2_USE_SEARCH_ENVELOPE "$(JSON_IN_USE_SEARCH_ENVELOPE_JSON_2)"
+GUI ACTIVEDISCLOSUREGROUP JSON_IN_USE_SEARCH_ENVELOPE_JSON_2 JSON_IN_SEARCH_ENVELOPE_MINX_JSON_2%JSON_IN_SEARCH_ENVELOPE_MINY_JSON_2%JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_2%JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_2%JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_2%JSON_IN_CLIP_TO_ENVELOPE_JSON_2%JSON_IN_SEARCH_METHOD%JSON_IN_SEARCH_METHOD_FILTER%JSON_IN_SEARCH_ORDER%JSON_IN_SEARCH_FEATURE%JSON_IN_DUMMY_SEARCH_ENVELOPE_PARAMETER Use Search Envelope
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MINX_JSON_2 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MINX_JSON_2 0
+JSON_2_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MINX_JSON_2)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MINX_JSON_2 Minimum X:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MINY_JSON_2 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MINY_JSON_2 0
+JSON_2_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MINY_JSON_2)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MINY_JSON_2 Minimum Y:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_2 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_2 0
+JSON_2_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_2)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MAXX_JSON_2 Maximum X:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_2 <Unused>,0 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_2 0
+JSON_2_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_2)"
+GUI OPTIONAL FLOAT JSON_IN_SEARCH_ENVELOPE_MAXY_JSON_2 Maximum Y:
+# ===========================================================================
+GUI LOOKUP JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_2 <Unused>, 
+DEFAULT_MACRO JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_2 
+JSON_2_SEARCH_ENVELOPE "$(JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_2)"
+GUI OPTIONAL COORDSYS JSON_IN_SEARCH_ENVELOPE_COORDINATE_SYSTEM_JSON_2 Search Envelope Coordinate System:
+# ===========================================================================
+# BUG18999: We now have a soft clip to fall back on like native spatial index
+# thus we are reintroducing the clip to envelop as an option for users.
+# Defualt to soft clip as per the existing database readers we are emulating
+GUI LOOKUP JSON_IN_CLIP_TO_ENVELOPE_JSON_2 <Unused>,NO 
+DEFAULT_MACRO JSON_IN_CLIP_TO_ENVELOPE_JSON_2 NO
+JSON_2_CLIP_TO_ENVELOPE "$(JSON_IN_CLIP_TO_ENVELOPE_JSON_2)"
+GUI OPTIONAL CHECKBOX JSON_IN_CLIP_TO_ENVELOPE_JSON_2 YES%NO Clip to Search Envelope
+# ===========================================================================
+DEFAULT_MACRO JSON_IN_NETWORK_AUTHENTICATION_JSON_2 
+JSON_2_NETWORK_AUTHENTICATION "$(JSON_IN_NETWORK_AUTHENTICATION_JSON_2)"
+GUI OPTIONAL AUTHENTICATOR JSON_IN_NETWORK_AUTHENTICATION_JSON_2 CONTAINER%GROUP%CONTAINER_TITLE%"Network Authentication"%PROMPT_TYPE%NETWORK Network Authentication
+# ============================================================================
+DEFAULT_MACRO JSON_IN_ATTRIBUTE_READING_JSON_2 ALL
+JSON_2_ATTRIBUTE_READING "$(JSON_IN_ATTRIBUTE_READING_JSON_2)"
+# ============================================================================
+JSON_2_GENERATE_FME_BUILD_NUM 24202
+JSON_2_DATASET "$(SourceDataset_JSON_2)"
+#! END_SOURCE_HEADER
+#! START_WB_HEADER
+#! END_WB_HEADER
+#! END_HEADER
+
+LOG_FILENAME "$(FME_MF_DIR)CAMA_sample_data_json_values_parsing.log"
+LOG_APPEND NO
+LOG_FILTER_MASK -1
+LOG_MAX_FEATURES 200
+LOG_MAX_RECORDED_FEATURES 200
+FME_REPROJECTION_ENGINE ESRI
+FME_IMPLICIT_CSMAP_REPROJECTION_MODE Auto
+FME_GEOMETRY_HANDLING Enhanced
+FME_STROKE_MAX_DEVIATION 0
+FME_NAMES_ENCODING UTF-8
+FME_BULK_MODE_THRESHOLD 2000
+LAST_SAVE_BUILD "FME 2024.0.1.0 (20240328 - Build 24202 - WIN64)"
+DEFAULT_MACRO DATASET_KEYWORD_JSON_1 JSON_1
+DEFAULT_MACRO DATASET_KEYWORD_JSON_2 JSON_2
+# -------------------------------------------------------------------------
+
+JSON_1_READER_META_ATTRIBUTES fme_feature_type
+
+# -------------------------------------------------------------------------
+
+JSON_2_READER_META_ATTRIBUTES fme_feature_type
+
+# -------------------------------------------------------------------------
+
+MULTI_READER_CONTINUE_ON_READER_FAILURE No
+
+# -------------------------------------------------------------------------
+
+MACRO WORKSPACE_NAME CAMA_sample_data_json_values_parsing
+MACRO FME_VIEWER_APP fmedatainspector
+# -------------------------------------------------------------------------
+JSON_1_DEF JSONFeature   lrsn                         string   extension                    string   dwelling_number              string   imp_line_number              string   improvement_id               string   status                       string   last_update                  string   imp_type                     string   attached_flag                string   imp_height                   string   imp_width                    string   imp_length                   string   imp_capacity                 string   construction_type            string   grade                        string   year_built                   string   eff_year_built               string   year_remodeled               string   condition                    string   imp_base_rate1               string   imp_adj_rate1                string   imp_size                     string   unit_type                    string   reproduction_cost1           string   phys_depreciation1           string   ovrride_phys_depr            string   obs_depreciation             string   funct_depreciation           string   pct_complete                 string   rem_value1                   string   true_tax_value1              string   imp_eff_perim                string   imp_par                      string   finish_code                  string   calc_obs_dep                 string   location_adj1                string   location_adj3                string   sketch_code                  string   eff_year                     string   sound_value_code             string   bldg_section                 string   effective_age_calc_flag      string   imp_base_rate3               string   imp_adj_rate3                string   reproduction_cost3           string   phys_depreciation3           string   rem_value3                   string   true_tax_value3              string   number_items                 string   import_imp_id                string   import_card_number           string   misc_imp_type                string   import_dwell_id              string   ext_cover                    string   sound_value_reason           string   OtherImpFlag                 string
+# -------------------------------------------------------------------------
+JSON_2_DEF JSONFeature   lrsn                         string   extension                    string   bldg_section                 string   last_update                  string   status                       string   pricing_key                  string   number_floors                string   total_area                   string   party_walls                  string   sqft_rate1                   string   subtotal1                    string   plumb_value1                 string   spfeat_value1                string   exfeat_value1                string   base_value1                  string   reproduction_cost1           string   deprec_tbl                   string   eff_year                     string   roof_code1                   string   roof_pct1                    string   roof_code2                   string   roof_pct2                    string   roof_code3                   string   roof_pct3                    string   roof_code4                   string   roof_pct4                    string   roof_ins_pct                 string   wall_ins_pct                 string   number_units                 string   avg_unit_size                string   sqft_rate3                   string   subtotal3                    string   plumb_value3                 string   spfeat_value3                string   exfeat_value3                string   base_value3                  string   reproduction_cost3           string   mkt_bldg_type                string
+# -------------------------------------------------------------------------
+
+FACTORY_DEF * RoutingFactory   FACTORY_NAME "Router and Unexpected Input Remover"   COMMAND_PARM_EVALUATION SINGLE_PASS   INPUT FEATURE_TYPE *    ROUTE JSON JSON_1::JSONFeature multi_reader_keyword,$(DATASET_KEYWORD_JSON_1) TO FME_GENERIC ::JSONFeature ALIAS_GEOMETRY    ROUTE JSON JSON_2::JSONFeature multi_reader_keyword,$(DATASET_KEYWORD_JSON_2) TO FME_GENERIC ::JSONFeature ALIAS_GEOMETRY    MERGE_INPUT Yes   OUTPUT ROUTED FEATURE_TYPE *
+JSON_1_MERGE_DEF JSON_1::JSONFeature EXACT JSONFeature
+JSON_2_MERGE_DEF JSON_2::JSONFeature EXACT JSONFeature
+# -------------------------------------------------------------------------
+
+FACTORY_DEF * TeeFactory    FACTORY_NAME "JSONFeature_JSON_2 Splitter"    INPUT FEATURE_TYPE JSONFeature      multi_reader_keyword $(DATASET_KEYWORD_JSON_2)
+# -------------------------------------------------------------------------
+
+FACTORY_DEF * TeeFactory    FACTORY_NAME "JSONFeature_JSON_1 Splitter"    INPUT FEATURE_TYPE JSONFeature      multi_reader_keyword $(DATASET_KEYWORD_JSON_1)    OUTPUT FEATURE_TYPE JSONFeature_JSON_1
+DEFAULT_MACRO WB_CURRENT_CONTEXT
+# -------------------------------------------------------------------------
+FACTORY_DEF * TeeFactory   FACTORY_NAME "UniqueValueLogger Input Input Collector"   INPUT FEATURE_TYPE JSONFeature_JSON_1   OUTPUT FEATURE_TYPE UniqueValueLogger_Input
+MACRO UniqueValueLogger_WORKSPACE_NAME UniqueValueLogger
+MACRO $(UniqueValueLogger_WORKSPACE_NAME)_TRANSFORMER_GROUP 
+MACRO $(UniqueValueLogger_WORKSPACE_NAME)_XFORMER_NAME UniqueValueLogger
+MACRO $(UniqueValueLogger_WORKSPACE_NAME)___COMPOUND_PARAMETERS 
+MACRO $(UniqueValueLogger_WORKSPACE_NAME)_VAL <at>Value<openparen>imp_type<closeparen>
+MACRO $(UniqueValueLogger_WORKSPACE_NAME)_SUB_DOC_NAME UniqueValueLogger
+MACRO $(UniqueValueLogger_WORKSPACE_NAME)_SUB_DOC_NAME UniqueValueLogger
+DEFAULT_MACRO UniqueValueLogger_WORKSPACE_NAME ""
+INCLUDE [puts {MACRO WB_OLD_CONTEXT_$(UniqueValueLogger_WORKSPACE_NAME) $(WB_CURRENT_CONTEXT)};          puts {MACRO WB_CURRENT_CONTEXT $(UniqueValueLogger_WORKSPACE_NAME)}]
+FACTORY_DEF * TeeFactory   FACTORY_NAME "$(UniqueValueLogger_WORKSPACE_NAME)_Input1757605226 Input Splitter"   INPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Input"   OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Input"
+# -------------------------------------------------------------------------
+FACTORY_DEF {*} AttrSetFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_AttributeCreator }    COMMAND_PARM_EVALUATION SINGLE_PASS    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Input"    MULTI_FEATURE_MODE { NO }    NULL_ATTR_MODE { NO_OP }    ATTRSET_CREATE_DIRECTIVES _PROPAGATE_MISSING_FDIV    ATTR_ACTION { "" "_value" "SET_TO" "$($(UniqueValueLogger_WORKSPACE_NAME)_VAL)" }    OUTPUT { OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeCreator_OUTPUT"        }
+# -------------------------------------------------------------------------
+FACTORY_DEF {*} AttributeKeeperFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_AttributeKeeper }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeCreator_OUTPUT"    KEEP_ATTRS { _value }    KEEP_LISTS {  }    KEEP_FME_ATTRIBUTES Yes    BUILD_FEATURE_TABLES { NO }    OUTPUT_ON_ATTRIBUTE_CHANGE { <Unused> }    OUTPUT { OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeKeeper_OUTPUT"        }
+# -------------------------------------------------------------------------
+FACTORY_DEF {*} AggregateFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_Aggregator }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeKeeper_OUTPUT"    MODE { ONE_LEVEL }    GROUP_BY { _value }    FLUSH_WHEN_GROUPS_CHANGE { No }    REMOVE_GEOMETRY { NO }    COUNT_ATTRIBUTE { "_count" }    ACCUMULATE_ATTRIBUTES { All }    LIST_ATTRS_TO_INCLUDE { <Unused> }    LIST_ATTRS_TO_INCLUDE_MODE { <Unused> }    SEPARATOR { <comma> }    PRODUCE_MULTIS { YES }    OUTPUT { AGGREGATE FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Aggregator_AGGREGATE"          }
+# -------------------------------------------------------------------------
+DEFAULT_MACRO $(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_19fe5e5f_e058_48dc_bdc1_603c3d1139af1_ATTRS_TO_EVALUATE
+INCLUDE [    if {{OUTGOING} == {OUTGOING}} {       if {[string length {_concatenated}] == 0} { return; };       set attrs [list {_concatenated}];    } else {       set attrs [split {<Unused>} { }];    };    set clauses {};    foreach attr $attrs {       lappend clauses "ATTR";       lappend clauses "{";       lappend clauses $attr;       lappend clauses {"<at>Value<openparen>_value<closeparen><comma><at>Value<openparen>_count<closeparen><lf>"};       lappend clauses "}";    };    puts "MACRO $(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_19fe5e5f_e058_48dc_bdc1_603c3d1139af1_ATTRS_TO_EVALUATE [join $clauses { }]"; ]
+FACTORY_DEF {*} AttrSetFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Aggregator_AGGREGATE"    ATTRSET_CREATE_DIRECTIVES _PROPAGATE_MISSING_FDIV    $($(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_19fe5e5f_e058_48dc_bdc1_603c3d1139af1_ATTRS_TO_EVALUATE)    OUTPUT { OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_OUTPUT"        }
+# -------------------------------------------------------------------------
+FACTORY_DEF {*} SortFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_Sorter }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_OUTPUT"    FLUSH_WHEN_GROUPS_CHANGE { No }    SORT_BY { _count NUMERIC DESCENDING _value ALPHA ASCENDING }    OUTPUT { SORTED FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Sorter_SORTED"          }
+FACTORY_DEF * TeeFactory   FACTORY_NAME "$(UniqueValueLogger_WORKSPACE_NAME)_Sorter SORTED Splitter"   INPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Sorter_SORTED"   OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Sorter_SORTED_0_4HYMgXD3KC0="   OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Sorter_SORTED_1_a52AlrYbB04="
+# -------------------------------------------------------------------------
+FACTORY_DEF {*} TeeFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_ListBuilder_fme_type_remover }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Sorter_SORTED_0_4HYMgXD3KC0="    OUTPUT { FEATURE_TYPE $(UniqueValueLogger_WORKSPACE_NAME)_ListBuilder_no_fme_type       @RemoveAttributes(fme_type,fme_geometry) }
+FACTORY_DEF {*} ListFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_ListBuilder }    INPUT { FEATURE_TYPE $(UniqueValueLogger_WORKSPACE_NAME)_ListBuilder_no_fme_type }    LIST_NAME { "_list{}" }    LIST_ATTRS_TO_INCLUDE { <Unused> }    LIST_ATTRS_TO_INCLUDE_MODE { ALL }    FLUSH_WHEN_GROUPS_CHANGE { <Unused> }    OUTPUT { LIST FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_ListBuilder_OUTPUT"          }
+# -------------------------------------------------------------------------
+# Create a FME_UUID_SAFE from the FME_UUID so we can use it for Tcl identifiers (FMEDESKTOP-11308)
+INCLUDE [ FME_CleanseFMEUUID {$(UniqueValueLogger_WORKSPACE_NAME)_ListConcatenator_1f5984ad_e4f1_45d2_8a86_8df081f0f2781} ]
+Tcl2 set $(FME_UUID_SAFE)__separator [FME_DecodeText {}];      regsub -all \"{}\" [FME_DecodeText {_list<opencurly><closecurly>._concatenated}] [FME_DecodeText {<opencurly><backslash>d+<closecurly>}] $(FME_UUID_SAFE)__listPattern;      set $(FME_UUID_SAFE)__listPattern ^$$(FME_UUID_SAFE)__listPattern$;
+Tcl2 proc $(FME_UUID_SAFE)__Concatenate {} {   upvar \#0 $(FME_UUID_SAFE)__separator separator             $(FME_UUID_SAFE)__listPattern listPattern;   set allAttrs [lsort -dictionary [FME_AttributeNames]];   set keepEmptyParts [string equal {No} {No}];   set result {};   foreach attrName $allAttrs {     if {[regexp $listPattern $attrName]} {       set attrValue [FME_GetAttribute $attrName];       if {$keepEmptyParts || $attrValue != {}} {         lappend result $attrValue;       };     };   };   FME_SetAttribute {"UNIQUE VALUES"} [join $result $separator]; }
+FACTORY_DEF {*} TeeFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_ListConcatenator }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_ListBuilder_OUTPUT"    OUTPUT { FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_ListConcatenator_OUTPUT"         @Tcl2($(FME_UUID_SAFE)__Concatenate)          }
+# -------------------------------------------------------------------------
+DEFAULT_MACRO $(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_2_c5a3f9f5_71c4_4cf3_8bc1_1802b6a3a02d1_ATTRS_TO_EVALUATE
+INCLUDE [    if {{OUTGOING} == {OUTGOING}} {       if {[string length {UNIQUE<space>VALUES}] == 0} { return; };       set attrs [list {UNIQUE<space>VALUES}];    } else {       set attrs [split {<Unused>} { }];    };    set clauses {};    foreach attr $attrs {       lappend clauses "ATTR";       lappend clauses "{";       lappend clauses $attr;       lappend clauses {"<lf><lf>VALUE<comma><space>COUNT<lf><at>Value<openparen>UNIQUE<space>VALUES<closeparen><lf>"};       lappend clauses "}";    };    puts "MACRO $(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_2_c5a3f9f5_71c4_4cf3_8bc1_1802b6a3a02d1_ATTRS_TO_EVALUATE [join $clauses { }]"; ]
+FACTORY_DEF {*} AttrSetFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_2 }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_ListConcatenator_OUTPUT"    ATTRSET_CREATE_DIRECTIVES _PROPAGATE_MISSING_FDIV    $($(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_2_c5a3f9f5_71c4_4cf3_8bc1_1802b6a3a02d1_ATTRS_TO_EVALUATE)    OUTPUT { OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_2_OUTPUT"        }
+# -------------------------------------------------------------------------
+# Build the List removal function and regular expression if there was any list attributes to be removed.
+# If not, then we will not have any extra list removal call to @RemoveAttributes, which speeds the
+# normal, non-list removal especially when in Bulk Mode.  Note that this computation of the regular expressions is done
+# once during mapping file parse time.
+INCLUDE [    set listAttributeRemoveRegexps {};    set anyList {no};    foreach attr [split "_list<opencurly><closecurly>"] {       set attr [FME_DecodeText $attr];       set attr [regsub "{}$" $attr "{}.*"];       set attr [regsub -all "{}" $attr "\\{\[0-9\]+\\}"];       append listAttributeRemoveRegexps ",^$attr$";       set anyList {yes};    };    if { ${anyList} == {no} } {        puts {MACRO $(UniqueValueLogger_WORKSPACE_NAME)_AttributeRemover_2_LIST_FUNC }    } else {        puts "MACRO $(UniqueValueLogger_WORKSPACE_NAME)_AttributeRemover_2_LIST_FUNC @RemoveAttributes(fme_pcre_match\"$listAttributeRemoveRegexps\")"    }; ]
+FACTORY_DEF {*} TeeFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_AttributeRemover_2 }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_StringConcatenator_2_OUTPUT"    OUTPUT { FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeRemover_2_OUTPUT"        @RemoveAttributes(fme_encoded,)        $($(UniqueValueLogger_WORKSPACE_NAME)_AttributeRemover_2_LIST_FUNC)         }
+# -------------------------------------------------------------------------
+# Create a FME_UUID_SAFE from the FME_UUID so we can use it for Tcl identifiers (FMEDESKTOP-11308)
+INCLUDE [ FME_CleanseFMEUUID {$(UniqueValueLogger_WORKSPACE_NAME)_Logger_dedfbedf_80e8_42c5_b909_9ae40156dd0d1} ]
+# If the Logger was in a custom transformer, the custom transformer's name was not being
+# properly logged -- instead we saw "$(<customXformerName_WORKSPACE_NAME)" being logged as the prefix of the
+# message. By deferencing and expanding out the XFORMER_NAME below, and then "WWJD" encoding it when it is
+# used in the @Log call via the $encode macro name suffix trick, we get the right result, and the right result
+# safely.
+MACRO LOGGABLE_XFORMER_NAME $(UniqueValueLogger_WORKSPACE_NAME)_Logger
+FACTORY_DEF {*} TeeFactory    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_Logger_Logger }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeRemover_2_OUTPUT"    OUTPUT { FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Logger_LOGGED"                  @Log(ENCODED, "$(LOGGABLE_XFORMER_NAME$encode):<space>Unique<space>values:","1","1","",INFO,LOG_RECORD,$(FME_UUID_SAFE))                   }
+FACTORY_DEF * TeeFactory   FACTORY_NAME "$(UniqueValueLogger_WORKSPACE_NAME)_Logger LOGGED Transformer Output Nuker"   INPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Logger_LOGGED"
+# -------------------------------------------------------------------------
+FACTORY_DEF {*} AttrSetFactory    COMMAND_PARM_EVALUATION SINGLE_PASS    FACTORY_NAME { $(UniqueValueLogger_WORKSPACE_NAME)_AttributeManager }    INPUT  FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Sorter_SORTED_1_a52AlrYbB04="    MULTI_FEATURE_MODE { NO }    NULL_ATTR_MODE { NO_OP }    ATTRSET_CREATE_DIRECTIVES _PROPAGATE_MISSING_FDIV    ACTION_COLUMN 3    DEF_VAL_COLUMN 2    ATTR_ACTION { "_concatenated" "_concatenated" "" "REMOVE" }    OUTPUT { OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeManager_OUTPUT"        }
+FACTORY_DEF * TeeFactory   FACTORY_NAME "$(UniqueValueLogger_WORKSPACE_NAME)_Output1757605226 Output Collector"   INPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_AttributeManager_OUTPUT"   OUTPUT FEATURE_TYPE "$(UniqueValueLogger_WORKSPACE_NAME)_Output"
+INCLUDE [puts {MACRO WB_CURRENT_CONTEXT $(WB_OLD_CONTEXT_$(UniqueValueLogger_WORKSPACE_NAME))}]
+FACTORY_DEF * TeeFactory   FACTORY_NAME "UniqueValueLogger Output Output Renamer/Nuker"   INPUT FEATURE_TYPE UniqueValueLogger_Output
+# -------------------------------------------------------------------------
+
+FACTORY_DEF * RoutingFactory FACTORY_NAME "Destination Feature Type Routing Correlator"   COMMAND_PARM_EVALUATION SINGLE_PASS   INPUT FEATURE_TYPE *   FEATURE_TYPE_ATTRIBUTE __wb_out_feat_type__   OUTPUT ROUTED FEATURE_TYPE *    OUTPUT NOT_ROUTED FEATURE_TYPE __nuke_me__ @Tcl2("FME_StatMessage 818059 [FME_GetAttribute fme_template_feature_type] 818060 818061 fme_warn")
+# -------------------------------------------------------------------------
+
+FACTORY_DEF * TeeFactory   FACTORY_NAME "Final Output Nuker"   INPUT FEATURE_TYPE __nuke_me__
+
