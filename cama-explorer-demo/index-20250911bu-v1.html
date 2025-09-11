@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VT CAMA Sample Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+    <style>
+        html, body {
+            overflow: hidden; /* Prevent body scrolling */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        #map-view {
+            height: 100%; /* Make map fill its container */
+            width: 100%;
+        }
+        #map-view:focus,
+        #map-view:focus-within,
+        .esri-view-surface--is-focused {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        div {
+            -webkit-tap-highlight-color: transparent;
+        }
+        div:focus {
+            outline: none;
+        }
+        .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #555; }
+        .loader { border-top-color: #3498db; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .main-table-row { cursor: pointer; }
+        .main-table-row:hover { background-color: #e6f0e6; }
+        .related-section h3 {
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        #sketch-canvas {
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+        .detail-card {
+            background-color: #f9fafb;
+            border-left: 4px solid #003300;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+        }
+        .esri-popup .esri-popup__main-container {
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="flex h-screen">
+        <div class="w-3/5 h-screen overflow-y-auto relative" id="left-pane">
+            <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <header class="mb-8 text-left">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Vermont CAMA Sample Explorer</h1>
+                    <p class="mt-2 text-md text-gray-600">Click a parcel on the map or search below to explore property data. <b>For demo purposes only.</b></p>
+                </header>
+
+                <div id="main-view">
+                    <div id="filter-status" class="hidden mb-4 p-4 bg-[#e6f0e6] border-l-4 border-[#003300] text-[#003300] rounded-md flex justify-between items-center">
+                        <p>Showing data for parcel selected on map.</p>
+                        <button id="clear-filter-btn" class="font-bold hover:underline">Clear Map Filter</button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                        <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Search by Address or LRSN</label>
+                        <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#003300] focus:border-[#003300]">
+                    </div>
+
+                    <main id="data-container" class="bg-white p-4 rounded-lg shadow-md min-h-[400px]">
+                        <div id="status-message" class="flex items-center justify-center h-full"></div>
+                        <div id="table-wrapper" class="hidden">
+                            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                                <h2 class="text-xl font-semibold text-gray-800">Properties</h2>
+                                <div id="table-info" class="text-sm text-gray-600"></div>
+                            </div>
+                            <div class="overflow-x-auto table-container">
+                                <table id="data-table" class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50"></thead>
+                                    <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                            <div id="pagination-controls" class="mt-4 flex justify-between items-center"></div>
+                        </div>
+                    </main>
+                </div>
+
+                <div id="detail-view" class="hidden">
+                    <button id="back-button" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#003300] hover:bg-[#002a00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#003300]">
+                        &larr; Back to Search Results
+                    </button>
+                    <div id="detail-content" class="space-y-8"></div>
+                </div>
+
+                <div class="mt-8 text-left text-xs text-gray-500 border-t pt-4">
+                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
+                </div>
+            </div>
+             <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
+                <i class="fa-solid fa-circle-arrow-up"></i>
+            </button>
+        </div>
+
+        <div class="w-2/5 h-screen">
+            <div id="map-view" class="shadow-lg"></div>
+        </div>
+    </div>
+    
+    <script src="https://js.arcgis.com/4.29/"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- CONFIGURATION ---
+        const S3_BASE_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/sample/';
+        const PROPERTY_CLASS_CODES_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json';
+        const MASTER_FILE = 'Site_Address';
+        const ESSENTIAL_FILES = ['Site_Address', 'Parcel_Main'];
+        const RELATED_FILES = {
+            "Parcel & Legal": ["Parcel_Main", "Legal"],
+            "Valuation": ["Valuation_History", "Valuation_Detail", "Cap_Distributions", "Influence_Mods"],
+            "Sales & Transfers": ["Transfer"],
+            "Buildings & Improvements": ["Improvements", "Imp_Ext_Features", "Permits"],
+            "Commercial Buildings": ["CI_Building", "CI_Floors", "CI_Plumbing", "CI_Special", "CI_Unit_Cost", "CI_Uses"],
+            "Residential Buildings": ["R_Floor", "R_Man_Housing"],
+            "Land Details": ["Land_Site", "Land_Detail", "Land_Influence"],
+            "Neighborhood": ["Nbhd_Main", "Nbhd_Res", "Nbhd_Com", "Nbhd_HF", "Nbhd_Land", "Nbhd_Land_Detail"],
+            "Sketches & Images": ["Sketch_Main", "Sketch_Vector", "Sketch_Segment", "Sketch_OB", "Sketch_Notes", "Sketch_Labels", "Image_Directory"],
+        };
+        const USE_CARD_VIEW = ['Parcel_Main', 'Land_Detail', 'Land_Site', 'Nbhd_Main', 'Transfer'];
+        const ROWS_PER_PAGE = 10;
+        const LRSN_KEY = 'LRSN';
+
+        // --- STATE ---
+        let masterData = [];
+        let filteredData = [];
+        let dataCache = {};
+        let propertyClassCodes = {};
+        let currentPage = 1;
+        let mapView = null;
+        let parcelLayer = null;
+        let highlightHandle = null;
+
+        // --- DOM ELEMENTS ---
+        const searchInput = document.getElementById('search-input');
+        const statusMessage = document.getElementById('status-message');
+        const tableWrapper = document.getElementById('table-wrapper');
+        const dataTable = document.getElementById('data-table');
+        const tableInfo = document.getElementById('table-info');
+        const paginationControls = document.getElementById('pagination-controls');
+        const mainView = document.getElementById('main-view');
+        const detailView = document.getElementById('detail-view');
+        const detailContent = document.getElementById('detail-content');
+        const backButton = document.getElementById('back-button');
+        const filterStatus = document.getElementById('filter-status');
+        const clearFilterBtn = document.getElementById('clear-filter-btn');
+        const leftPane = document.getElementById('left-pane');
+        const toTopBtn = document.getElementById('to-top-btn');
+
+        // --- INITIALIZATION ---
+        async function initialize() {
+            showLoading('Loading property data...');
+            await initializeMap();
+            await loadPropertyClassCodes();
+            await loadInitialData();
+            renderMainTable();
+            loadRelatedDataInBackground();
+            
+            searchInput.addEventListener('input', handleSearch);
+            backButton.addEventListener('click', showMainView);
+            clearFilterBtn.addEventListener('click', clearMapFilter);
+            
+            toTopBtn.addEventListener('click', () => {
+                leftPane.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            leftPane.addEventListener('scroll', () => {
+                if (leftPane.scrollTop > 200) {
+                    toTopBtn.classList.remove('opacity-0', 'invisible');
+                } else {
+                    toTopBtn.classList.add('opacity-0', 'invisible');
+                }
+            });
+        }
+
+        // --- MAP LOGIC ---
+        async function initializeMap() {
+            return new Promise((resolve, reject) => {
+                require([
+                    "esri/Map",
+                    "esri/views/MapView",
+                    "esri/layers/FeatureLayer"
+                ], (Map, MapView, FeatureLayer) => {
+                    const parcelRenderer = {
+                        type: "simple",
+                        symbol: {
+                            type: "simple-fill",
+                            style: "solid",
+                            color: [0, 0, 0, 0], 
+                            outline: { color: [211, 211, 211, 0.9], width: "1px" }
+                        }
+                    };
+                    parcelLayer = new FeatureLayer({
+                        url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
+                        definitionExpression: "TOWN = 'BARRE TOWN'",
+                        outFields: ["SPAN"],
+                        popupEnabled: false, 
+                        renderer: parcelRenderer
+                    });
+                    const map = new Map({ basemap: "satellite", layers: [parcelLayer] });
+                    mapView = new MapView({
+                        container: "map-view",
+                        map: map,
+                        center: [-72.485, 44.187],
+                        zoom: 13,
+                        popup: {
+                            dockEnabled: false,
+                            dockOptions: { buttonEnabled: false, breakpoint: false },
+                            collapseEnabled: false,
+                            actions: []
+                        }
+                    });
+                    mapView.when(() => {
+                        let lastHoveredGraphic = null;
+                        mapView.on("pointer-move", (event) => {
+                            mapView.hitTest(event).then((response) => {
+                                const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
+                                if (parcelResult) {
+                                    if (lastHoveredGraphic && lastHoveredGraphic.uid === parcelResult.graphic.uid) return;
+                                    lastHoveredGraphic = parcelResult.graphic;
+                                    document.getElementById('map-view').style.cursor = 'pointer';
+                                    const taxId = parcelResult.graphic.attributes.SPAN;
+                                    let popupContent = `SPAN: ${taxId}`;
+                                    const taxIdStr = String(taxId).trim();
+                                    const pRec = (dataCache['Parcel_Main'] || []).find(p => {
+                                        const rTaxId = p.tax_bill_id || p.TAX_BILL_ID;
+                                        return rTaxId !== undefined && String(rTaxId).trim() === taxIdStr;
+                                    });
+                                    if (pRec) {
+                                        const lrsn = pRec.lrsn || pRec.LRSN;
+                                        if (lrsn) {
+                                            const lrsnStr = String(lrsn);
+                                            const aRec = masterData.find(p => (String(p.LRSN) === lrsnStr || String(p.lrsn) === lrsnStr));
+                                            if (aRec && aRec.FreeFormAddr) {
+                                                popupContent = `<strong>${aRec.FreeFormAddr}</strong><br><span class='text-gray-500 text-xs'>SPAN: ${taxId}</span>`;
+                                            }
+                                        }
+                                    }
+                                    mapView.popup.open({ title: "Parcel Information", content: popupContent, location: parcelResult.mapPoint });
+                                } else {
+                                    if (lastHoveredGraphic) {
+                                        mapView.popup.close();
+                                        lastHoveredGraphic = null;
+                                        document.getElementById('map-view').style.cursor = 'default';
+                                    }
+                                }
+                            });
+                        });
+                        mapView.on("click", (event) => {
+                            mapView.hitTest(event).then((response) => {
+                                if (highlightHandle) highlightHandle.remove();
+                                const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
+                                if (parcelResult) {
+                                    const taxId = parcelResult.graphic.attributes.SPAN;
+                                    if (taxId) {
+                                        const taxIdStr = String(taxId).trim();
+                                        const pRec = (dataCache['Parcel_Main'] || []).find(p => {
+                                            const rTaxId = p.tax_bill_id || p.TAX_BILL_ID;
+                                            return rTaxId !== undefined && String(rTaxId).trim() === taxIdStr;
+                                        });
+                                        if (pRec) {
+                                            const lrsn = pRec.lrsn || pRec.LRSN;
+                                            if (lrsn) {
+                                                if (masterData.find(p => String(p.LRSN) === String(lrsn) || String(p.lrsn) === String(lrsn))) {
+                                                    showDetailView(lrsn);
+                                                } else {
+                                                    showError(`No address data found for parcel (Tax ID: ${taxIdStr}).`);
+                                                    showMainView();
+                                                }
+                                            } else {
+                                                showError(`Could not link parcel to details (missing LRSN).`);
+                                                showMainView();
+                                            }
+                                        } else {
+                                            showError(`No CAMA data found for parcel (Tax ID: ${taxIdStr}).`);
+                                            showMainView();
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                        resolve();
+                    }).catch(reject);
+                });
+            });
+        }
+        
+        function highlightParcel(graphic) {
+            mapView.whenLayerView(graphic.layer).then(layerView => {
+                highlightHandle = layerView.highlight(graphic);
+            });
+        }
+
+        function clearMapHighlight() {
+            if (highlightHandle) {
+                highlightHandle.remove();
+                highlightHandle = null;
+            }
+        }
+        
+        async function zoomToParcelByTaxId(taxId) {
+            if (!parcelLayer || !taxId) return;
+            clearMapHighlight();
+            const query = parcelLayer.createQuery();
+            query.where = `SPAN = '${taxId}'`;
+            query.returnGeometry = true;
+            try {
+                const { features } = await parcelLayer.queryFeatures(query);
+                if (features.length > 0) {
+                    mapView.goTo(features[0].geometry).catch(err => err.name !== "view:goto-interrupted" && console.error(err));
+                    highlightParcel(features[0]);
+                }
+            } catch(error) {
+                console.error("Failed to zoom to feature:", error);
+            }
+        }
+        
+        function resetMapView() {
+            if (mapView) {
+                mapView.goTo({ center: [-72.485, 44.187], zoom: 13 }).catch(err => err.name !== "view:goto-interrupted" && console.error(err));
+                clearMapHighlight();
+            }
+        }
+
+        function clearMapFilter() {
+            filteredData = masterData;
+            currentPage = 1;
+            renderMainTable();
+            filterStatus.classList.add('hidden');
+            searchInput.value = '';
+            resetMapView();
+            statusMessage.classList.add('hidden');
+            tableWrapper.classList.remove('hidden');
+        }
+
+        // --- DATA FETCHING & HANDLING ---
+        async function loadPropertyClassCodes() {
+            try {
+                const response = await fetch(PROPERTY_CLASS_CODES_URL);
+                if (!response.ok) throw new Error(`Failed to fetch property codes: ${response.statusText}`);
+                const data = await response.json();
+
+                propertyClassCodes = {}; 
+
+                for (const primaryType in data) {
+                    if (data.hasOwnProperty(primaryType)) {
+                        const secondaryTypes = data[primaryType];
+                        for (const code in secondaryTypes) {
+                            if (secondaryTypes.hasOwnProperty(code)) {
+                                const secondaryType = secondaryTypes[code];
+                                propertyClassCodes[code] = {
+                                    primary: primaryType,
+                                    secondary: secondaryType
+                                };
+                            }
+                        }
+                    }
+                }
+                console.log("Property Class Codes Lookup Table successfully created.");
+            } catch (error) {
+                console.error("Error loading property class codes:", error);
+            }
+        }
+        
+        async function loadInitialData() {
+            try {
+                await Promise.all(ESSENTIAL_FILES.map(async (file) => {
+                    const response = await fetch(`${S3_BASE_URL}${file}.json`);
+                    if (!response.ok) throw new Error(`Failed to load: ${file}`);
+                    dataCache[file] = await response.json();
+                }));
+                masterData = dataCache[MASTER_FILE];
+                filteredData = masterData;
+            } catch (error) {
+                showError('Failed to load initial property data. The application cannot start.');
+                console.error(error);
+            }
+        }
+
+        async function loadRelatedDataInBackground() {
+            const allFiles = Object.values(RELATED_FILES).flat();
+            const filesToLoad = allFiles.filter(file => !ESSENTIAL_FILES.includes(file));
+            Promise.all(filesToLoad.map(async (file) => {
+                try {
+                    const response = await fetch(`${S3_BASE_URL}${file}.json`);
+                    if (response.ok) dataCache[file] = await response.json();
+                } catch (fetchError) {
+                     console.error(`Could not fetch ${file}:`, fetchError);
+                     dataCache[file] = [];
+                }
+            }));
+        }
+
+        function handleSearch() {
+            resetMapView();
+            filterStatus.classList.add('hidden');
+            const searchTerm = searchInput.value.toLowerCase();
+            filteredData = searchTerm ? masterData.filter(row => Object.values(row).some(v => String(v).toLowerCase().includes(searchTerm))) : masterData;
+            currentPage = 1;
+            renderMainTable();
+        }
+
+        // --- HIERARCHICAL VIEW LOGIC ---
+        function showDetailView(lrsn) {
+            const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => (p.lrsn === lrsn || p.LRSN === lrsn));
+            if (parcelMainRecord) {
+                const taxId = parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID;
+                if(taxId) zoomToParcelByTaxId(taxId);
+            }
+
+            mainView.classList.add('hidden');
+            detailView.classList.remove('hidden');
+            
+            const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
+            const spanId = parcelMainRecord ? (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID || 'N/A') : 'N/A';
+            
+            // MODIFIED: Handle cases where property type is not found
+            let typeDescription = "Not Defined"; // Default value
+            if (parcelMainRecord) {
+                const propClassCodeValue = parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS;
+                
+                if (propClassCodeValue !== undefined && propClassCodeValue !== null && String(propClassCodeValue).trim() !== '') {
+                    const propClassCodeClean = String(propClassCodeValue).trim().padStart(3, '0');
+                    const lookupResult = propertyClassCodes[propClassCodeClean];
+
+                    if (lookupResult && lookupResult.primary && lookupResult.secondary) {
+                        typeDescription = `${lookupResult.primary} - ${lookupResult.secondary}`;
+                    }
+                }
+            }
+            const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
+
+            let html = `<div class="bg-white p-6 rounded-lg shadow-md">
+                            <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
+                            <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
+                            ${propertyTypeHtml}
+                            <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
+                            <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
+                        </div>`;
+
+            html += `<div id="detail-nav" class="my-4 p-4 bg-gray-100 rounded-lg shadow-inner sticky top-0 z-10"><h4 class="text-sm font-semibold mb-2 text-gray-600">Quick Navigation</h4><div class="flex flex-wrap gap-2">`;
+            for (const group in RELATED_FILES) {
+                const sectionId = group.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                html += `<a href="#${sectionId}" class="nav-button bg-white hover:bg-gray-200 text-gray-700 text-sm font-medium py-2 px-3 rounded-lg border border-gray-300 shadow-sm transition-colors">${group}</a>`;
+            }
+            html += `</div></div>`;
+
+            for (const group in RELATED_FILES) {
+                const sectionId = group.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                html += `<section id="${sectionId}" class="related-section bg-white p-6 rounded-lg shadow-md mt-4 scroll-mt-24"><h3 class="text-xl font-semibold text-gray-800">${group}</h3>`;
+                let groupHasData = false;
+                if (group === "Sketches & Images") {
+                    if ((dataCache['Sketch_Vector'] || []).some(r => r.LRSN === lrsn || r.lrsn === lrsn)) {
+                        groupHasData = true;
+                        html += `<div class="my-4"><canvas id="sketch-canvas" width="500" height="400"></canvas></div>`;
+                    }
+                }
+                RELATED_FILES[group].forEach(file => {
+                    const relatedRecords = (dataCache[file] || []).filter(r => r.LRSN === lrsn || r.lrsn === lrsn);
+                    if (relatedRecords.length > 0) {
+                        groupHasData = true;
+                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
+                        html += USE_CARD_VIEW.includes(file) ? createDetailList(relatedRecords) : createHtmlTable(relatedRecords);
+                    }
+                });
+                if (!groupHasData) html += `<p class="text-gray-500">No data available in this category.</p>`;
+                html += `</section>`;
+            }
+
+            detailContent.innerHTML = html;
+            document.querySelectorAll('#detail-nav a').forEach(a => a.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }));
+            const canvas = document.getElementById('sketch-canvas');
+            if (canvas) drawSketch(lrsn, canvas);
+            leftPane.scrollTo(0, 0);
+        }
+        
+        function showMainView() {
+            detailView.classList.add('hidden');
+            mainView.classList.remove('hidden');
+            resetMapView();
+        }
+
+        // --- UI RENDERING ---
+        function renderMainTable() {
+            statusMessage.classList.add('hidden');
+            tableWrapper.classList.remove('hidden');
+            renderMainTableHeaders();
+            renderMainTablePage();
+            renderPagination();
+        }
+
+        function renderMainTableHeaders() {
+            const tableHead = dataTable.querySelector('thead');
+            tableHead.innerHTML = '';
+            if (masterData.length === 0) return;
+            const headers = ['LRSN', 'Address', 'City', 'Zip'];
+            const headerRow = document.createElement('tr');
+            headers.forEach(h => {
+                const th = document.createElement('th');
+                th.className = 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+                th.textContent = h;
+                headerRow.appendChild(th);
+            });
+            tableHead.appendChild(headerRow);
+        }
+
+        function renderMainTablePage() {
+            const tableBody = dataTable.querySelector('tbody');
+            tableBody.innerHTML = '';
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-gray-500">No properties found.</td></tr>`;
+                updateTableInfo(0, 0);
+                return;
+            }
+            const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+            const endIndex = startIndex + ROWS_PER_PAGE;
+            const pageData = filteredData.slice(startIndex, endIndex);
+            pageData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'main-table-row';
+                tr.dataset.lrsn = row[LRSN_KEY];
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${row.LRSN || ''}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${row.FreeFormAddr || ''}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${row.StrtCity || ''}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${row.StrtZip || ''}</td>
+                `;
+                tr.addEventListener('click', () => showDetailView(row[LRSN_KEY]));
+                tableBody.appendChild(tr);
+            });
+            updateTableInfo(startIndex, endIndex);
+        }
+
+        function renderPagination() {
+            paginationControls.innerHTML = '';
+            const totalPages = Math.ceil(filteredData.length / ROWS_PER_PAGE);
+            if (totalPages <= 1) return;
+            let html = `<div class="text-sm text-gray-700">Page <span class="font-medium">${currentPage}</span> of <span class="font-medium">${totalPages}</span></div>`;
+            html += `<div class="flex items-center gap-2">
+                        <button class="pagination-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+                        <button class="pagination-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+                     </div>`;
+            paginationControls.innerHTML = html;
+            document.querySelectorAll('.pagination-btn').forEach(button => {
+                button.className = 'relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed';
+                button.addEventListener('click', (e) => {
+                    currentPage = parseInt(e.target.dataset.page);
+                    renderMainTablePage();
+                    renderPagination();
+                    dataTable.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        // --- UTILITY FUNCTIONS ---
+        function formatDateString(value) {
+            return (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}/)) ? value.substring(0, 10) : value;
+        }
+        
+        function createDetailList(records) {
+            if (!records || records.length === 0) return '';
+            let listHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">`;
+            const record = records[0]; 
+            for (const key in record) {
+                const value = formatDateString(String(record[key]).trim());
+                if (value && value !== '\u0000') {
+                    const fKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    listHtml += `<div class="detail-card"><strong class="block text-xs text-gray-500">${fKey}</strong><span class="text-gray-900">${value}</span></div>`;
+                }
+            }
+            return listHtml + `</div>`;
+        }
+
+        function createHtmlTable(records) {
+            if (!records || records.length === 0) return '<p class="text-sm text-gray-500">No records found.</p>';
+            const headers = Object.keys(records[0]);
+            let table = '<div class="overflow-x-auto table-container"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr>';
+            headers.forEach(h => table += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${h.replace(/_/g, ' ')}</th>`);
+            table += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+            records.forEach(r => {
+                table += '<tr>';
+                headers.forEach(h => table += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">${formatDateString(r[h])}</td>`);
+                table += '</tr>';
+            });
+            return table + '</tbody></table></div>';
+        }
+
+        function drawSketch(lrsn, canvas) {
+            const vectors = (dataCache['Sketch_Vector'] || []).filter(v => v.lrsn === lrsn || v.LRSN === lrsn);
+            if (vectors.length === 0) return;
+            const ctx = canvas.getContext('2d');
+            const padding = 40;
+            const segments = vectors.reduce((acc, v) => {
+                acc[v.segment_id] = acc[v.segment_id] || [];
+                acc[v.segment_id].push(v);
+                return acc;
+            }, {});
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity, cX = 0, cY = 0;
+            Object.values(segments).forEach(sVecs => {
+                cX = 0; cY = 0;
+                sVecs.forEach(v => {
+                    const run = parseFloat(v.run) || 0, rise = parseFloat(v.rise) || 0;
+                    minX = Math.min(minX, cX); minY = Math.min(minY, cY);
+                    maxX = Math.max(maxX, cX); maxY = Math.max(maxY, cY);
+                    cX += run; cY -= rise;
+                    minX = Math.min(minX, cX); minY = Math.min(minY, cY);
+                    maxX = Math.max(maxX, cX); maxY = Math.max(maxY, cY);
+                });
+            });
+            const sketchW = maxX - minX, sketchH = maxY - minY;
+            if (sketchW === 0 || sketchH === 0) return;
+            const scale = Math.min((canvas.width - padding * 2) / sketchW, (canvas.height - padding * 2) / sketchH);
+            const offX = (canvas.width - sketchW * scale) / 2 - minX * scale;
+            const offY = (canvas.height - sketchH * scale) / 2 - minY * scale;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 2; ctx.font = '10px Inter'; ctx.fillStyle = '#4b5563';
+            Object.values(segments).forEach(sVecs => {
+                cX = 0; cY = 0;
+                ctx.beginPath();
+                ctx.moveTo(offX, offY);
+                sVecs.forEach(v => {
+                    const run = parseFloat(v.run) || 0, rise = parseFloat(v.rise) || 0, len = parseFloat(v.vector_length) || 0;
+                    const sX = cX * scale + offX, sY = cY * scale + offY;
+                    cX += run; cY -= rise;
+                    const eX = cX * scale + offX, eY = cY * scale + offY;
+                    ctx.lineTo(eX, eY);
+                    if (len > 0) {
+                        const mX = (sX + eX) / 2, mY = (sY + eY) / 2, ang = Math.atan2(eY - sY, eX - sX);
+                        const lOffX = Math.sin(ang) * 10, lOffY = -Math.cos(ang) * 10;
+                        ctx.save();
+                        ctx.translate(mX + lOffX, mY + lOffY);
+                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                        ctx.fillText(len.toFixed(1), 0, 0);
+                        ctx.restore();
+                    }
+                });
+                ctx.stroke();
+            });
+        }
+
+        function showLoading(message) {
+            statusMessage.innerHTML = `<div class="flex flex-col items-center gap-4"><div class="loader h-12 w-12 rounded-full border-4 border-gray-200"></div><p class="text-gray-500 text-lg">${message}</p></div>`;
+            statusMessage.classList.remove('hidden');
+            tableWrapper.classList.add('hidden');
+        }
+
+        function showError(message) {
+            statusMessage.innerHTML = `<p class="text-red-600 bg-red-100 p-4 rounded-md">${message}</p>`;
+        }
+        
+        function updateTableInfo(startIndex, endIndex) {
+            const end = Math.min(endIndex, filteredData.length);
+            const start = filteredData.length > 0 ? startIndex + 1 : 0;
+            tableInfo.textContent = `Showing ${start} to ${end} of ${filteredData.length} properties.`;
+        }
+
+        initialize();
+    });
+    </script>
+</body>
+</html>
