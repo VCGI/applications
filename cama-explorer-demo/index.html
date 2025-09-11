@@ -107,7 +107,7 @@
                 </div>
 
                 <div class="mt-8 text-left text-xs text-gray-500 border-t pt-4">
-                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
+                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
                 </div>
             </div>
              <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
@@ -203,6 +203,25 @@
                     "esri/views/MapView",
                     "esri/layers/FeatureLayer"
                 ], (Map, MapView, FeatureLayer) => {
+                    const parcelLabelClass = {
+                        // autocasts as new LabelClass()
+                        symbol: {
+                            type: "text", // autocasts as new TextSymbol()
+                            color: "#fff",
+                            haloColor: "#333333",
+                            haloSize: "1pt",
+                            font: {
+                                // autocast as new Font()
+                                family: "Arial",
+                                size: "8pt",
+                                weight: "bold"
+                            }
+                        },
+                        labelPlacement: "always-horizontal",
+                        labelExpressionInfo: {
+                            expression: "$feature.SPAN"
+                        }
+                    };
                     const parcelRenderer = {
                         type: "simple",
                         symbol: {
@@ -217,7 +236,8 @@
                         definitionExpression: "TOWN = 'BARRE TOWN'",
                         outFields: ["SPAN"],
                         popupEnabled: false, 
-                        renderer: parcelRenderer
+                        renderer: parcelRenderer,
+                        labelingInfo: [parcelLabelClass]
                     });
                     const map = new Map({ basemap: "satellite", layers: [parcelLayer] });
                     mapView = new MapView({
@@ -233,41 +253,6 @@
                         }
                     });
                     mapView.when(() => {
-                        let lastHoveredGraphic = null;
-                        mapView.on("pointer-move", (event) => {
-                            mapView.hitTest(event).then((response) => {
-                                const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
-                                if (parcelResult) {
-                                    if (lastHoveredGraphic && lastHoveredGraphic.uid === parcelResult.graphic.uid) return;
-                                    lastHoveredGraphic = parcelResult.graphic;
-                                    document.getElementById('map-view').style.cursor = 'pointer';
-                                    const taxId = parcelResult.graphic.attributes.SPAN;
-                                    let popupContent = `SPAN: ${taxId}`;
-                                    const taxIdStr = String(taxId).trim();
-                                    const pRec = (dataCache['Parcel_Main'] || []).find(p => {
-                                        const rTaxId = p.tax_bill_id || p.TAX_BILL_ID;
-                                        return rTaxId !== undefined && String(rTaxId).trim() === taxIdStr;
-                                    });
-                                    if (pRec) {
-                                        const lrsn = pRec.lrsn || pRec.LRSN;
-                                        if (lrsn) {
-                                            const lrsnStr = String(lrsn);
-                                            const aRec = masterData.find(p => (String(p.LRSN) === lrsnStr || String(p.lrsn) === lrsnStr));
-                                            if (aRec && aRec.FreeFormAddr) {
-                                                popupContent = `<strong>${aRec.FreeFormAddr}</strong><br><span class='text-gray-500 text-xs'>SPAN: ${taxId}</span>`;
-                                            }
-                                        }
-                                    }
-                                    mapView.popup.open({ title: "Parcel Information", content: popupContent, location: parcelResult.mapPoint });
-                                } else {
-                                    if (lastHoveredGraphic) {
-                                        mapView.popup.close();
-                                        lastHoveredGraphic = null;
-                                        document.getElementById('map-view').style.cursor = 'default';
-                                    }
-                                }
-                            });
-                        });
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 if (highlightHandle) highlightHandle.remove();
@@ -450,7 +435,6 @@
                 }
             }
 
-            // --- START: Modified Number of Structures calculation ---
             const improvements = dataCache['Improvements'] || [];
             const ciBuildings = dataCache['CI_Building'] || [];
 
