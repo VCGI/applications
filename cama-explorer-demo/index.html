@@ -443,7 +443,12 @@
             const relatedCiBuildings = ciBuildings.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
 
             const numImprovements = relatedImprovements.length + relatedCiBuildings.length;
-            const dwellings = relatedImprovements.filter(r => r.imp_type === 'DWELL');
+            
+            // --- MODIFICATION START ---
+            const dwellingTypes = ['DWELL', 'MHOME', 'APARTRES', 'TRAILER', 'MHPARK2'];
+            const dwellings = relatedImprovements.filter(r => dwellingTypes.includes(r.imp_type));
+            // --- MODIFICATION END ---
+
             const numDwellings = dwellings.length;
 
             let yearBuilt = 'N/A';
