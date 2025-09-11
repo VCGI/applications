@@ -436,6 +436,12 @@
                 }
             }
 
+            // --- MODIFICATION START: Get Legal Description and Acres ---
+            const legalRecord = (dataCache['Legal'] || []).find(r => r.lrsn === lrsn || r.LRSN === lrsn);
+            const legalDesc = legalRecord ? (legalRecord.leg_description || legalRecord.LEG_DESCRIPTION || 'N/A') : 'N/A';
+            const acres = parcelMainRecord ? (parcelMainRecord.legal_acreage || 'N/A') : 'N/A';
+            // --- MODIFICATION END ---
+            
             const improvements = dataCache['Improvements'] || [];
             const ciBuildings = dataCache['CI_Building'] || [];
 
@@ -444,10 +450,8 @@
 
             const numImprovements = relatedImprovements.length + relatedCiBuildings.length;
 
-            // --- PERSISTENT CHANGE: Dwelling calculation updated ---
             const dwellingTypes = ['DWELL', 'MHOME', 'APARTRES', 'MHPARK2'];
             const dwellings = relatedImprovements.filter(r => dwellingTypes.includes(r.imp_type));
-            // --- END PERSISTENT CHANGE ---
 
             const numDwellings = dwellings.length;
 
@@ -461,8 +465,11 @@
                 yearBuilt = relatedImprovements[0].year_built;
                 effYearBuilt = relatedImprovements[0].eff_year_built;
             }
-
+            
+            // --- MODIFICATION START: Add new fields to details card HTML ---
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
+            const legalDescHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Description:</strong> ${legalDesc}</p>`;
+            const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Acres:</strong> ${acres}</p>`;
             const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
             const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${numDwellings}</p>`;
             const yearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Year Built:</strong> ${yearBuilt}</p>`;
@@ -472,6 +479,8 @@
                             <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
                             <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
                             ${propertyTypeHtml}
+                            ${legalDescHtml}
+                            ${acresHtml}
                             ${numImprovementsHtml}
                             ${dwellingsHtml}
                             ${yearBuiltHtml}
@@ -479,6 +488,7 @@
                             <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
                         </div>`;
+            // --- MODIFICATION END ---
 
             html += `<div id="detail-nav" class="my-4 p-4 bg-gray-100 rounded-lg shadow-inner sticky top-0 z-10"><h4 class="text-sm font-semibold mb-2 text-gray-600">Quick Navigation</h4><div class="flex flex-wrap gap-2">`;
             for (const group in RELATED_FILES) {
