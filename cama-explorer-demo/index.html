@@ -220,7 +220,8 @@
                         labelPlacement: "always-horizontal",
                         labelExpressionInfo: {
                             expression: "$feature.SPAN"
-                        }
+                        },
+                        minScale: 5000 // Only show labels at zoom level 18 and above
                     };
                     const parcelRenderer = {
                         type: "simple",
@@ -442,12 +443,25 @@
             const relatedCiBuildings = ciBuildings.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
 
             const numImprovements = relatedImprovements.length + relatedCiBuildings.length;
-            const numDwellings = relatedImprovements.filter(r => r.imp_type === 'DWELL').length;
+            const dwellings = relatedImprovements.filter(r => r.imp_type === 'DWELL');
+            const numDwellings = dwellings.length;
+
+            let yearBuilt = 'N/A';
+            let effYearBuilt = 'N/A';
+
+            if (dwellings.length > 0) {
+                yearBuilt = dwellings[0].year_built;
+                effYearBuilt = dwellings[0].eff_year_built;
+            } else if (relatedImprovements.length > 0) {
+                yearBuilt = relatedImprovements[0].year_built;
+                effYearBuilt = relatedImprovements[0].eff_year_built;
+            }
 
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
             const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
             const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${numDwellings}</p>`;
-
+            const yearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Year Built:</strong> ${yearBuilt}</p>`;
+            const effYearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Effective Year Built:</strong> ${effYearBuilt}</p>`;
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
@@ -455,6 +469,8 @@
                             ${propertyTypeHtml}
                             ${numImprovementsHtml}
                             ${dwellingsHtml}
+                            ${yearBuiltHtml}
+                            ${effYearBuiltHtml}
                             <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
                         </div>`;
