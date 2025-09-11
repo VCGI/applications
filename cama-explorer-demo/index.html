@@ -107,7 +107,7 @@
                 </div>
 
                 <div class="mt-8 text-left text-xs text-gray-500 border-t pt-4">
-                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
+                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
                 </div>
             </div>
              <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
@@ -457,17 +457,20 @@
             const relatedImprovements = improvements.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
             const relatedCiBuildings = ciBuildings.filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
 
-            const numStructures = relatedImprovements.length + relatedCiBuildings.length;
-            // --- END: Modified Number of Structures calculation ---
+            const numImprovements = relatedImprovements.length + relatedCiBuildings.length;
+            const numDwellings = relatedImprovements.filter(r => r.imp_type === 'DWELL').length;
 
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
-            const numStructuresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Structures:</strong> ${numStructures}</p>`;
+            const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
+            const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${numDwellings}</p>`;
+
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
                             <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
                             ${propertyTypeHtml}
-                            ${numStructuresHtml}
+                            ${numImprovementsHtml}
+                            ${dwellingsHtml}
                             <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
                         </div>`;
