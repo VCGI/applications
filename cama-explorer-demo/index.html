@@ -464,10 +464,19 @@
                 effYearBuilt = relatedImprovements[0].eff_year_built;
             }
             
-            // --- MODIFICATION START: Calculate residential areas ---
             const rFloorRecords = (dataCache['R_Floor'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
-            const finishedArea = rFloorRecords.reduce((sum, record) => sum + (parseFloat(record.finished_living_area) || 0), 0);
-            const totalArea = rFloorRecords.reduce((sum, record) => sum + (parseFloat(record.base_area) || 0), 0);
+            
+            // --- MODIFICATION START: Corrected calculation for residential areas ---
+            const finishedArea = rFloorRecords.reduce((sum, record) => {
+                const area = record.finished_living_area || record.FINISHED_LIVING_AREA;
+                return sum + (parseFloat(area) || 0);
+            }, 0);
+            
+            const totalArea = rFloorRecords.reduce((sum, record) => {
+                const area = record.base_area || record.BASE_AREA;
+                return sum + (parseFloat(area) || 0);
+            }, 0);
+            // --- MODIFICATION END ---
             
             let finishedAreaHtml = '';
             if (finishedArea > 0) {
@@ -477,7 +486,6 @@
             if (totalArea > 0) {
                 totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
             }
-            // --- MODIFICATION END ---
             
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
             const legalDescHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Description:</strong> ${legalDesc}</p>`;
