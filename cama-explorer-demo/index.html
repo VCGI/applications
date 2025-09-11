@@ -436,11 +436,9 @@
                 }
             }
 
-            // --- MODIFICATION START: Get Legal Description and Acres ---
             const legalRecord = (dataCache['Legal'] || []).find(r => r.lrsn === lrsn || r.LRSN === lrsn);
             const legalDesc = legalRecord ? (legalRecord.leg_description || legalRecord.LEG_DESCRIPTION || 'N/A') : 'N/A';
             const acres = parcelMainRecord ? (parcelMainRecord.legal_acreage || 'N/A') : 'N/A';
-            // --- MODIFICATION END ---
             
             const improvements = dataCache['Improvements'] || [];
             const ciBuildings = dataCache['CI_Building'] || [];
@@ -466,7 +464,21 @@
                 effYearBuilt = relatedImprovements[0].eff_year_built;
             }
             
-            // --- MODIFICATION START: Add new fields to details card HTML ---
+            // --- MODIFICATION START: Calculate residential areas ---
+            const rFloorRecords = (dataCache['R_Floor'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+            const finishedArea = rFloorRecords.reduce((sum, record) => sum + (parseFloat(record.finished_living_area) || 0), 0);
+            const totalArea = rFloorRecords.reduce((sum, record) => sum + (parseFloat(record.base_area) || 0), 0);
+            
+            let finishedAreaHtml = '';
+            if (finishedArea > 0) {
+                finishedAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Finished Residential Area:</strong> ${finishedArea.toLocaleString()} sq ft</p>`;
+            }
+            let totalAreaHtml = '';
+            if (totalArea > 0) {
+                totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
+            }
+            // --- MODIFICATION END ---
+            
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
             const legalDescHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Description:</strong> ${legalDesc}</p>`;
             const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Acres:</strong> ${acres}</p>`;
@@ -485,10 +497,11 @@
                             ${dwellingsHtml}
                             ${yearBuiltHtml}
                             ${effYearBuiltHtml}
+                            ${finishedAreaHtml}
+                            ${totalAreaHtml}
                             <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
                         </div>`;
-            // --- MODIFICATION END ---
 
             html += `<div id="detail-nav" class="my-4 p-4 bg-gray-100 rounded-lg shadow-inner sticky top-0 z-10"><h4 class="text-sm font-semibold mb-2 text-gray-600">Quick Navigation</h4><div class="flex flex-wrap gap-2">`;
             for (const group in RELATED_FILES) {
