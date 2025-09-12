@@ -443,13 +443,30 @@
             const acres = parcelMainRecord ? (parcelMainRecord.legal_acreage || 'N/A') : 'N/A';
             
             const relatedImprovements = (dataCache['Improvements'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+            
+            // --- MODIFICATION START: Reverted Number of Improvements calculation ---
             const numImprovements = relatedImprovements.length;
 
-            // --- Dwelling calculation logic ---
+            let numCommercialBuildings = 0;
+            const commercialResidentialCodes = ['333', '337'];
+
+            if (!commercialResidentialCodes.includes(propClassCodeStr)) {
+                const ciRecords = (dataCache['CI_Building'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+                if (ciRecords.length > 0) {
+                    const extensions = new Set(ciRecords.map(r => r.extension || r.EXTENSION));
+                    numCommercialBuildings = extensions.size;
+                }
+            }
+            
+            let commercialBuildingHtml = '';
+            if (numCommercialBuildings > 0) {
+                commercialBuildingHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Commercial Buildings:</strong> ${numCommercialBuildings}</p>`;
+            }
+            // --- MODIFICATION END ---
+
             let calculatedDwellings = 0;
             let isUncertain = false;
-
-            if (relatedImprovements.length > 0) {
+            if (relatedImprovements.length > 0 || numCommercialBuildings > 0) {
                 const ciRecords = (dataCache['CI_Building'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
                 const directUnitCount = ciRecords.reduce((sum, record) => {
                     const units = record.number_units || record.NUMBER_UNITS;
@@ -501,26 +518,17 @@
             }
             const numDwellings = calculatedDwellings;
 
-            // --- MODIFICATION START: Refined check for duplex/condo evidence ---
             let isCondoOrDuplex = false;
             let footnoteHtml = '';
-            
-            // Define property types that are explicitly single-unit.
             const singleUnitPropClassCodes = ['101', '150', '201', '250'];
-
-            // Check 1: Non-zero parent_lrsn, but only if it's NOT a known single-unit type.
             const parentLrsn = parcelMainRecord ? (parcelMainRecord.parent_lrsn || parcelMainRecord.PARENT_LRSN) : null;
             if (parentLrsn && String(parentLrsn).trim() !== '0' && String(parentLrsn).trim() !== '' && !singleUnitPropClassCodes.includes(propClassCodeStr)) {
                 isCondoOrDuplex = true;
             }
-            
-            // Check 2: Condo-related property class codes.
             const condoPropClassCodes = ['130', '131', '132', '135', '230', '231', '232', '235'];
             if (condoPropClassCodes.includes(propClassCodeStr)) {
                 isCondoOrDuplex = true;
             }
-
-            // Check 3: "Duplex" in legal description.
             if (legalDesc && legalDesc.toLowerCase().includes('duplex')) {
                 isCondoOrDuplex = true;
             }
@@ -530,7 +538,6 @@
             if (isCondoOrDuplex) {
                 footnoteHtml = `<p class="mt-2 text-xs text-gray-500 italic">*Indicates a duplex or condominium where the unit count may be undercounted in the source data.</p>`;
             }
-            // --- MODIFICATION END ---
 
             let yearBuilt = 'N/A';
             let effYearBuilt = 'N/A';
@@ -577,6 +584,7 @@
                             ${legalDescHtml}
                             ${acresHtml}
                             ${numImprovementsHtml}
+                            ${commercialBuildingHtml}
                             ${dwellingsHtml}
                             ${yearBuiltHtml}
                             ${effYearBuiltHtml}
