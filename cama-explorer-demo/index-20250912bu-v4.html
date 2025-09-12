@@ -121,7 +121,6 @@
     </div>
     
     <script src="https://js.arcgis.com/4.29/"></script>
-<script src="https://js.arcgis.com/4.29/"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
@@ -139,18 +138,6 @@
             "Land Details": ["Land_Site", "Land_Detail", "Land_Influence"],
             "Neighborhood": ["Nbhd_Main", "Nbhd_Res", "Nbhd_Com", "Nbhd_HF", "Nbhd_Land", "Nbhd_Land_Detail"],
             "Sketches & Images": ["Sketch_Main", "Sketch_Vector", "Sketch_Segment", "Sketch_OB", "Sketch_Notes", "Sketch_Labels", "Image_Directory"],
-        };
-        const SECTION_ICONS = {
-            "Property Details": "fa-circle-info",
-            "Parcel & Legal": "fa-file-contract",
-            "Valuation": "fa-file-invoice-dollar",
-            "Sales & Transfers": "fa-handshake",
-            "Buildings & Improvements": "fa-building",
-            "Commercial Buildings": "fa-city",
-            "Residential Buildings": "fa-house",
-            "Land Details": "fa-sign-hanging",
-            "Neighborhood": "fa-tree-city",
-            "Sketches & Images": "fa-compass-drafting"
         };
         const USE_CARD_VIEW = ['Parcel_Main', 'Land_Detail', 'Land_Site', 'Nbhd_Main', 'Transfer'];
         const ROWS_PER_PAGE = 10;
@@ -217,16 +204,24 @@
                     "esri/layers/FeatureLayer"
                 ], (Map, MapView, FeatureLayer) => {
                     const parcelLabelClass = {
+                        // autocasts as new LabelClass()
                         symbol: {
-                            type: "text",
+                            type: "text", // autocasts as new TextSymbol()
                             color: "#fff",
                             haloColor: "#333333",
                             haloSize: "1pt",
-                            font: { family: "Arial", size: "8pt", weight: "bold" }
+                            font: {
+                                // autocast as new Font()
+                                family: "Arial",
+                                size: "8pt",
+                                weight: "bold"
+                            }
                         },
                         labelPlacement: "always-horizontal",
-                        labelExpressionInfo: { expression: "$feature.SPAN" },
-                        minScale: 5000
+                        labelExpressionInfo: {
+                            expression: "$feature.SPAN"
+                        },
+                        minScale: 5000 // Only show labels at zoom level 18 and above
                     };
                     const parcelRenderer = {
                         type: "simple",
@@ -253,7 +248,7 @@
                         zoom: 13,
                         highlightOptions: {
                             color: "#c3d600",
-                            fillOpacity: 0.5
+                            fillOpacity: 0.4
                         },
                         popup: {
                             dockEnabled: false,
@@ -418,7 +413,7 @@
         }
 
         // --- HIERARCHICAL VIEW LOGIC ---
-        function showDetailView(lrsn) {
+       function showDetailView(lrsn) {
             const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => (p.lrsn === lrsn || p.LRSN === lrsn));
             if (parcelMainRecord) {
                 const taxId = parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID;
@@ -540,19 +535,25 @@
                 footnoteHtml = `<p class="mt-2 text-xs text-gray-500 italic">*Indicates a duplex or condominium where the unit count may be undercounted in the source data.</p>`;
             }
             
+            // --- MODIFICATION START: Conditionally create Year Built HTML ---
             let yearBuiltHtml = '';
             let effYearBuiltHtml = '';
+
             if (numDwellings > 0) {
                 let yearBuilt = 'N/A';
                 let effYearBuilt = 'N/A';
+                
+                // Find a primary residential improvement to source the year from.
                 const residentialImprovements = relatedImprovements.filter(r => ['DWELL', 'APARTRES', 'MHOME'].includes(r.imp_type));
                 if (residentialImprovements.length > 0) {
                     yearBuilt = residentialImprovements[0].year_built;
                     effYearBuilt = residentialImprovements[0].eff_year_built;
                 }
+                
                 yearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Year Built:</strong> ${yearBuilt}</p>`;
                 effYearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Effective Year Built:</strong> ${effYearBuilt}</p>`;
             }
+            // --- MODIFICATION END ---
             
             const rFloorRecords = (dataCache['R_Floor'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
             const finishedArea = rFloorRecords.reduce((sum, record) => {
@@ -573,8 +574,6 @@
                 totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
             }
             
-            // --- MODIFICATION START: Add icons to headers ---
-            const propertyDetailsIcon = SECTION_ICONS["Property Details"];
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
             const legalDescHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Description:</strong> ${legalDesc}</p>`;
             const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Acres:</strong> ${acres}</p>`;
@@ -582,9 +581,7 @@
             const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${uncertaintyMarker}${numDwellings.toLocaleString()}${condoMarker}</p>`;
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
-                            <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-4">
-                                <i class="fa-solid ${propertyDetailsIcon} mr-3" style="color: #003300;"></i>Property Details
-                            </h2>
+                            <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
                             <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
                             ${propertyTypeHtml}
                             ${legalDescHtml}
@@ -610,13 +607,7 @@
 
             for (const group in RELATED_FILES) {
                 const sectionId = group.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-                const iconClass = SECTION_ICONS[group] || 'fa-question-circle';
-                html += `<section id="${sectionId}" class="related-section bg-white p-6 rounded-lg shadow-md mt-4 scroll-mt-24">
-                            <h3 class="text-xl font-semibold text-gray-800 flex items-center">
-                                <i class="fa-solid ${iconClass} mr-3" style="color: #003300;"></i>${group}
-                            </h3>`;
-                // --- MODIFICATION END ---
-                
+                html += `<section id="${sectionId}" class="related-section bg-white p-6 rounded-lg shadow-md mt-4 scroll-mt-24"><h3 class="text-xl font-semibold text-gray-800">${group}</h3>`;
                 let groupHasData = false;
                 if (group === "Sketches & Images") {
                     if ((dataCache['Sketch_Vector'] || []).some(r => r.LRSN === lrsn || r.lrsn === lrsn)) {
