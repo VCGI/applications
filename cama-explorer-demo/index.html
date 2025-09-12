@@ -413,7 +413,7 @@
         }
 
         // --- HIERARCHICAL VIEW LOGIC ---
-        function showDetailView(lrsn) {
+       function showDetailView(lrsn) {
             const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => (p.lrsn === lrsn || p.LRSN === lrsn));
             if (parcelMainRecord) {
                 const taxId = parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID;
@@ -443,13 +443,10 @@
             const acres = parcelMainRecord ? (parcelMainRecord.legal_acreage || 'N/A') : 'N/A';
             
             const relatedImprovements = (dataCache['Improvements'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
-            
-            // --- MODIFICATION START: Reverted Number of Improvements calculation ---
             const numImprovements = relatedImprovements.length;
 
             let numCommercialBuildings = 0;
             const commercialResidentialCodes = ['333', '337'];
-
             if (!commercialResidentialCodes.includes(propClassCodeStr)) {
                 const ciRecords = (dataCache['CI_Building'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
                 if (ciRecords.length > 0) {
@@ -462,7 +459,6 @@
             if (numCommercialBuildings > 0) {
                 commercialBuildingHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Commercial Buildings:</strong> ${numCommercialBuildings}</p>`;
             }
-            // --- MODIFICATION END ---
 
             let calculatedDwellings = 0;
             let isUncertain = false;
@@ -538,17 +534,26 @@
             if (isCondoOrDuplex) {
                 footnoteHtml = `<p class="mt-2 text-xs text-gray-500 italic">*Indicates a duplex or condominium where the unit count may be undercounted in the source data.</p>`;
             }
+            
+            // --- MODIFICATION START: Conditionally create Year Built HTML ---
+            let yearBuiltHtml = '';
+            let effYearBuiltHtml = '';
 
-            let yearBuilt = 'N/A';
-            let effYearBuilt = 'N/A';
-            const dwellingsForYear = relatedImprovements.filter(r => (r.imp_type === 'DWELL' || r.imp_type === 'APARTRES'));
-            if (dwellingsForYear.length > 0) {
-                yearBuilt = dwellingsForYear[0].year_built;
-                effYearBuilt = dwellingsForYear[0].eff_year_built;
-            } else if (relatedImprovements.length > 0) {
-                yearBuilt = relatedImprovements[0].year_built;
-                effYearBuilt = relatedImprovements[0].eff_year_built;
+            if (numDwellings > 0) {
+                let yearBuilt = 'N/A';
+                let effYearBuilt = 'N/A';
+                
+                // Find a primary residential improvement to source the year from.
+                const residentialImprovements = relatedImprovements.filter(r => ['DWELL', 'APARTRES', 'MHOME'].includes(r.imp_type));
+                if (residentialImprovements.length > 0) {
+                    yearBuilt = residentialImprovements[0].year_built;
+                    effYearBuilt = residentialImprovements[0].eff_year_built;
+                }
+                
+                yearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Year Built:</strong> ${yearBuilt}</p>`;
+                effYearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Effective Year Built:</strong> ${effYearBuilt}</p>`;
             }
+            // --- MODIFICATION END ---
             
             const rFloorRecords = (dataCache['R_Floor'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
             const finishedArea = rFloorRecords.reduce((sum, record) => {
@@ -574,8 +579,6 @@
             const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Acres:</strong> ${acres}</p>`;
             const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
             const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${uncertaintyMarker}${numDwellings.toLocaleString()}${condoMarker}</p>`;
-            const yearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Year Built:</strong> ${yearBuilt}</p>`;
-            const effYearBuiltHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Effective Year Built:</strong> ${effYearBuilt}</p>`;
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900">Property Details</h2>
