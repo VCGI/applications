@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VT CAMA Sample Explorer</title>
+    <title>Vermont CAMA Sample Viewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -66,7 +66,7 @@
         <div class="w-3/5 h-screen overflow-y-auto relative" id="left-pane">
             <div class="container mx-auto p-4 sm:p-6 lg:p-8">
                 <header class="mb-8 text-left">
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Vermont CAMA Sample Explorer</h1>
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Vermont CAMA Sample Viewer</h1>
                     <p class="mt-2 text-md text-gray-600">Click a parcel on the map or search below to explore property data. <b>For demo purposes only.</b></p>
                 </header>
 
@@ -77,7 +77,9 @@
                     </div>
 
                     <div class="bg-white p-4 rounded-lg shadow-md mb-6">
-                        <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Search by Address or LRSN</label>
+                        <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="fa-solid fa-magnifying-glass mr-2" style="color: #003300;"></i>Search by Address or LRSN
+                        </label>
                         <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#003300] focus:border-[#003300]">
                     </div>
 
@@ -85,7 +87,9 @@
                         <div id="status-message" class="flex items-center justify-center h-full"></div>
                         <div id="table-wrapper" class="hidden">
                             <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                                <h2 class="text-xl font-semibold text-gray-800">Properties</h2>
+                                <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                                    <i class="fa-solid fa-sign-hanging mr-3" style="color: #003300;"></i>Properties
+                                </h2>
                                 <div id="table-info" class="text-sm text-gray-600"></div>
                             </div>
                             <div class="overflow-x-auto table-container">
@@ -121,7 +125,6 @@
     </div>
     
     <script src="https://js.arcgis.com/4.29/"></script>
-<script src="https://js.arcgis.com/4.29/"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
@@ -253,7 +256,7 @@
                         zoom: 13,
                         highlightOptions: {
                             color: "#c3d600",
-                            fillOpacity: 0.5
+                            fillOpacity: 0.4
                         },
                         popup: {
                             dockEnabled: false,
@@ -573,7 +576,6 @@
                 totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
             }
             
-            // --- MODIFICATION START: Add icons to headers ---
             const propertyDetailsIcon = SECTION_ICONS["Property Details"];
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
             const legalDescHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Description:</strong> ${legalDesc}</p>`;
@@ -615,7 +617,6 @@
                             <h3 class="text-xl font-semibold text-gray-800 flex items-center">
                                 <i class="fa-solid ${iconClass} mr-3" style="color: #003300;"></i>${group}
                             </h3>`;
-                // --- MODIFICATION END ---
                 
                 let groupHasData = false;
                 if (group === "Sketches & Images") {
