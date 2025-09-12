@@ -447,77 +447,61 @@
             const relatedImprovements = (dataCache['Improvements'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
             const numImprovements = relatedImprovements.length;
 
-            // --- MODIFICATION START: Advanced dwelling calculation with conditional Direct Count ---
+            // --- MODIFICATION START: Advanced dwelling calculation with Property Class ---
             let calculatedDwellings = 0;
             let isUncertain = false;
 
-            // --- Evidence Gathering Phase ---
-            // Source 1: Direct Count from CI_Building
-            const ciRecords = (dataCache['CI_Building'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
-            const directUnitCount = ciRecords.reduce((sum, record) => {
-                const units = record.number_units || record.NUMBER_UNITS;
-                return sum + (parseInt(units) || 0);
-            }, 0);
-
-            // Source 2: Count from Property Class Code
-            const propClassCode = parcelMainRecord ? (parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS) : null;
-            const propClassCodeStr = propClassCode ? String(propClassCode).trim() : '';
-            const multiUnitCodes = {
-                '102': 2, '103': 3, '104': 4,
-                '202': 2, '203': 3, '204': 4
-            };
-            const unitsFromCode = multiUnitCodes[propClassCodeStr] || 0;
-
-            // Source 3: Count from Improvement Types (Estimation)
-            let unitsFromImpType = 0;
-            let isImpTypeEstimate = false;
             if (relatedImprovements.length > 0) {
-                const singleUnitTypes = ['DWELL', 'MHOME', 'MHPARK2'];
-                const multiUnitTypes = ['APARTRES'];
+                // Step 1: Attempt to get a direct unit count from commercial building data first.
+                const ciRecords = (dataCache['CI_Building'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+                const directUnitCount = ciRecords.reduce((sum, record) => {
+                    const units = record.number_units || record.NUMBER_UNITS;
+                    return sum + (parseInt(units) || 0);
+                }, 0);
 
-                relatedImprovements.forEach(imp => {
-                    const impType = imp.imp_type || imp.IMP_TYPE;
-                    if (singleUnitTypes.includes(impType)) {
-                        unitsFromImpType += 1;
-                    } else if (multiUnitTypes.includes(impType)) {
-                        const rFloorRecords = (dataCache['R_Floor'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
-                        const kitchenCount = rFloorRecords.reduce((sum, record) => {
-                            const count = record.kit_count || record.KIT_COUNT;
-                            return sum + (parseInt(count) || 0);
-                        }, 0);
-
-                        if (kitchenCount > 0) {
-                            unitsFromImpType += kitchenCount;
-                            isImpTypeEstimate = true;
-                        } else {
-                            unitsFromImpType += 1;
-                            isImpTypeEstimate = true;
-                        }
-                    }
-                });
-            }
-
-            // --- Decision Making Phase ---
-            const hasOtherEvidence = (unitsFromCode > 0) || (unitsFromImpType > 0);
-
-            if (hasOtherEvidence) {
-                // If other evidence exists, we can trust the hierarchy of data sources.
                 if (directUnitCount > 0) {
                     calculatedDwellings = directUnitCount;
-                    isUncertain = false;
-                } else if (unitsFromCode > 0) {
-                    calculatedDwellings = unitsFromCode;
-                    isUncertain = false;
                 } else {
-                    calculatedDwellings = unitsFromImpType;
-                    isUncertain = isImpTypeEstimate;
-                }
-            } else {
-                // If no other evidence of dwellings exists, ignore the directUnitCount as requested.
-                // The total remains 0 because unitsFromCode and unitsFromImpType are already 0.
-                calculatedDwellings = 0;
-            }
+                    // Step 2: If no direct count, try to derive from the property class code.
+                    const propClassCode = parcelMainRecord ? (parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS) : null;
+                    const propClassCodeStr = propClassCode ? String(propClassCode).trim() : '';
+                    
+                    const multiUnitCodes = {
+                        '102': 2, '103': 3, '104': 4,
+                        '202': 2, '203': 3, '204': 4
+                    };
+                    const unitsFromCode = multiUnitCodes[propClassCodeStr] || 0;
+                    
+                    if (unitsFromCode > 0) {
+                        calculatedDwellings = unitsFromCode;
+                    } else {
+                        // Step 3: If still no count, fall back to analyzing improvement types.
+                        const singleUnitTypes = ['DWELL', 'MHOME', 'MHPARK2'];
+                        const multiUnitTypes = ['APARTRES'];
 
+                        relatedImprovements.forEach(imp => {
+                            const impType = imp.imp_type || imp.IMP_TYPE;
+                            if (singleUnitTypes.includes(impType)) {
+                                calculatedDwellings += 1;
+                            } else if (multiUnitTypes.includes(impType)) {
+                                const rFloorRecords = (dataCache['R_Floor'] || []).filter(r => r.lrsn === lrsn || r.LRSN === lrsn);
+                                const kitchenCount = rFloorRecords.reduce((sum, record) => {
+                                    const count = record.kit_count || record.KIT_COUNT;
+                                    return sum + (parseInt(count) || 0);
+                                }, 0);
+
+                                if (kitchenCount > 0) {
+                                    calculatedDwellings += kitchenCount;
+                                    isUncertain = true; 
+                                } else {
+                                    calculatedDwellings += 1;
+                                    isUncertain = true;
+                                }
+                            }
+                        });
+                    }
+                }
+            }
             const numDwellings = calculatedDwellings;
             // --- MODIFICATION END ---
 
