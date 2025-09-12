@@ -124,7 +124,7 @@
         </div>
     </div>
     
-    <script src="https://js.arcgis.com/4.29/"></script>
+<script src="https://js.arcgis.com/4.29/"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
@@ -228,7 +228,15 @@
                             font: { family: "Arial", size: "8pt", weight: "bold" }
                         },
                         labelPlacement: "always-horizontal",
-                        labelExpressionInfo: { expression: "$feature.SPAN" },
+                        labelExpressionInfo: {
+                            expression: `
+                                if (IsEmpty($feature.SPAN)) {
+                                    return "No SPAN Assigned to Parcel";
+                                } else {
+                                    return $feature.SPAN;
+                                }
+                            `
+                        },
                         minScale: 5000
                     };
                     const parcelRenderer = {
@@ -540,7 +548,7 @@
             const uncertaintyMarker = isUncertain ? '~' : '';
             const condoMarker = isCondoOrDuplex ? '*' : '';
             if (isCondoOrDuplex) {
-                footnoteHtml = `<p class="mt-2 text-xs text-gray-500 italic">*Indicates a duplex, condominium, or site type where the unit count may be undercounted in the source data.</p>`;
+                footnoteHtml = `<p class="mt-2 text-xs text-gray-500 italic">*Indicates a duplex or condominium where the unit count may be undercounted in the source data.</p>`;
             }
             
             let yearBuiltHtml = '';
