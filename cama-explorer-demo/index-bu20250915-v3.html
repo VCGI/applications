@@ -225,91 +225,90 @@
                     "esri/Map",
                     "esri/views/MapView",
                     "esri/layers/FeatureLayer",
-                    "esri/layers/VectorTileLayer", // Added missing module
-                    "esri/Basemap",              // Added missing module
-                    "esri/layers/TileLayer"      // Added missing module
-                ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer) => { // Added corresponding parameters
+                    "esri/layers/VectorTileLayer",
+                    "esri/Basemap",
+                    "esri/layers/TileLayer"
+                ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer) => {
 
-                    // This async function was missing from your file but is needed for the logic
-                    async function setupMap() {
-                        const imageryLayer = new TileLayer({
-                            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-                            title: "Satellite Imagery"
-                        });
+                    const imageryLayer = new TileLayer({
+                        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+                        title: "Satellite Imagery"
+                    });
 
-                        // This was also missing a VectorTileLayer constructor
-                        const labelLayer = new VectorTileLayer({
-                            url: "https://www.arcgis.com/sharing/rest/content/items/ba52238d338745b1a355407ec9df6768/resources/styles/root.json",
-                            title: "Custom Styled Labels"
-                        });
+                    // 1. Create the label layer using the specific style URL you provided
+                    const labelLayer = new VectorTileLayer({
+                        url: "https://www.arcgis.com/sharing/rest/content/items/ba52238d338745b1a355407ec9df6768/resources/styles/root.json",
+                        title: "Custom Styled Labels"
+                    });
 
-                        const satelliteBasemap = new Basemap({
-                            baseLayers: [imageryLayer],
-                            referenceLayers: [labelLayer],
-                            title: "Imagery with Custom Labels",
-                            id: "imagery-with-custom-labels"
-                        });
+                    const satelliteBasemap = new Basemap({
+                        baseLayers: [imageryLayer],
+                        referenceLayers: [labelLayer],
+                        title: "Imagery with Custom Labels",
+                        id: "imagery-with-custom-labels"
+                    });
 
+                    const parcelLabelClass = {
+                        symbol: {
+                            type: "text",
+                            color: "#fff",
+                            haloColor: "#333333",
+                            haloSize: "1pt",
+                            font: { family: "Arial", size: "8pt", weight: "bold" }
+                        },
+                        labelPlacement: "always-horizontal",
+                        labelExpressionInfo: {
+                            expression: `
+                                if (IsEmpty($feature.SPAN)) {
+                                    return "No SPAN Assigned to Parcel";
+                                } else {
+                                    return $feature.SPAN;
+                                }
+                            `
+                        },
+                        minScale: 5000
+                    };
+                    const parcelRenderer = {
+                        type: "simple",
+                        symbol: {
+                            type: "simple-fill",
+                            style: "solid",
+                            color: [0, 0, 0, 0], 
+                            outline: { color: [211, 211, 211, 0.9], width: "1px" }
+                        }
+                    };
+                    parcelLayer = new FeatureLayer({
+                        url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
+                        definitionExpression: "TOWN = 'BARRE TOWN'",
+                        outFields: ["SPAN"],
+                        popupEnabled: false, 
+                        renderer: parcelRenderer,
+                        labelingInfo: [parcelLabelClass]
+                    });
+                    
+                    const map = new Map({ 
+                        basemap: satelliteBasemap, 
+                        layers: [parcelLayer] 
+                    });
 
-                        const parcelLabelClass = {
-                            symbol: {
-                                type: "text",
-                                color: "#fff",
-                                haloColor: "#333333",
-                                haloSize: "1pt",
-                                font: { family: "Arial", size: "8pt", weight: "bold" }
-                            },
-                            labelPlacement: "always-horizontal",
-                            labelExpressionInfo: {
-                                expression: `
-                                    if (IsEmpty($feature.SPAN)) {
-                                        return "No SPAN Assigned to Parcel";
-                                    } else {
-                                        return $feature.SPAN;
-                                    }
-                                `
-                            },
-                            minScale: 5000
-                        };
-                        const parcelRenderer = {
-                            type: "simple",
-                            symbol: {
-                                type: "simple-fill",
-                                style: "solid",
-                                color: [0, 0, 0, 0], 
-                                outline: { color: [211, 211, 211, 0.9], width: "1px" }
-                            }
-                        };
-                        parcelLayer = new FeatureLayer({
-                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
-                            definitionExpression: "TOWN = 'BARRE TOWN'",
-                            outFields: ["SPAN"],
-                            popupEnabled: false, 
-                            renderer: parcelRenderer,
-                            labelingInfo: [parcelLabelClass]
-                        });
+                    mapView = new MapView({
+                        container: "map-view",
+                        map: map,
+                        center: [-72.485, 44.187],
+                        zoom: 13,
+                        highlightOptions: {
+                            color: "#c3d600",
+                            fillOpacity: 0.4
+                        },
+                        popup: {
+                            dockEnabled: false,
+                            dockOptions: { buttonEnabled: false, breakpoint: false },
+                            collapseEnabled: false,
+                            actions: []
+                        }
+                    });
 
-                        // The code you uploaded was missing the new basemap variable
-                        const map = new Map({ basemap: satelliteBasemap, layers: [parcelLayer] });
-
-                        mapView = new MapView({
-                            container: "map-view",
-                            map: map,
-                            center: [-72.485, 44.187],
-                            zoom: 13,
-                            highlightOptions: {
-                                color: "#c3d600",
-                                fillOpacity: 0.4
-                            },
-                            popup: {
-                                dockEnabled: false,
-                                dockOptions: { buttonEnabled: false, breakpoint: false },
-                                collapseEnabled: false,
-                                actions: []
-                            }
-                        });
-                        await mapView.when();
-
+                    mapView.when(() => {
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 if (highlightHandle) highlightHandle.remove();
@@ -344,9 +343,7 @@
                             });
                         });
                         resolve();
-                    }
-                     // Run the async setup function and catch any errors
-                    setupMap().catch(err => reject(err));
+                    }).catch(reject);
                 });
             });
         }
