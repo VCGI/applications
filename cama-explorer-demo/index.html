@@ -168,6 +168,7 @@
         let mapView = null;
         let parcelLayer = null;
         let highlightHandle = null;
+        let e911Layer = null;
 
         // --- DOM ELEMENTS ---
         const searchInput = document.getElementById('search-input');
@@ -225,19 +226,18 @@
                     "esri/Map",
                     "esri/views/MapView",
                     "esri/layers/FeatureLayer",
-                    "esri/layers/VectorTileLayer", // Added missing module
-                    "esri/Basemap",              // Added missing module
-                    "esri/layers/TileLayer"      // Added missing module
-                ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer) => { // Added corresponding parameters
+                    "esri/layers/VectorTileLayer",
+                    "esri/Basemap",
+                    "esri/layers/TileLayer",
+                    "esri/smartMapping/renderers/location"
+                ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer, locationRendererCreator) => {
 
-                    // This async function was missing from your file but is needed for the logic
                     async function setupMap() {
                         const imageryLayer = new TileLayer({
                             url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
                             title: "Satellite Imagery"
                         });
 
-                        // This was also missing a VectorTileLayer constructor
                         const labelLayer = new VectorTileLayer({
                             url: "https://www.arcgis.com/sharing/rest/content/items/ba52238d338745b1a355407ec9df6768/resources/styles/root.json",
                             title: "Custom Styled Labels"
@@ -249,7 +249,6 @@
                             title: "Imagery with Custom Labels",
                             id: "imagery-with-custom-labels"
                         });
-
 
                         const parcelLabelClass = {
                             symbol: {
@@ -288,9 +287,19 @@
                             renderer: parcelRenderer,
                             labelingInfo: [parcelLabelClass]
                         });
+                        
+                        e911Layer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Emergency_ESITE_point_SP_v1/FeatureServer/0",
+                            title: "E-911 Site Locations",
+                            visible: false,
+                            minScale: 4514,
+                            outFields: ["PRIMARYADDRESS"]
+                        });
 
-                        // The code you uploaded was missing the new basemap variable
-                        const map = new Map({ basemap: satelliteBasemap, layers: [parcelLayer] });
+                        const map = new Map({ 
+                            basemap: satelliteBasemap, 
+                            layers: [parcelLayer, e911Layer]
+                        });
 
                         mapView = new MapView({
                             container: "map-view",
@@ -309,6 +318,58 @@
                             }
                         });
                         await mapView.when();
+
+                        const rendererParams = {
+                            layer: e911Layer,
+                            view: mapView,
+                            visualVariables: {
+                                type: "size"
+                            }
+                        };
+                        const rendererResponse = await locationRendererCreator.createRenderer(rendererParams);
+                        
+                        const newSymbol = rendererResponse.renderer.symbol.clone();
+                        newSymbol.color = "#333333";
+                        newSymbol.outline = { color: "#ffffff", width: "1px" };
+                        rendererResponse.renderer.symbol = newSymbol;
+                        e911Layer.renderer = rendererResponse.renderer;
+
+                        const e911LabelClass = {
+                            labelExpressionInfo: {
+                                // *** FIX: Corrected the Arcade expression syntax ***
+                                expression: "$feature.PRIMARYADDRESS" 
+                            },
+                            symbol: {
+                                type: "text",
+                                color: "#2b2b2b",
+                                haloColor: "#d3d3d3",
+                                haloSize: 1,
+                                font: {
+                                    family: "Arial",
+                                    size: 7,
+                                    weight: "bold"
+                                }
+                            },
+                            labelPlacement: "above-center"
+                        };
+                        e911Layer.labelingInfo = [e911LabelClass];
+
+                        const toggleContainer = document.createElement("div");
+                        toggleContainer.innerHTML = `
+                            <label for="e911-toggle" class="flex items-center cursor-pointer p-1">
+                                <input type="checkbox" id="e911-toggle" class="h-4 w-4 rounded border-gray-300 text-[#003300] focus:ring-[#003300]">
+                                <span class="ml-2 text-sm font-medium text-gray-700">Show E911 Address Points</span>
+                            </label>
+                        `;
+                        toggleContainer.className = "esri-widget bg-white shadow-md"; 
+                        mapView.ui.add(toggleContainer, "top-right");
+
+                        const e911Toggle = toggleContainer.querySelector('#e911-toggle');
+                        e911Toggle.addEventListener('change', (event) => {
+                            if (e911Layer) {
+                                e911Layer.visible = event.target.checked;
+                            }
+                        });
 
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
@@ -345,7 +406,6 @@
                         });
                         resolve();
                     }
-                     // Run the async setup function and catch any errors
                     setupMap().catch(err => reject(err));
                 });
             });
