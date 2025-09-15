@@ -212,84 +212,99 @@
         }
 
         // --- MAP LOGIC ---
-// --- MAP LOGIC ---
         async function initializeMap() {
             return new Promise((resolve, reject) => {
                 require([
                     "esri/Map",
                     "esri/views/MapView",
                     "esri/layers/FeatureLayer",
-                    "esri/layers/VectorTileLayer" // 1. Import the VectorTileLayer module
-                ], (Map, MapView, FeatureLayer, VectorTileLayer) => { // 2. Add it to the function parameters
+                    "esri/Basemap",
+                    "esri/layers/TileLayer"
+                ], (Map, MapView, FeatureLayer, Basemap, TileLayer) => {
 
-                    const parcelLabelClass = {
-                        symbol: {
-                            type: "text",
-                            color: "#fff",
-                            haloColor: "#333333",
-                            haloSize: "1pt",
-                            font: { family: "Arial", size: "8pt", weight: "bold" }
-                        },
-                        labelPlacement: "always-horizontal",
-                        labelExpressionInfo: {
-                            expression: `
-                                if (IsEmpty($feature.SPAN)) {
-                                    return "No SPAN Assigned to Parcel";
-                                } else {
-                                    return $feature.SPAN;
+                    // This function now runs asynchronously to load the necessary layers
+                    async function setupMap() {
+                        const imageryLayer = new TileLayer({
+                            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+                            title: "Satellite Imagery"
+                        });
 
-                                }
-                            `
-                        },
-                        minScale: 5000
-                    };
-                    const parcelRenderer = {
-                        type: "simple",
-                        symbol: {
-                            type: "simple-fill",
-                            style: "solid",
-                            color: [0, 0, 0, 0], 
-                            outline: { color: [211, 211, 211, 0.9], width: "1px" }
-                        }
-                    };
-                    parcelLayer = new FeatureLayer({
-                        url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
-                        definitionExpression: "TOWN = 'BARRE TOWN'",
-                        outFields: ["SPAN"],
-                        popupEnabled: false, 
-                        renderer: parcelRenderer,
-                        labelingInfo: [parcelLabelClass]
-                    });
+                        // 1. Load the official "dark-gray-vector" basemap from the API
+                        const darkGrayBasemap = Basemap.fromId("dark-gray-vector");
+                        await darkGrayBasemap.load();
 
-                    // 3. Create the new label layer
-                    const labelLayer = new VectorTileLayer({
-                        url: "https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_HumGeo_Label_Base/VectorTileServer",
-                        title: "Human Geography Labels"
-                    });
+                        // 2. Extract its reference layer (which contains the properly styled dark labels)
+                        const darkLabelLayer = darkGrayBasemap.referenceLayers.getItemAt(0);
 
-                    // 4. Add the parcel layer and the new label layer on top of the satellite basemap
-                    const map = new Map({ 
-                        basemap: "satellite", 
-                        layers: [parcelLayer, labelLayer] // Add labelLayer here
-                    });
+                        // 3. Create our final basemap using the satellite imagery and the extracted dark label layer
+                        const satelliteBasemap = new Basemap({
+                            baseLayers: [imageryLayer],
+                            referenceLayers: [darkLabelLayer],
+                            title: "Imagery with Dark Labels",
+                            id: "imagery-with-dark-labels"
+                        });
 
-                    mapView = new MapView({
-                        container: "map-view",
-                        map: map,
-                        center: [-72.485, 44.187],
-                        zoom: 13,
-                        highlightOptions: {
-                            color: "#c3d600",
-                            fillOpacity: 0.4
-                        },
-                        popup: {
-                            dockEnabled: false,
-                            dockOptions: { buttonEnabled: false, breakpoint: false },
-                            collapseEnabled: false,
-                            actions: []
-                        }
-                    });
-                    mapView.when(() => {
+                        const parcelLabelClass = {
+                            symbol: {
+                                type: "text",
+                                color: "#fff",
+                                haloColor: "#333333",
+                                haloSize: "1pt",
+                                font: { family: "Arial", size: "8pt", weight: "bold" }
+                            },
+                            labelPlacement: "always-horizontal",
+                            labelExpressionInfo: {
+                                expression: `
+                                    if (IsEmpty($feature.SPAN)) {
+                                        return "No SPAN Assigned to Parcel";
+                                    } else {
+                                        return $feature.SPAN;
+                                    }
+                                `
+                            },
+                            minScale: 5000
+                        };
+                        const parcelRenderer = {
+                            type: "simple",
+                            symbol: {
+                                type: "simple-fill",
+                                style: "solid",
+                                color: [0, 0, 0, 0], 
+                                outline: { color: [211, 211, 211, 0.9], width: "1px" }
+                            }
+                        };
+                        parcelLayer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
+                            definitionExpression: "TOWN = 'BARRE TOWN'",
+                            outFields: ["SPAN"],
+                            popupEnabled: false, 
+                            renderer: parcelRenderer,
+                            labelingInfo: [parcelLabelClass]
+                        });
+                        
+                        const map = new Map({ 
+                            basemap: satelliteBasemap, 
+                            layers: [parcelLayer] 
+                        });
+
+                        mapView = new MapView({
+                            container: "map-view",
+                            map: map,
+                            center: [-72.485, 44.187],
+                            zoom: 13,
+                            highlightOptions: {
+                                color: "#c3d600",
+                                fillOpacity: 0.4
+                            },
+                            popup: {
+                                dockEnabled: false,
+                                dockOptions: { buttonEnabled: false, breakpoint: false },
+                                collapseEnabled: false,
+                                actions: []
+                            }
+                        });
+                        await mapView.when();
+
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 if (highlightHandle) highlightHandle.remove();
@@ -324,7 +339,9 @@
                             });
                         });
                         resolve();
-                    }).catch(reject);
+                    }
+                    // Run the async setup function and catch any errors
+                    setupMap().catch(err => reject(err));
                 });
             });
         }
