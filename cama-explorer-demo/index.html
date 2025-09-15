@@ -229,8 +229,9 @@
                     "esri/layers/VectorTileLayer",
                     "esri/Basemap",
                     "esri/layers/TileLayer",
-                    "esri/smartMapping/renderers/location"
-                ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer, locationRendererCreator) => {
+                    "esri/smartMapping/renderers/location",
+                    "esri/widgets/Compass"
+                ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer, locationRendererCreator, Compass) => {
 
                     async function setupMap() {
                         const imageryLayer = new TileLayer({
@@ -319,6 +320,7 @@
                         });
                         await mapView.when();
 
+                        // --- Layer and Renderer Setup (Must complete before adding UI widgets) ---
                         const rendererParams = {
                             layer: e911Layer,
                             view: mapView,
@@ -336,7 +338,6 @@
 
                         const e911LabelClass = {
                             labelExpressionInfo: {
-                                // *** FIX: Corrected the Arcade expression syntax ***
                                 expression: "$feature.PRIMARYADDRESS" 
                             },
                             symbol: {
@@ -353,6 +354,12 @@
                             labelPlacement: "above-center"
                         };
                         e911Layer.labelingInfo = [e911LabelClass];
+
+                        // --- UI Widget Setup (Moved to the end) ---
+                        const compass = new Compass({
+                            view: mapView
+                        });
+                        mapView.ui.add(compass, "top-left");
 
                         const toggleContainer = document.createElement("div");
                         toggleContainer.innerHTML = `
@@ -371,6 +378,7 @@
                             }
                         });
 
+                        // --- Map Event Listeners ---
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 if (highlightHandle) highlightHandle.remove();
@@ -533,7 +541,7 @@
         }
 
         // --- HIERARCHICAL VIEW LOGIC ---
-function showDetailView(lrsn) {
+        function showDetailView(lrsn) {
             const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => (p.lrsn === lrsn || p.LRSN === lrsn));
             if (parcelMainRecord) {
                 const taxId = parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID;
@@ -546,6 +554,10 @@ function showDetailView(lrsn) {
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             const spanId = parcelMainRecord ? (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID || 'N/A') : 'N/A';
             
+            // 1. Get the last_update value
+            const lastUpdateValue = parcelMainRecord ? (parcelMainRecord.last_update || parcelMainRecord.LAST_UPDATE || 'N/A') : 'N/A';
+            const formattedLastUpdate = formatLastUpdateDate(lastUpdateValue);
+
             let typeDescription = "Not Defined"; 
             const propClassCode = parcelMainRecord ? (parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS) : null;
             const propClassCodeStr = propClassCode ? String(propClassCode).trim() : '';
@@ -648,7 +660,6 @@ function showDetailView(lrsn) {
             if (legalDesc && legalDesc.toLowerCase().includes('duplex')) {
                 isCondoOrDuplex = true;
             }
-            // 1. Add Mobile Home Parks (337) to the condition
             if (propClassCodeStr === '337') {
                 isCondoOrDuplex = true;
             }
@@ -656,7 +667,6 @@ function showDetailView(lrsn) {
             const uncertaintyMarker = isUncertain ? '~' : '';
             const condoMarker = isCondoOrDuplex ? '*' : '';
             if (isCondoOrDuplex) {
-                // 2. Update the footnote text
                 footnoteHtml = `<p class="mt-2 text-xs text-gray-500 italic">*Indicates a site type where the unit count may be undercounted in the source data.</p>`;
             }
             
@@ -699,6 +709,9 @@ function showDetailView(lrsn) {
             const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Acres:</strong> ${acres}</p>`;
             const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
             const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${uncertaintyMarker}${numDwellings.toLocaleString()}${condoMarker}</p>`;
+            
+            // 2. Add the new HTML element to the template string
+            const lastUpdateHtml = `<p class="text-sm text-gray-500">LAST UPDATE: ${formattedLastUpdate}</p>`;
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-4">
@@ -717,6 +730,7 @@ function showDetailView(lrsn) {
                             ${totalAreaHtml}
                             <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
+                            ${lastUpdateHtml}
                             ${footnoteHtml}
                         </div>`;
 
@@ -845,6 +859,24 @@ function showDetailView(lrsn) {
         // --- UTILITY FUNCTIONS ---
         function formatDateString(value) {
             return (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}/)) ? value.substring(0, 10) : value;
+        }
+
+        function formatLastUpdateDate(dateString) {
+            if (!dateString || dateString === 'N/A') {
+                return 'N/A';
+            }
+            try {
+                const date = new Date(dateString);
+                // An invalid date's time is NaN
+                if (isNaN(date.getTime())) {
+                    return 'N/A';
+                }
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            } catch (error) {
+                console.error("Could not format date:", dateString, error);
+                return 'N/A';
+            }
         }
         
         function createDetailList(records) {
