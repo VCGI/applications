@@ -10,7 +10,7 @@
 - Ernie Saunders <esaunders@nemrc.com>
 
 **Status**
-> [!ALERT]
+> [!WARNING]
 > Awaiting SoV config of Globalscape FTP for data transfer
 
 ## Tyler Technologies
