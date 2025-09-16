@@ -26,7 +26,7 @@
 
 :+1:
 
-**Software:** Aumentum Valuation (Formerly ProVal)
+**Software:** ProVal or Aumentum Valuation
 
 **Contacts:**
 
