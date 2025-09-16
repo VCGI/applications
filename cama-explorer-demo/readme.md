@@ -52,7 +52,7 @@
 
 **Contacts:**
 - Wayne P <WayneP@catalisgov.com>
-- Pat Santoso <>
+- Pat Santoso <Patrick.Santoso@catalisgov.com>
 
 ## New England Municipal Consultants (NEMC)
 
