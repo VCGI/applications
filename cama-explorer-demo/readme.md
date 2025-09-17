@@ -36,7 +36,7 @@
 
 **Status**
 > [!NOTE]
-> VC sent full sample data for one town (Barre Town) via their own FTP
+> VC sent full sample data for one town (Barre Town) via their own FTP. Still need data dictionary for turning codes into understandable strings.
 
 > [!NOTE]
 > Full sample data is largely useful for purposes of reporting building and property details, can likely be ETL'd or processed as-is
