@@ -10,6 +10,7 @@
 - Ernie Saunders <esaunders@nemrc.com>
 
 **Status**
+
 > [!IMPORTANT]
 > Awaiting SoV config of Globalscape FTP for data transfer
 
@@ -34,7 +35,8 @@
 - William Pleake <William.Pleake@AumentumTech.com>
 - Russ Beaudoin <argivt@msn.com>
 
-**Status**
+**Status:**
+
 > [!NOTE]
 > VC sent full sample data for one town (Barre Town) via their own FTP. Still need data dictionary for turning codes into understandable strings.
 
@@ -54,11 +56,13 @@
 **Software:** Catalis CAMA (Formerly PATRIOT Properties)
 
 **Contacts:**
+
 - Wayne P <WayneP@catalisgov.com>
 - Pat Santoso <Patrick.Santoso@catalisgov.com>
 
 ## New England Municipal Consultants (NEMC)
 
 **Contacts:**
+
 - William Krajeski <bill@nemcvt.com>
 - Matt Krajeski <mattkraj09@gmail.com>
