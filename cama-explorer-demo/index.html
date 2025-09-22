@@ -794,8 +794,11 @@
             html += `<div class="my-4"><canvas id="sketch-canvas" width="500" height="400"></canvas></div>`;
         }
         RELATED_FILES[group].forEach(file => {
-            const relatedRecords = (dataCache[file] || []).filter(r => r.LRSN === lrsn || r.lrsn === lrsn);
-            if (relatedRecords.length > 0) {
+    const relatedRecords = (dataCache[file] || []).filter(r => 
+        (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
+        (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim())
+    );
+    if (relatedRecords.length > 0) {
                 groupHasData = true;
                 html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
                 html += createHtmlTable(relatedRecords);
@@ -804,9 +807,13 @@
     } 
     // --- DEFAULT HANDLING FOR ALL OTHER GROUPS ---
     else {
-        RELATED_FILES[group].forEach(file => {
-            const relatedRecords = (dataCache[file] || []).filter(r => r.LRSN === lrsn || r.lrsn === lrsn);
-            if (relatedRecords.length > 0) {
+        else {
+    RELATED_FILES[group].forEach(file => {
+        const relatedRecords = (dataCache[file] || []).filter(r => 
+            (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
+            (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim())
+        );
+        if (relatedRecords.length > 0) {
                 groupHasData = true;
                 html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
                 html += USE_CARD_VIEW.includes(file) ? createDetailList(relatedRecords) : createHtmlTable(relatedRecords);
@@ -1037,7 +1044,10 @@
             };
 
             // Step 1: Find the parcel's neighborhood ID from Parcel_Main
-            const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => p.lrsn === lrsn || p.LRSN === lrsn);
+            const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => 
+                (p.lrsn && String(p.lrsn).trim() === String(lrsn).trim()) || 
+                (p.LRSN && String(p.LRSN).trim() === String(lrsn).trim())
+            );
             if (!parcelMainRecord) {
                 console.log("Could not find Parcel_Main record for LRSN:", lrsn);
                 return results; // Return empty results
