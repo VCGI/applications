@@ -807,7 +807,6 @@
     } 
     // --- DEFAULT HANDLING FOR ALL OTHER GROUPS ---
     else {
-        else {
     RELATED_FILES[group].forEach(file => {
         const relatedRecords = (dataCache[file] || []).filter(r => 
             (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
