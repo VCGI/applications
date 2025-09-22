@@ -742,31 +742,81 @@
             html += `</div></div>`;
 
             for (const group in RELATED_FILES) {
-                const sectionId = group.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-                const iconClass = SECTION_ICONS[group] || 'fa-question-circle';
-                html += `<section id="${sectionId}" class="related-section bg-white p-6 rounded-lg shadow-md mt-4 scroll-mt-24">
-                            <h3 class="text-xl font-semibold text-gray-800 flex items-center">
-                                <i class="fa-solid ${iconClass} mr-3" style="color: #003300;"></i>${group}
-                            </h3>`;
-                
-                let groupHasData = false;
-                if (group === "Sketches & Images") {
-                    if ((dataCache['Sketch_Vector'] || []).some(r => r.LRSN === lrsn || r.lrsn === lrsn)) {
-                        groupHasData = true;
-                        html += `<div class="my-4"><canvas id="sketch-canvas" width="500" height="400"></canvas></div>`;
-                    }
-                }
-                RELATED_FILES[group].forEach(file => {
-                    const relatedRecords = (dataCache[file] || []).filter(r => r.LRSN === lrsn || r.lrsn === lrsn);
-                    if (relatedRecords.length > 0) {
-                        groupHasData = true;
-                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
-                        html += USE_CARD_VIEW.includes(file) ? createDetailList(relatedRecords) : createHtmlTable(relatedRecords);
-                    }
-                });
-                if (!groupHasData) html += `<p class="text-gray-500">No data available in this category.</p>`;
-                html += `</section>`;
+    const sectionId = group.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+    const iconClass = SECTION_ICONS[group] || 'fa-question-circle';
+    html += `<section id="${sectionId}" class="related-section bg-white p-6 rounded-lg shadow-md mt-4 scroll-mt-24">
+                <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                    <i class="fa-solid ${iconClass} mr-3" style="color: #003300;"></i>${group}
+                </h3>`;
+    
+    let groupHasData = false;
+
+    // --- SPECIAL HANDLING FOR NEIGHBORHOOD ---
+    if (group === "Neighborhood") {
+        const neighborhoodData = getNeighborhoodData(lrsn);
+        
+        if (neighborhoodData.main) {
+            groupHasData = true;
+            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Main</h4>`;
+            // Use your existing createDetailList since it's a single object
+            html += createDetailList([neighborhoodData.main]); 
+        }
+        if (neighborhoodData.res) {
+            groupHasData = true;
+            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Residential Model</h4>`;
+            html += createDetailList([neighborhoodData.res]);
+        }
+        if (neighborhoodData.com) {
+            groupHasData = true;
+            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Commercial Model</h4>`;
+            html += createDetailList([neighborhoodData.com]);
+        }
+        if (neighborhoodData.land) {
+            groupHasData = true;
+            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Land Model</h4>`;
+            html += createDetailList([neighborhoodData.land]);
+        }
+        if (neighborhoodData.landDetails.length > 0) {
+            groupHasData = true;
+            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Land Model Details</h4>`;
+            html += createHtmlTable(neighborhoodData.landDetails);
+        }
+        if (neighborhoodData.hfFactors.length > 0) {
+            groupHasData = true;
+            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Home Site Factors (HF)</h4>`;
+            html += createHtmlTable(neighborhoodData.hfFactors);
+        }
+    } 
+    // --- SPECIAL HANDLING FOR SKETCHES ---
+    else if (group === "Sketches & Images") {
+        if ((dataCache['Sketch_Vector'] || []).some(r => r.LRSN === lrsn || r.lrsn === lrsn)) {
+            groupHasData = true;
+            html += `<div class="my-4"><canvas id="sketch-canvas" width="500" height="400"></canvas></div>`;
+        }
+        RELATED_FILES[group].forEach(file => {
+            const relatedRecords = (dataCache[file] || []).filter(r => r.LRSN === lrsn || r.lrsn === lrsn);
+            if (relatedRecords.length > 0) {
+                groupHasData = true;
+                html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
+                html += createHtmlTable(relatedRecords);
             }
+        });
+    } 
+    // --- DEFAULT HANDLING FOR ALL OTHER GROUPS ---
+    else {
+        RELATED_FILES[group].forEach(file => {
+            const relatedRecords = (dataCache[file] || []).filter(r => r.LRSN === lrsn || r.lrsn === lrsn);
+            if (relatedRecords.length > 0) {
+                groupHasData = true;
+                html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
+                html += USE_CARD_VIEW.includes(file) ? createDetailList(relatedRecords) : createHtmlTable(relatedRecords);
+            }
+        });
+    }
+
+    if (!groupHasData) html += `<p class="text-gray-500">No data available in this category.</p>`;
+    html += `</section>`;
+}
 
             detailContent.innerHTML = html;
             document.querySelectorAll('#detail-nav a').forEach(a => a.addEventListener('click', function(e) {
@@ -974,6 +1024,56 @@
             const end = Math.min(endIndex, filteredData.length);
             const start = filteredData.length > 0 ? startIndex + 1 : 0;
             tableInfo.textContent = `Showing ${start} to ${end} of ${filteredData.length} properties.`;
+        }
+
+        function getNeighborhoodData(lrsn) {
+            const results = {
+                main: null,
+                res: null,
+                com: null,
+                land: null,
+                landDetails: [],
+                hfFactors: []
+            };
+
+            // Step 1: Find the parcel's neighborhood ID from Parcel_Main
+            const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => p.lrsn === lrsn || p.LRSN === lrsn);
+            if (!parcelMainRecord) {
+                console.log("Could not find Parcel_Main record for LRSN:", lrsn);
+                return results; // Return empty results
+            }
+            
+            const neighborhoodId = parcelMainRecord.neighborhood || parcelMainRecord.NEIGHBORHOOD;
+            if (!neighborhoodId) {
+                console.log("Neighborhood ID not found on Parcel_Main record for LRSN:", lrsn);
+                return results;
+            }
+
+            // Step 2: Use the neighborhood ID to get the main neighborhood records
+            results.main = (dataCache['Nbhd_Main'] || []).find(r => r.neighborhood === neighborhoodId);
+            results.res = (dataCache['Nbhd_Res'] || []).find(r => r.neighborhood === neighborhoodId);
+            results.com = (dataCache['Nbhd_Com'] || []).find(r => r.neighborhood === neighborhoodId);
+            results.land = (dataCache['Nbhd_Land'] || []).find(r => r.neighborhood === neighborhoodId);
+
+            // Step 3: Use model numbers from the main records to get detail records
+            if (results.land) {
+                const landModelSerial = results.land.land_model_serial || results.land.LAND_MODEL_SERIAL;
+                if (landModelSerial) {
+                    results.landDetails = (dataCache['Nbhd_Land_Detail'] || []).filter(
+                        r => (r.model_ser_numb === landModelSerial || r.MODEL_SER_NUMB === landModelSerial) && 
+                             (r.neighborhood === neighborhoodId || r.NEIGHBORHOOD === neighborhoodId)
+                    );
+                }
+            }
+
+            if (results.res) {
+                const hfModelNumber = results.res.hf_model_number || results.res.HF_MODEL_NUMBER;
+                if (hfModelNumber) {
+                    results.hfFactors = (dataCache['Nbhd_HF'] || []).filter(r => r.hf_model_number === hfModelNumber || r.HF_MODEL_NUMBER === hfModelNumber);
+                }
+            }
+
+            return results;
         }
 
         initialize();
