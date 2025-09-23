@@ -155,7 +155,7 @@
             "Neighborhood": "fa-tree-city",
             "Sketches & Images": "fa-compass-drafting"
         };
-        const USE_CARD_VIEW = ['Parcel_Main', 'Land_Detail', 'Land_Site', 'Nbhd_Main', 'Transfer', 'Land_Site'];
+        const USE_CARD_VIEW = ['Parcel_Main', 'Nbhd_Main', 'Transfer'];
         const ROWS_PER_PAGE = 10;
         const LRSN_KEY = 'LRSN';
 
@@ -794,11 +794,12 @@
             html += `<div class="my-4"><canvas id="sketch-canvas" width="500" height="400"></canvas></div>`;
         }
         RELATED_FILES[group].forEach(file => {
-    const relatedRecords = (dataCache[file] || []).filter(r => 
-        (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
-        (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim())
-    );
-    if (relatedRecords.length > 0) {
+            const relatedRecords = (dataCache[file] || []).filter(r => 
+                (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
+                (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
+                (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim())
+            );
+            if (relatedRecords.length > 0) {
                 groupHasData = true;
                 html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
                 html += createHtmlTable(relatedRecords);
@@ -807,12 +808,13 @@
     } 
     // --- DEFAULT HANDLING FOR ALL OTHER GROUPS ---
     else {
-    RELATED_FILES[group].forEach(file => {
-        const relatedRecords = (dataCache[file] || []).filter(r => 
-            (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
-            (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim())
-        );
-        if (relatedRecords.length > 0) {
+        RELATED_FILES[group].forEach(file => {
+            const relatedRecords = (dataCache[file] || []).filter(r => 
+                (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
+                (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
+                (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim())
+            );
+            if (relatedRecords.length > 0) {
                 groupHasData = true;
                 html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
                 html += USE_CARD_VIEW.includes(file) ? createDetailList(relatedRecords) : createHtmlTable(relatedRecords);
