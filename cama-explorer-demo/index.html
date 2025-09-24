@@ -702,12 +702,18 @@
                 totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
             }
             
-            // --- NEW: Site Details from Land_Site.json ---
+            // --- NEW: Site and Land Details from JSON ---
             const UTILITY_MAP = { all: 'All', elect: 'Electric', gas: 'Gas', septic: 'Septic', sewer: 'Sewer', water: 'Water', well: 'Well' };
             const ROAD_MAP = { paved: 'Paved', unpaved: 'Unpaved', sidewalk: 'Sidewalk' };
             const ZONING_MAP = { CA: 'Conservation', EBC: 'East Barre Commercial', HC: 'Highway Commercial', HDR: 'High Density Residential', I: 'Industrial', LDR: 'Low Density Residential', MDR: 'Medium Density Residential', OBR: 'Office Building Retail', VHD: 'Very High Density Residential' };
 
             const landSiteRecords = (dataCache['Land_Site'] || []).filter(r => 
+                (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim()) ||
+                (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
+                (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim())
+            );
+            
+            const landDetailRecords = (dataCache['Land_Detail'] || []).filter(r => 
                 (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim()) ||
                 (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
                 (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim())
@@ -724,6 +730,19 @@
             const utilities = getSiteDetails(landSiteRecords, 'sc_util', UTILITY_MAP);
             const road = getSiteDetails(landSiteRecords, 'sc_street', ROAD_MAP);
             const zoning = getSiteDetails(landSiteRecords, 'zoning', ZONING_MAP);
+
+            const landTypes = landDetailRecords
+                .map(r => r.LandType || r.landtype)
+                .filter(Boolean)
+                .join(', ');
+            const landTypesDisplay = landTypes || 'N/A';
+
+            const totalFrontage = landDetailRecords.reduce((sum, record) => {
+                const frontage = parseFloat(record.ActualFrontage || record.actualfrontage);
+                return sum + (isNaN(frontage) ? 0 : frontage);
+            }, 0);
+            const totalFrontageDisplay = totalFrontage > 0 ? totalFrontage.toLocaleString() : 'N/A';
+
 
             // --- Build HTML for Property Details card ---
             const propertyDetailsIcon = SECTION_ICONS["Property Details"];
@@ -757,6 +776,8 @@
                                     <p class="mt-1 text-sm text-gray-600"><strong>Utilities:</strong> ${utilities}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Road:</strong> ${road}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Zoning:</strong> ${zoning}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Land Types:</strong> ${landTypesDisplay}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Actual Frontage:</strong> ${totalFrontageDisplay}</p>
                                 </div>
                             </div>
 

@@ -1,142 +1,103 @@
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Current FME version: FME 2024.0.1.0 (20240328 - Build 24202 - WIN64)
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|System Time: 20250924161242 UTC
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME_HOME is 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Data Interoperability (node locked-crc)
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Permanent License.
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Machine host name is: ADS02590L
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|OS Locale Name     : en_US
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|OS Locale Encoding : windows-1252
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Process Encoding   : UTF-8
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME API version: '4.0 20240212'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: FME_BASE is 'yes'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: FME_MF_DIR is 'C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo/'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: FME_MF_NAME is 'CAMA_sample_data_json_values_parsing.fmw'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: FME_PRODUCT_NAME is 'FME(R) 2024.0.1.0'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Operating System: Microsoft Windows 11 64-bit  (Build 22631)
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Platform: WIN64
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|System Status: 745.12 GB of disk space available in the FME temporary folder (C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_0)
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|System Status: 31.56 GB of physical memory available
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|System Status: 126.25 GB of virtual memory available
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|START - ProcessID: 13736, peak process memory usage: 85260 kB, current process memory usage: 85260 kB
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Command line arguments are `C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\fme.exe' `C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo\wb-xlate-1758730358091_35732' `LOG_STANDARDOUT' `YES' `LOG_TIMINGS' `YES' `LogCountServerName' `58102' `LOG_STANDARDOUT' `No' `WORKBENCH_LOG_SERVER' `57826'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Connection Storage: 'C:\Users\tim.terway\AppData\Roaming\Safe Software\FME\'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Shared folders for formats are : C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\datasources;C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\Formats
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Shared folders for transformers are : C:\Users\tim.terway\AppData\Roaming\Safe Software\FME\Packages\24202-win64\transformers;C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\transformers
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Shared folders for coordinate systems are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CoordinateSystems
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Shared folders for coordinate system exceptions are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CoordinateSystemExceptions
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Shared folders for coordinate system grid overrides are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CoordinateSystemGridOverrides
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Shared folders for CS-MAP transformation exceptions are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CsmapTransformationExceptions
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Shared folders for transformer categories are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\TransformerCategories
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Reader Keyword is `MULTI_READER'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Writer Keyword is `MULTI_DEST'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Writer Group Definition Keyword is `MULTI_DEST_DEF'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Reader type is `MULTI_READER'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Writer type is `MULTI_WRITER'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: No destination coordinate system set
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Current working folder is `C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Temporary folder is `C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_0', set from environment variable `FME_TEMP'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Cache folder is 'C:\Users\TIM~1.TER\AppData\Local\Temp'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: FME_HOME is `C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\'
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Start freeing memory when the process exceeds 94.69 GB
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|FME Configuration: Stop freeing memory when the process is below 71.02 GB
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Creating writer for format: 
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Creating reader for format: 
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|MULTI_READER(MULTI_READER): Will fail with first member reader failure
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|MULTI_READER(MULTI_READER): Adding JSON Reader with keyword JSON_3
-2025-09-24 12:12:41|   0.0|  0.0|INFORM|Using Multi Reader with keyword `MULTI_READER' to read multiple datasets
-2025-09-24 12:12:42|   0.1|  0.1|INFORM|Using Python interpreter from `C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python311.dll' with PYTHONHOME `C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3'
-2025-09-24 12:12:42|   0.1|  0.0|INFORM|Python version 3.11 loaded successfully
-2025-09-24 12:12:43|   0.2|  0.1|INFORM|ArcGIS for the Python interpreter initialized in 0.0040459 seconds
-2025-09-24 12:12:44|   0.2|  0.0|INFORM|Potentially retrieving dataset 'https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/Land_Site.json' for reader JSON_3
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Retrieved file C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_0\TempFS_1758730362226_13736\_Other\CAMA\sample\Land_Site.json for reader JSON_3
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Creating reader for format: JSON (JavaScript Object Notation)
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Trying to find a DYNAMIC plugin for reader named `JSON'
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Loaded module 'JSON' from file 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\plugins/JSON.dll'
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|FME API version of module 'JSON' matches current internal version (4.0 20240212)
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Opening the JSON reader with source dataset 'C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_0\TempFS_1758730362226_13736\_Other\CAMA\sample\Land_Site.json'
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Using MultiWriter with keyword `MULTI_DEST' to output data (ID_ATTRIBUTE is `multi_writer_id')
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Loaded module 'LogCount_func' from file 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\plugins/LogCount_func.dll'
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|FME API version of module 'LogCount_func' matches current internal version (4.0 20240212)
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|Loaded module 'AttributeFilterFactory' from file 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\plugins/AttributeFilterFactory.dll'
-2025-09-24 12:12:45|   0.2|  0.0|INFORM|FME API version of module 'AttributeFilterFactory' matches current internal version (4.0 20240212)
-2025-09-24 12:12:45|   0.4|  0.2|INFORM|Loaded module 'AttributeKeeperFactory' from file 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\plugins/AttributeKeeperFactory.dll'
-2025-09-24 12:12:45|   0.4|  0.0|INFORM|FME API version of module 'AttributeKeeperFactory' matches current internal version (4.0 20240212)
-2025-09-24 12:12:46|   0.9|  0.5|INFORM|Closing the JSON reader
-2025-09-24 12:12:46|   0.9|  0.0|INFORM|MULTI_READER(MULTI_READER): Done reading 15217 features from 1 readers
-2025-09-24 12:12:46|   0.9|  0.0|INFORM|Emptying factory pipeline
-2025-09-24 12:12:46|   0.9|  0.0|STATS |Router and Unexpected Input Remover (RoutingFactory): Tested 15217 input feature(s), wrote 15217 output feature(s): 15217 matched merge filters, 15217 were routed to output, 0 could not be routed.
-2025-09-24 12:12:46|   0.9|  0.0|STATS |Unwanted Router Input Nuker (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
-2025-09-24 12:12:46|   0.9|  0.0|STATS |JSONFeature_JSON_1 Splitter (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
-2025-09-24 12:12:46|   0.9|  0.0|STATS |JSONFeature_JSON_2 Splitter (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.1|STATS |JSONFeature_JSON_4 Splitter (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |JSONFeature_JSON_3 Splitter (TeeFactory): Cloned 15217 input feature(s) into 15217 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |AttributeFilter (TeeFactory): Cloned 15217 input feature(s) into 15217 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |AttributeFilter zoning Splitter (TeeFactory): Cloned 3632 input feature(s) into 7264 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2 Input Input Collector (TeeFactory): Cloned 3626 input feature(s) into 3626 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_Input1758730359 Input Splitter (TeeFactory): Cloned 3626 input feature(s) into 3626 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_Aggregator (AggregateFactory): Combined 3626 input feature(s) into 3 output feature(s), including 0 singleton(s)
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|UniqueValueLogger_2_Sorter (SortFactory): Starting sorting 3 feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|UniqueValueLogger_2_Sorter (SortFactory): Done sorting 3 feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_Sorter (SortFactory): Finished sorting a total of 3 features.
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_Sorter SORTED Splitter (TeeFactory): Cloned 3 input feature(s) into 6 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_ListBuilder_fme_type_remover (TeeFactory): Cloned 3 input feature(s) into 3 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |Storing feature(s) to FME feature store file `C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo\CAMA_sample_data_json_values_parsing_log.ffs'
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|UniqueValueLogger_2_Logger: Unique values:
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Feature Type: `UniqueValueLogger_2_Logger_LOGGED'
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Attribute(string: UTF-8): `UNIQUE VALUES' has value `
-
-VALUE, COUNT
-paved,3024
-unpaved,600
-sidewalk,2
-
-'
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Attribute(string; UTF-8): `fme_feature_type' has value `JSONFeature'
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Attribute(string: UTF-8): `fme_geometry' has value `fme_undefined'
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Attribute(string: UTF-8): `fme_type' has value `fme_no_geom'
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Coordinate System: `'
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Geometry Type: Null
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|Coordinate Dimension: 2
-2025-09-24 12:12:46|   1.0|  0.0|INFORM|===========================================================================
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_ListBuilder (ListFactory): Combined 3 input feature(s) into 1 output feature(s), including 0 singleton(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_ListConcatenator (TeeFactory): Cloned 1 input feature(s) into 1 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_AttributeRemover_2 (TeeFactory): Cloned 1 input feature(s) into 1 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_Logger_Logger (TeeFactory): Cloned 1 input feature(s) into 1 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2_Output1758730359 Output Collector (TeeFactory): Cloned 3 input feature(s) into 3 output feature(s)
-2025-09-24 12:12:46|   1.0|  0.0|STATS |UniqueValueLogger_2 Output Output Renamer/Nuker (TeeFactory): Cloned 3 input feature(s) into 3 output feature(s)
-2025-09-24 12:12:47|   1.0|  0.0|STATS |Destination Feature Type Routing Correlator (RoutingFactory): Tested 15223 input feature(s), wrote 15223 output feature(s): 0 matched merge filters, 0 were routed to output, 15223 could not be routed.
-2025-09-24 12:12:47|   1.0|  0.0|STATS |Final Output Nuker (TeeFactory): Cloned 15223 input feature(s) into 0 output feature(s)
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |      Features not written - verify feature type fanout/dynamic settings
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |  (Check that fanout/dynamic feature type attribute exists and has a value)
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |                                                                         15223
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |==============================================================================
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |Total features not written                                               15223
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|STATS |                            Features Read Summary
-2025-09-24 12:12:47|   1.0|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|STATS |JSONFeature                                                              15217
-2025-09-24 12:12:47|   1.0|  0.0|STATS |==============================================================================
-2025-09-24 12:12:47|   1.0|  0.0|STATS |Total Features Read                                                      15217
-2025-09-24 12:12:47|   1.0|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|STATS |                           Features Written Summary
-2025-09-24 12:12:47|   1.0|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|STATS |==============================================================================
-2025-09-24 12:12:47|   1.0|  0.0|STATS |Total Features Written                                                       0
-2025-09-24 12:12:47|   1.0|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |-~                                                                             ~-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |-~    Feature caches have been recorded at every stage of the translation.     ~-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |-~                      To inspect the recorded features,                      ~-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |-~              click the feature cache icons next to the ports.               ~-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |-~                                                                             ~-
-2025-09-24 12:12:47|   1.0|  0.0|WARN  |-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-2025-09-24 12:12:47|   1.0|  0.0|INFORM|Translation was SUCCESSFUL with 16 warning(s) (0 feature(s) output)
-2025-09-24 12:12:47|   1.0|  0.0|STATS |Stored 1 feature(s) to FME feature store file `C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo\CAMA_sample_data_json_values_parsing_log.ffs'
-2025-09-24 12:12:47|   1.0|  0.0|INFORM|FME Session Duration: 5.4 seconds. (CPU: 0.8s user, 0.2s system)
-2025-09-24 12:12:47|   1.0|  0.0|INFORM|END - ProcessID: 13736, peak process memory usage: 137180 kB, current process memory usage: 119288 kB
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|Current FME version: FME 2024.0.1.0 (20240328 - Build 24202 - WIN64)
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|System Time: 20250924164539 UTC
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME_HOME is 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\'
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|Data Interoperability (node locked-crc)
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|Permanent License.
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|Machine host name is: ADS02590L
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|OS Locale Name     : en_US
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|OS Locale Encoding : windows-1252
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|Process Encoding   : UTF-8
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME API version: '4.0 20240212'
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME Configuration: FME_BASE is 'yes'
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME Configuration: FME_MF_DIR is 'C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo/'
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME Configuration: FME_MF_NAME is 'CAMA_sample_data_json_values_parsing.fmw'
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME Configuration: FME_PRODUCT_NAME is 'FME(R) 2024.0.1.0'
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|Operating System: Microsoft Windows 11 64-bit  (Build 22631)
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME Platform: WIN64
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|System Status: 744.94 GB of disk space available in the FME temporary folder (C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_1)
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|System Status: 31.56 GB of physical memory available
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|System Status: 126.25 GB of virtual memory available
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|START - ProcessID: 18264, peak process memory usage: 85248 kB, current process memory usage: 85248 kB
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME Configuration: Command line arguments are `C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\fme.exe' `C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo\wb-xlate-1758732324981_35732' `LOG_STANDARDOUT' `YES' `LOG_TIMINGS' `YES' `LogCountServerName' `58102' `LOG_STANDARDOUT' `No' `WORKBENCH_LOG_SERVER' `57826'
+2025-09-24 12:45:39|   0.0|  0.0|INFORM|FME Configuration: Connection Storage: 'C:\Users\tim.terway\AppData\Roaming\Safe Software\FME\'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|Shared folders for formats are : C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\datasources;C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\Formats
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|Shared folders for transformers are : C:\Users\tim.terway\AppData\Roaming\Safe Software\FME\Packages\24202-win64\transformers;C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\transformers
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|Shared folders for coordinate systems are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CoordinateSystems
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|Shared folders for coordinate system exceptions are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CoordinateSystemExceptions
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|Shared folders for coordinate system grid overrides are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CoordinateSystemGridOverrides
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|Shared folders for CS-MAP transformation exceptions are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\CsmapTransformationExceptions
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|Shared folders for transformer categories are : C:\Users\tim.terway\OneDrive - State of Vermont\Documents\FME\TransformerCategories
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Reader Keyword is `MULTI_READER'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Writer Keyword is `MULTI_DEST'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Writer Group Definition Keyword is `MULTI_DEST_DEF'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Reader type is `MULTI_READER'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Writer type is `MULTI_WRITER'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: No destination coordinate system set
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Current working folder is `C:\Users\tim.terway\Documents\GitHub\applications\cama-explorer-demo'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Temporary folder is `C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_1', set from environment variable `FME_TEMP'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Cache folder is 'C:\Users\TIM~1.TER\AppData\Local\Temp'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: FME_HOME is `C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\'
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Start freeing memory when the process exceeds 94.69 GB
+2025-09-24 12:45:41|   0.0|  0.0|INFORM|FME Configuration: Stop freeing memory when the process is below 71.02 GB
+2025-09-24 12:45:43|   0.0|  0.0|INFORM|Creating writer for format: 
+2025-09-24 12:45:43|   0.0|  0.0|INFORM|Creating reader for format: 
+2025-09-24 12:45:43|   0.0|  0.0|INFORM|MULTI_READER(MULTI_READER): Will fail with first member reader failure
+2025-09-24 12:45:43|   0.0|  0.0|INFORM|MULTI_READER(MULTI_READER): Adding JSON Reader with keyword JSON_4
+2025-09-24 12:45:43|   0.0|  0.0|INFORM|Using Multi Reader with keyword `MULTI_READER' to read multiple datasets
+2025-09-24 12:45:44|   0.0|  0.0|INFORM|Using Python interpreter from `C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python311.dll' with PYTHONHOME `C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3'
+2025-09-24 12:45:44|   0.0|  0.0|INFORM|Python version 3.11 loaded successfully
+2025-09-24 12:45:45|   0.0|  0.0|INFORM|ArcGIS for the Python interpreter initialized in 0.0003829 seconds
+2025-09-24 12:45:46|   0.0|  0.0|INFORM|Potentially retrieving dataset 'https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/Land_Detail.json' for reader JSON_4
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Retrieved file C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_1\TempFS_1758732344210_18264\_Other\CAMA\sample\Land_Detail.json for reader JSON_4
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Creating reader for format: JSON (JavaScript Object Notation)
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Trying to find a DYNAMIC plugin for reader named `JSON'
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Loaded module 'JSON' from file 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\plugins/JSON.dll'
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|FME API version of module 'JSON' matches current internal version (4.0 20240212)
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Opening the JSON reader with source dataset 'C:\Users\TIM~1.TER\AppData\Local\Temp\wbrun_1758729610368_35732\fmetmp_1\TempFS_1758732344210_18264\_Other\CAMA\sample\Land_Detail.json'
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Using MultiWriter with keyword `MULTI_DEST' to output data (ID_ATTRIBUTE is `multi_writer_id')
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Loaded module 'LogCount_func' from file 'C:\Program Files\ArcGIS\Data Interoperability for ArcGIS Pro\plugins/LogCount_func.dll'
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|FME API version of module 'LogCount_func' matches current internal version (4.0 20240212)
+2025-09-24 12:45:48|   0.0|  0.0|INFORM|Reading source feature # 500
+2025-09-24 12:45:49|   0.5|  0.5|INFORM|Closing the JSON reader
+2025-09-24 12:45:49|   0.5|  0.0|INFORM|MULTI_READER(MULTI_READER): Done reading 11949 features from 1 readers
+2025-09-24 12:45:49|   0.5|  0.0|INFORM|Emptying factory pipeline
+2025-09-24 12:45:49|   0.5|  0.0|STATS |Router and Unexpected Input Remover (RoutingFactory): Tested 11949 input feature(s), wrote 11949 output feature(s): 11949 matched merge filters, 11949 were routed to output, 0 could not be routed.
+2025-09-24 12:45:49|   0.5|  0.0|STATS |Unwanted Router Input Nuker (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
+2025-09-24 12:45:49|   0.5|  0.0|STATS |JSONFeature_JSON_1 Splitter (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
+2025-09-24 12:45:49|   0.5|  0.0|STATS |JSONFeature_JSON_2 Splitter (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
+2025-09-24 12:45:49|   0.5|  0.0|STATS |JSONFeature_JSON_4 Splitter (TeeFactory): Cloned 11949 input feature(s) into 11949 output feature(s)
+2025-09-24 12:45:49|   0.5|  0.0|STATS |JSONFeature_JSON_3 Splitter (TeeFactory): Cloned 0 input feature(s) into 0 output feature(s)
+2025-09-24 12:45:49|   0.5|  0.0|STATS |Destination Feature Type Routing Correlator (RoutingFactory): Tested 11949 input feature(s), wrote 11949 output feature(s): 0 matched merge filters, 0 were routed to output, 11949 could not be routed.
+2025-09-24 12:45:49|   0.5|  0.0|STATS |Final Output Nuker (TeeFactory): Cloned 11949 input feature(s) into 0 output feature(s)
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |      Features not written - verify feature type fanout/dynamic settings
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |  (Check that fanout/dynamic feature type attribute exists and has a value)
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |                                                                         11949
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |==============================================================================
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |Total features not written                                               11949
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|STATS |                            Features Read Summary
+2025-09-24 12:45:49|   0.5|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|STATS |JSONFeature                                                              11949
+2025-09-24 12:45:49|   0.5|  0.0|STATS |==============================================================================
+2025-09-24 12:45:49|   0.5|  0.0|STATS |Total Features Read                                                      11949
+2025-09-24 12:45:49|   0.5|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|STATS |                           Features Written Summary
+2025-09-24 12:45:49|   0.5|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|STATS |==============================================================================
+2025-09-24 12:45:49|   0.5|  0.0|STATS |Total Features Written                                                       0
+2025-09-24 12:45:49|   0.5|  0.0|STATS |=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |-~                                                                             ~-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |-~    Feature caches have been recorded at every stage of the translation.     ~-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |-~                      To inspect the recorded features,                      ~-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |-~              click the feature cache icons next to the ports.               ~-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |-~                                                                             ~-
+2025-09-24 12:45:49|   0.5|  0.0|WARN  |-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+2025-09-24 12:45:49|   0.5|  0.0|INFORM|Translation was SUCCESSFUL with 16 warning(s) (0 feature(s) output)
+2025-09-24 12:45:49|   0.5|  0.0|INFORM|FME Session Duration: 10.1 seconds. (CPU: 0.4s user, 0.1s system)
+2025-09-24 12:45:49|   0.5|  0.0|INFORM|END - ProcessID: 18264, peak process memory usage: 115772 kB, current process memory usage: 114656 kB
