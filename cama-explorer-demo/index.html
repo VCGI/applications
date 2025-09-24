@@ -554,9 +554,6 @@
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             const spanId = parcelMainRecord ? (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID || 'N/A') : 'N/A';
             
-            const lastUpdateValue = parcelMainRecord ? (parcelMainRecord.last_update || parcelMainRecord.LAST_UPDATE || 'N/A') : 'N/A';
-            const formattedLastUpdate = formatLastUpdateDate(lastUpdateValue);
-
             let typeDescription = "Not Defined"; 
             const propClassCode = parcelMainRecord ? (parcelMainRecord.property_class || parcelMainRecord.PROPERTY_CLASS) : null;
             const propClassCodeStr = propClassCode ? String(propClassCode).trim() : '';
@@ -702,7 +699,7 @@
                 totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
             }
             
-            // --- NEW: Site and Land Details from JSON ---
+            // --- NEW: Site, Land, and Neighborhood Details from JSON ---
             const UTILITY_MAP = { all: 'All', elect: 'Electric', gas: 'Gas', septic: 'Septic', sewer: 'Sewer', water: 'Water', well: 'Well' };
             const ROAD_MAP = { paved: 'Paved', unpaved: 'Unpaved', sidewalk: 'Sidewalk' };
             const ZONING_MAP = { CA: 'Conservation', EBC: 'East Barre Commercial', HC: 'Highway Commercial', HDR: 'High Density Residential', I: 'Industrial', LDR: 'Low Density Residential', MDR: 'Medium Density Residential', OBR: 'Office Building Retail', VHD: 'Very High Density Residential' };
@@ -718,6 +715,9 @@
                 (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
                 (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim())
             );
+            
+            const neighborhoodData = getNeighborhoodData(lrsn);
+            const nbhdMainRecord = neighborhoodData.main;
 
             const getSiteDetails = (records, category, map) => {
                 const values = records
@@ -741,8 +741,11 @@
                 const frontage = parseFloat(record.ActualFrontage || record.actualfrontage);
                 return sum + (isNaN(frontage) ? 0 : frontage);
             }, 0);
-            const totalFrontageDisplay = totalFrontage > 0 ? totalFrontage.toLocaleString() : 'N/A';
+            const totalFrontageDisplay = totalFrontage > 0 ? `${totalFrontage.toLocaleString()} feet` : 'N/A';
 
+            const townshipNumber = nbhdMainRecord ? (nbhdMainRecord.township_number || nbhdMainRecord.TOWNSHIP_NUMBER || 'N/A') : 'N/A';
+            const neighborhoodNumber = nbhdMainRecord ? (nbhdMainRecord.neighborhood || nbhdMainRecord.NEIGHBORHOOD || 'N/A') : 'N/A';
+            const neighborhoodName = nbhdMainRecord ? (nbhdMainRecord.neigh_name || nbhdMainRecord.NEIGH_NAME || 'N/A') : 'N/A';
 
             // --- Build HTML for Property Details card ---
             const propertyDetailsIcon = SECTION_ICONS["Property Details"];
@@ -751,7 +754,6 @@
             const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Acres:</strong> ${acres}</p>`;
             const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
             const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${uncertaintyMarker}${numDwellings.toLocaleString()}${condoMarker}</p>`;
-            const lastUpdateHtml = `<p class="text-sm text-gray-500 mt-1">LAST UPDATE: ${formattedLastUpdate}</p>`;
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-4">
@@ -778,12 +780,14 @@
                                     <p class="mt-1 text-sm text-gray-600"><strong>Zoning:</strong> ${zoning}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Land Types:</strong> ${landTypesDisplay}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Actual Frontage:</strong> ${totalFrontageDisplay}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Township #:</strong> ${townshipNumber}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Neighborhood #:</strong> ${neighborhoodNumber}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Neighborhood Name:</strong> ${neighborhoodName}</p>
                                 </div>
                             </div>
 
                             <p class="text-sm text-gray-500 mt-4">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
-                            ${lastUpdateHtml}
                             ${footnoteHtml}
                         </div>`;
 
@@ -806,8 +810,6 @@
 
                 // --- SPECIAL HANDLING FOR NEIGHBORHOOD ---
                 if (group === "Neighborhood") {
-                    const neighborhoodData = getNeighborhoodData(lrsn);
-                    
                     if (neighborhoodData.main) {
                         groupHasData = true;
                         html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Main</h4>`;
@@ -1113,10 +1115,10 @@
             }
 
             // Step 2: Use the neighborhood ID to get the main neighborhood records
-            results.main = (dataCache['Nbhd_Main'] || []).find(r => r.neighborhood === neighborhoodId);
-            results.res = (dataCache['Nbhd_Res'] || []).find(r => r.neighborhood === neighborhoodId);
-            results.com = (dataCache['Nbhd_Com'] || []).find(r => r.neighborhood === neighborhoodId);
-            results.land = (dataCache['Nbhd_Land'] || []).find(r => r.neighborhood === neighborhoodId);
+            results.main = (dataCache['Nbhd_Main'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) === neighborhoodId);
+            results.res = (dataCache['Nbhd_Res'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) === neighborhoodId);
+            results.com = (dataCache['Nbhd_Com'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) === neighborhoodId);
+            results.land = (dataCache['Nbhd_Land'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) === neighborhoodId);
 
             // Step 3: Use model numbers from the main records to get detail records
             if (results.land) {
@@ -1124,7 +1126,7 @@
                 if (landModelSerial) {
                     results.landDetails = (dataCache['Nbhd_Land_Detail'] || []).filter(
                         r => (r.model_ser_numb === landModelSerial || r.MODEL_SER_NUMB === landModelSerial) && 
-                             (r.neighborhood === neighborhoodId || r.NEIGHBORHOOD === neighborhoodId)
+                             ((r.neighborhood || r.NEIGHBORHOOD) === neighborhoodId)
                     );
                 }
             }
