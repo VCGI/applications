@@ -554,7 +554,6 @@
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             const spanId = parcelMainRecord ? (parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID || 'N/A') : 'N/A';
             
-            // 1. Get the last_update value
             const lastUpdateValue = parcelMainRecord ? (parcelMainRecord.last_update || parcelMainRecord.LAST_UPDATE || 'N/A') : 'N/A';
             const formattedLastUpdate = formatLastUpdateDate(lastUpdateValue);
 
@@ -703,32 +702,65 @@
                 totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
             }
             
+            // --- NEW: Site Details from Land_Site.json ---
+            const UTILITY_MAP = { all: 'All', elect: 'Electric', gas: 'Gas', septic: 'Septic', sewer: 'Sewer', water: 'Water', well: 'Well' };
+            const ROAD_MAP = { paved: 'Paved', unpaved: 'Unpaved', sidewalk: 'Sidewalk' };
+            const ZONING_MAP = { CA: 'Conservation', EBC: 'East Barre Commercial', HC: 'Highway Commercial', HDR: 'High Density Residential', I: 'Industrial', LDR: 'Low Density Residential', MDR: 'Medium Density Residential', OBR: 'Office Building Retail', VHD: 'Very High Density Residential' };
+
+            const landSiteRecords = (dataCache['Land_Site'] || []).filter(r => 
+                (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim()) ||
+                (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
+                (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim())
+            );
+
+            const getSiteDetails = (records, category, map) => {
+                const values = records
+                    .filter(r => (r.CategoryType || r.categorytype) === category)
+                    .map(r => map[r.CodeType || r.codetype] || (r.CodeType || r.codetype))
+                    .join(', ');
+                return values || 'N/A';
+            };
+
+            const utilities = getSiteDetails(landSiteRecords, 'sc_util', UTILITY_MAP);
+            const road = getSiteDetails(landSiteRecords, 'sc_street', ROAD_MAP);
+            const zoning = getSiteDetails(landSiteRecords, 'zoning', ZONING_MAP);
+
+            // --- Build HTML for Property Details card ---
             const propertyDetailsIcon = SECTION_ICONS["Property Details"];
             const propertyTypeHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Property Type:</strong> ${typeDescription}</p>`;
             const legalDescHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Description:</strong> ${legalDesc}</p>`;
             const acresHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Legal Acres:</strong> ${acres}</p>`;
             const numImprovementsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Number of Improvements:</strong> ${numImprovements}</p>`;
             const dwellingsHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Dwellings:</strong> ${uncertaintyMarker}${numDwellings.toLocaleString()}${condoMarker}</p>`;
-            
-            // 2. Add the new HTML element to the template string
-            const lastUpdateHtml = `<p class="text-sm text-gray-500">LAST UPDATE: ${formattedLastUpdate}</p>`;
+            const lastUpdateHtml = `<p class="text-sm text-gray-500 mt-1">LAST UPDATE: ${formattedLastUpdate}</p>`;
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md">
                             <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-4">
                                 <i class="fa-solid ${propertyDetailsIcon} mr-3" style="color: #003300;"></i>Property Details
                             </h2>
                             <p class="text-lg text-[#003300]">${parcelData.FreeFormAddr || 'Address not available'}</p>
-                            ${propertyTypeHtml}
-                            ${legalDescHtml}
-                            ${acresHtml}
-                            ${numImprovementsHtml}
-                            ${commercialBuildingHtml}
-                            ${dwellingsHtml}
-                            ${yearBuiltHtml}
-                            ${effYearBuiltHtml}
-                            ${finishedAreaHtml}
-                            ${totalAreaHtml}
-                            <p class="text-sm text-gray-500 mt-2">LRSN: ${lrsn}</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 mt-4">
+                                <div>
+                                    ${propertyTypeHtml}
+                                    ${legalDescHtml}
+                                    ${acresHtml}
+                                    ${numImprovementsHtml}
+                                    ${commercialBuildingHtml}
+                                    ${dwellingsHtml}
+                                    ${yearBuiltHtml}
+                                    ${effYearBuiltHtml}
+                                    ${finishedAreaHtml}
+                                    ${totalAreaHtml}
+                                </div>
+                                <div>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Utilities:</strong> ${utilities}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Road:</strong> ${road}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Zoning:</strong> ${zoning}</p>
+                                </div>
+                            </div>
+
+                            <p class="text-sm text-gray-500 mt-4">LRSN: ${lrsn}</p>
                             <p class="text-sm text-gray-500">SPAN: ${spanId}</p>
                             ${lastUpdateHtml}
                             ${footnoteHtml}
@@ -742,89 +774,88 @@
             html += `</div></div>`;
 
             for (const group in RELATED_FILES) {
-    const sectionId = group.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-    const iconClass = SECTION_ICONS[group] || 'fa-question-circle';
-    html += `<section id="${sectionId}" class="related-section bg-white p-6 rounded-lg shadow-md mt-4 scroll-mt-24">
-                <h3 class="text-xl font-semibold text-gray-800 flex items-center">
-                    <i class="fa-solid ${iconClass} mr-3" style="color: #003300;"></i>${group}
-                </h3>`;
-    
-    let groupHasData = false;
+                const sectionId = group.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                const iconClass = SECTION_ICONS[group] || 'fa-question-circle';
+                html += `<section id="${sectionId}" class="related-section bg-white p-6 rounded-lg shadow-md mt-4 scroll-mt-24">
+                            <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                                <i class="fa-solid ${iconClass} mr-3" style="color: #003300;"></i>${group}
+                            </h3>`;
+                
+                let groupHasData = false;
 
-    // --- SPECIAL HANDLING FOR NEIGHBORHOOD ---
-    if (group === "Neighborhood") {
-        const neighborhoodData = getNeighborhoodData(lrsn);
-        
-        if (neighborhoodData.main) {
-            groupHasData = true;
-            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Main</h4>`;
-            // Use your existing createDetailList since it's a single object
-            html += createDetailList([neighborhoodData.main]); 
-        }
-        if (neighborhoodData.res) {
-            groupHasData = true;
-            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Residential Model</h4>`;
-            html += createDetailList([neighborhoodData.res]);
-        }
-        if (neighborhoodData.com) {
-            groupHasData = true;
-            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Commercial Model</h4>`;
-            html += createDetailList([neighborhoodData.com]);
-        }
-        if (neighborhoodData.land) {
-            groupHasData = true;
-            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Land Model</h4>`;
-            html += createDetailList([neighborhoodData.land]);
-        }
-        if (neighborhoodData.landDetails.length > 0) {
-            groupHasData = true;
-            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Land Model Details</h4>`;
-            html += createHtmlTable(neighborhoodData.landDetails);
-        }
-        if (neighborhoodData.hfFactors.length > 0) {
-            groupHasData = true;
-            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Home Site Factors (HF)</h4>`;
-            html += createHtmlTable(neighborhoodData.hfFactors);
-        }
-    } 
-    // --- SPECIAL HANDLING FOR SKETCHES ---
-    else if (group === "Sketches & Images") {
-        if ((dataCache['Sketch_Vector'] || []).some(r => r.LRSN === lrsn || r.lrsn === lrsn)) {
-            groupHasData = true;
-            html += `<div class="my-4"><canvas id="sketch-canvas" width="500" height="400"></canvas></div>`;
-        }
-        RELATED_FILES[group].forEach(file => {
-            const relatedRecords = (dataCache[file] || []).filter(r => 
-                (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
-                (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
-                (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim())
-            );
-            if (relatedRecords.length > 0) {
-                groupHasData = true;
-                html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
-                html += createHtmlTable(relatedRecords);
-            }
-        });
-    } 
-    // --- DEFAULT HANDLING FOR ALL OTHER GROUPS ---
-    else {
-        RELATED_FILES[group].forEach(file => {
-            const relatedRecords = (dataCache[file] || []).filter(r => 
-                (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
-                (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
-                (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim())
-            );
-            if (relatedRecords.length > 0) {
-                groupHasData = true;
-                html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
-                html += USE_CARD_VIEW.includes(file) ? createDetailList(relatedRecords) : createHtmlTable(relatedRecords);
-            }
-        });
-    }
+                // --- SPECIAL HANDLING FOR NEIGHBORHOOD ---
+                if (group === "Neighborhood") {
+                    const neighborhoodData = getNeighborhoodData(lrsn);
+                    
+                    if (neighborhoodData.main) {
+                        groupHasData = true;
+                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Main</h4>`;
+                        html += createDetailList([neighborhoodData.main]); 
+                    }
+                    if (neighborhoodData.res) {
+                        groupHasData = true;
+                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Residential Model</h4>`;
+                        html += createDetailList([neighborhoodData.res]);
+                    }
+                    if (neighborhoodData.com) {
+                        groupHasData = true;
+                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Commercial Model</h4>`;
+                        html += createDetailList([neighborhoodData.com]);
+                    }
+                    if (neighborhoodData.land) {
+                        groupHasData = true;
+                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Land Model</h4>`;
+                        html += createDetailList([neighborhoodData.land]);
+                    }
+                    if (neighborhoodData.landDetails.length > 0) {
+                        groupHasData = true;
+                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Land Model Details</h4>`;
+                        html += createHtmlTable(neighborhoodData.landDetails);
+                    }
+                    if (neighborhoodData.hfFactors.length > 0) {
+                        groupHasData = true;
+                        html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">Home Site Factors (HF)</h4>`;
+                        html += createHtmlTable(neighborhoodData.hfFactors);
+                    }
+                } 
+                // --- SPECIAL HANDLING FOR SKETCHES ---
+                else if (group === "Sketches & Images") {
+                    if ((dataCache['Sketch_Vector'] || []).some(r => r.LRSN === lrsn || r.lrsn === lrsn)) {
+                        groupHasData = true;
+                        html += `<div class="my-4"><canvas id="sketch-canvas" width="500" height="400"></canvas></div>`;
+                    }
+                    RELATED_FILES[group].forEach(file => {
+                        const relatedRecords = (dataCache[file] || []).filter(r => 
+                            (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
+                            (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
+                            (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim())
+                        );
+                        if (relatedRecords.length > 0) {
+                            groupHasData = true;
+                            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
+                            html += createHtmlTable(relatedRecords);
+                        }
+                    });
+                } 
+                // --- DEFAULT HANDLING FOR ALL OTHER GROUPS ---
+                else {
+                    RELATED_FILES[group].forEach(file => {
+                        const relatedRecords = (dataCache[file] || []).filter(r => 
+                            (r.LRSN && String(r.LRSN).trim() === String(lrsn).trim()) || 
+                            (r.lrsn && String(r.lrsn).trim() === String(lrsn).trim()) ||
+                            (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim())
+                        );
+                        if (relatedRecords.length > 0) {
+                            groupHasData = true;
+                            html += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace(/_/g, ' ')}</h4>`;
+                            html += USE_CARD_VIEW.includes(file) ? createDetailList(relatedRecords) : createHtmlTable(relatedRecords);
+                        }
+                    });
+                }
 
-    if (!groupHasData) html += `<p class="text-gray-500">No data available in this category.</p>`;
-    html += `</section>`;
-}
+                if (!groupHasData) html += `<p class="text-gray-500">No data available in this category.</p>`;
+                html += `</section>`;
+            }
 
             detailContent.innerHTML = html;
             document.querySelectorAll('#detail-nav a').forEach(a => a.addEventListener('click', function(e) {
