@@ -703,6 +703,14 @@
             const UTILITY_MAP = { all: 'All', elect: 'Electric', gas: 'Gas', septic: 'Septic', sewer: 'Sewer', water: 'Water', well: 'Well' };
             const ROAD_MAP = { paved: 'Paved', unpaved: 'Unpaved', sidewalk: 'Sidewalk' };
             const ZONING_MAP = { CA: 'Conservation', EBC: 'East Barre Commercial', HC: 'Highway Commercial', HDR: 'High Density Residential', I: 'Industrial', LDR: 'Low Density Residential', MDR: 'Medium Density Residential', OBR: 'Office Building Retail', VHD: 'Very High Density Residential' };
+            const LAND_TYPE_MAP = {
+                AG: "Current Use - Ag Open Idle", CF: "Current Use - Agricultural", CS: "Commercial Sewer", CW: "Commercial Water Source",
+                CX: "Commercial Excess", DR: "Development Rights", FL: "Farmland", FN: "Current Use - Non Prod Forest",
+                FR: "Current Use - Forest", HS: "Homesite", MN: "Sand & Gravel Pit", PC: "Primary Commercial",
+                PI: "Primary Industrial", PS: "Public Sewer", PW: "Public Water", QG: "Granite Reserve",
+                RE: "Excess Acreage", RW: "Road Right of Way", SC: "Secondary Commercial", SP: "Septic System",
+                SS: "Spring Water Source", UC: "Industrial Excess", WL: "Well"
+            };
 
             const landSiteRecords = (dataCache['Land_Site'] || []).filter(r => 
                 (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim()) ||
@@ -732,7 +740,10 @@
             const zoning = getSiteDetails(landSiteRecords, 'zoning', ZONING_MAP);
 
             const landTypes = landDetailRecords
-                .map(r => r.LandType || r.landtype)
+                .map(r => {
+                    const code = r.LandType || r.landtype;
+                    return LAND_TYPE_MAP[code] || code;
+                })
                 .filter(Boolean)
                 .join(', ');
             const landTypesDisplay = landTypes || 'N/A';
