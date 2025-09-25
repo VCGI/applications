@@ -873,7 +873,17 @@
                             if (file === 'Valuation_History') {
                                 relatedRecords.sort((a, b) => new Date(b.last_update || b.Last_Update) - new Date(a.last_update || a.Last_Update));
                             } else if (file === 'Valuation_Detail') {
-                                relatedRecords.sort((a, b) => new Date(b.last_update_long || b.Last_Update_Long) - new Date(a.last_update_long || a.Last_Update_Long));
+                                relatedRecords.sort((a, b) => {
+                                    const dateStrA = a.last_update_long || a.Last_Update_Long || '';
+                                    const dateStrB = b.last_update_long || b.Last_Update_Long || '';
+                                    // Handle YYYYMMDD format
+                                    if (dateStrA.length === 8 && dateStrB.length === 8) {
+                                        const formattedDateA = `${dateStrA.substring(0, 4)}-${dateStrA.substring(4, 6)}-${dateStrA.substring(6, 8)}`;
+                                        const formattedDateB = `${dateStrB.substring(0, 4)}-${dateStrB.substring(4, 6)}-${dateStrB.substring(6, 8)}`;
+                                        return new Date(formattedDateB) - new Date(formattedDateA);
+                                    }
+                                    return new Date(dateStrB) - new Date(dateStrA); // Fallback for other formats
+                                });
                             } else if (file === 'Land_Site') {
                                 relatedRecords.sort((a, b) => new Date(b.BegEffDate || b.begeffdate) - new Date(a.BegEffDate || a.begeffdate));
                             }
