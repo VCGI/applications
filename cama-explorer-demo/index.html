@@ -381,7 +381,6 @@
                         // --- Map Event Listeners ---
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
-                                if (highlightHandle) highlightHandle.remove();
                                 const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
                                 if (parcelResult) {
                                     const taxId = parcelResult.graphic.attributes.SPAN;
@@ -409,6 +408,9 @@
                                             showMainView();
                                         }
                                     }
+                                } else {
+                                    // If click is on empty space, clear the highlight
+                                    clearMapHighlight();
                                 }
                             });
                         });
@@ -419,10 +421,15 @@
             });
         }
         
-        function highlightParcel(graphic) {
-            mapView.whenLayerView(graphic.layer).then(layerView => {
-                highlightHandle = layerView.highlight(graphic);
+        async function highlightParcel(graphic) {
+            // Atomically update the highlight: clear the old one first.
+            clearMapHighlight();
+            
+            // Create the new highlight and set the handle once it's ready.
+            const newHandle = await mapView.whenLayerView(graphic.layer).then(layerView => {
+                return layerView.highlight(graphic);
             });
+            highlightHandle = newHandle;
         }
 
         function clearMapHighlight() {
@@ -434,7 +441,6 @@
         
         async function zoomToParcelByTaxId(taxId) {
             if (!parcelLayer || !taxId) return;
-            clearMapHighlight();
             const query = parcelLayer.createQuery();
             query.where = `SPAN = '${taxId}'`;
             query.returnGeometry = true;
@@ -442,7 +448,7 @@
                 const { features } = await parcelLayer.queryFeatures(query);
                 if (features.length > 0) {
                     mapView.goTo(features[0].geometry).catch(err => err.name !== "view:goto-interrupted" && console.error(err));
-                    highlightParcel(features[0]);
+                    await highlightParcel(features[0]);
                 }
             } catch(error) {
                 console.error("Failed to zoom to feature:", error);
@@ -541,11 +547,11 @@
         }
 
         // --- HIERARCHICAL VIEW LOGIC ---
-        function showDetailView(lrsn) {
+        async function showDetailView(lrsn) {
             const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => (p.lrsn === lrsn || p.LRSN === lrsn));
             if (parcelMainRecord) {
                 const taxId = parcelMainRecord.tax_bill_id || parcelMainRecord.TAX_BILL_ID;
-                if(taxId) zoomToParcelByTaxId(taxId);
+                if(taxId) await zoomToParcelByTaxId(taxId);
             }
 
             mainView.classList.add('hidden');
@@ -711,6 +717,7 @@
                 RE: "Excess Acreage", RW: "Road Right of Way", SC: "Secondary Commercial", SP: "Septic System",
                 SS: "Spring Water Source", UC: "Industrial Excess", WL: "Well"
             };
+            const TOWNSHIP_MAP = { '011': 'Barre City', '039': 'Barre Town' };
 
             const landSiteRecords = (dataCache['Land_Site'] || []).filter(r => 
                 (r.LandHeaderId && String(r.LandHeaderId).trim() === String(lrsn).trim()) ||
@@ -753,8 +760,13 @@
                 return sum + (isNaN(frontage) ? 0 : frontage);
             }, 0);
             const totalFrontageDisplay = totalFrontage > 0 ? `${totalFrontage.toLocaleString()} feet` : 'N/A';
-
-            const townshipNumber = nbhdMainRecord ? (nbhdMainRecord.township_number || nbhdMainRecord.TOWNSHIP_NUMBER || 'N/A') : 'N/A';
+            
+            const townshipCode = nbhdMainRecord ? (nbhdMainRecord.township_number || nbhdMainRecord.TOWNSHIP_NUMBER || 'N/A') : 'N/A';
+            let townshipDisplay = 'N/A';
+            if (townshipCode !== 'N/A') {
+                const translatedName = TOWNSHIP_MAP[townshipCode] || 'Unknown';
+                townshipDisplay = `${translatedName} (${townshipCode})`;
+            }
             const neighborhoodNumber = nbhdMainRecord ? (nbhdMainRecord.neighborhood || nbhdMainRecord.NEIGHBORHOOD || 'N/A') : 'N/A';
             const neighborhoodName = nbhdMainRecord ? (nbhdMainRecord.neigh_name || nbhdMainRecord.NEIGH_NAME || 'N/A') : 'N/A';
 
@@ -791,7 +803,7 @@
                                     <p class="mt-1 text-sm text-gray-600"><strong>Zoning:</strong> ${zoning}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Land Types:</strong> ${landTypesDisplay}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Actual Frontage:</strong> ${totalFrontageDisplay}</p>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>Township #:</strong> ${townshipNumber}</p>
+                                    <p class="mt-1 text-sm text-gray-600"><strong>Township:</strong> ${townshipDisplay}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Neighborhood #:</strong> ${neighborhoodNumber}</p>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Neighborhood Name:</strong> ${neighborhoodName}</p>
                                 </div>
