@@ -705,7 +705,7 @@
                 totalAreaHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Total Residential Area:</strong> ${totalArea.toLocaleString()} sq ft</p>`;
             }
             
-            // --- NEW: Site, Land, and Neighborhood Details from JSON ---
+            // --- Site, Land, and Neighborhood Details ---
             const UTILITY_MAP = { all: 'All', elect: 'Electric', gas: 'Gas', septic: 'Septic', sewer: 'Sewer', water: 'Water', well: 'Well' };
             const ROAD_MAP = { paved: 'Paved', unpaved: 'Unpaved', sidewalk: 'Sidewalk' };
             const ZONING_MAP = { CA: 'Conservation', EBC: 'East Barre Commercial', HC: 'Highway Commercial', HDR: 'High Density Residential', I: 'Industrial', LDR: 'Low Density Residential', MDR: 'Medium Density Residential', OBR: 'Office Building Retail', VHD: 'Very High Density Residential' };
@@ -769,6 +769,14 @@
             }
             const neighborhoodNumber = nbhdMainRecord ? (nbhdMainRecord.neighborhood || nbhdMainRecord.NEIGHBORHOOD || 'N/A') : 'N/A';
             const neighborhoodName = nbhdMainRecord ? (nbhdMainRecord.neigh_name || nbhdMainRecord.NEIGH_NAME || 'N/A') : 'N/A';
+            
+            // --- Residential Details ---
+            let storiesHtml = '';
+            if (numDwellings > 0) {
+                const maxFloor = Math.max(0, ...rFloorRecords.map(r => parseFloat(r.floor_key || r.FLOOR_KEY) || 0));
+                storiesHtml = `<p class="mt-1 text-sm text-gray-600"><strong>Stories:</strong> ${maxFloor || 'N/A'}</p>`;
+            }
+
 
             // --- Build HTML for Property Details card ---
             const propertyDetailsIcon = SECTION_ICONS["Property Details"];
@@ -796,6 +804,7 @@
                                     ${effYearBuiltHtml}
                                     ${finishedAreaHtml}
                                     ${totalAreaHtml}
+                                    ${storiesHtml}
                                 </div>
                                 <div>
                                     <p class="mt-1 text-sm text-gray-600"><strong>Utilities:</strong> ${utilities}</p>
