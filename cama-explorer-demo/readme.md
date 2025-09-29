@@ -12,7 +12,8 @@
 **Status**
 
 > [!IMPORTANT]
-> Awaiting SoV config of Globalscape FTP for data transfer
+> GlobalScape FTP configured for use Friday, September 26, 2025.
+> Emailed Chris for sample data on Monday, September 29, 2025.
 
 ## Tyler Technologies
 
