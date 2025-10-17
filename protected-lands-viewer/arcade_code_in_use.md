@@ -176,7 +176,7 @@ return (GISACRES+' ac'+TextFormatting.NewLine+(Round(AC_Diff_PCT,1)+'% Differenc
                 <span style="color:#64748b;">Date Acquired:</span> <span><strong>{expression/expr2}</strong></span>
             </div>
             <div>
-                <span style="color:#64748b;">Edit Date:</span> <span><strong>{UPDDATE}</strong></span><strong>&nbsp;</strong>
+                <span style="color:#64748b;">Edit Date:</span> <span><strong>{expression/expr4}</strong></span>
             </div>
             <div>
                 <span style="color:#64748b;">Geom Stats:</span> <strong>{expression/expr11}</strong>
