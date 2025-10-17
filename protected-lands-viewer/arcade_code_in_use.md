@@ -50,6 +50,27 @@ else if($feature.GAPSTATUS == '4') {
 }
 ```
 
+### Expression: Date Acquired Formatting
+
+This expression reformats the Date Acquired field for display in the pop up card.
+
+```javascript
+Text($feature.DATEAQRD, 'MMM D, YYYY')
+```
+
+### Expression: GIS Acres Display
+
+This expression reformats the GIS Acres field for display in the pop up card.
+
+```javascript
+var GISACRES = $feature.GISACRES;
+var LACRES = $feature.LISTED_AC;
+var AC_Diff_PCT = ((Abs(LACRES-GISACRES))/((LACRES+GISACRES)/2))*100;
+Round(AC_Diff_PCT,2)
+
+return (GISACRES+' ac'+TextFormatting.NewLine+(Round(AC_Diff_PCT,1)+'% Difference'));
+```
+
 ### HTML Text Container
 
 ```html
