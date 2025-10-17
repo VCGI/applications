@@ -8,6 +8,8 @@ These functions are executed via Attribute Expressions on the Protected Lands da
 
 ### Expression: Interest Org Type
 
+This script presents the interest type in the pop up card.
+
 ```javascript
 If($feature.INT_ORGTYP == 'FED') { 
    return 'Federal'
@@ -26,6 +28,25 @@ else if($feature.INT_ORGTYP == 'PVT') {
 }
 else if($feature.INT_ORGTYP == 'UNK') {
     return 'Unknown'
+}
+```
+
+### Expression: GAP Status Number
+
+This expression maintains the numeric display of GAP Status for the pop up card.
+
+```javascript
+If($feature.GAPSTATUS == '1') { 
+   return '1'
+} 
+else if($feature.GAPSTATUS == '2') {
+    return '2'
+} 
+else if($feature.GAPSTATUS == '3') {
+    return '3'
+} 
+else if($feature.GAPSTATUS == '4') {
+    return '4'
 }
 ```
 
