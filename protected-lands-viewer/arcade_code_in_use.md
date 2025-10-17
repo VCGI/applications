@@ -55,7 +55,15 @@ else if($feature.GAPSTATUS == '4') {
 This expression reformats the Date Acquired field for display in the pop up card.
 
 ```javascript
-Text($feature.DATEAQRD, 'MMM D, YYYY')
+Text($feature.DATEAQRD, 'MMM. D, YYYY')
+```
+
+### Expression: Update Date Formatting
+
+This expression reformats the Update Date field for display in the pop up card.
+
+```javascript
+Text($feature.UPDDATE, 'MMM. D, YYYY')
 ```
 
 ### Expression: GIS Acres Display
