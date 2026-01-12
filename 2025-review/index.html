@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vermont Year in GIS 2025</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Link to Google Fonts to load Source Sans Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/x-icon" href="https://files.vcgi.vermont.gov/logo/favicon.ico">
+
+    <!-- Linked Styles SoV Disaster Recovery -->
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/ajax-progress.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/align.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/autocomplete-loading.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/fieldgroup.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/container-inline.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/clearfix.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/details.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/hidden.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/item-list.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/js.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/nowrap.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/position-container.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/progress.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/reset-appearance.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/resize.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/sticky-header.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/system-status-counter.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/system-status-report-counters.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/system-status-report-general-info.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/tabledrag.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/tablesort.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/core/modules/system/css/components/tree-child.module.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/modules/contrib/calendar/css/calendar.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/modules/contrib/calendar/css/calendar_multiday.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/modules/contrib/extlink/extlink.css?svwgkf" />
+    <link rel="stylesheet" media="all" href="https://disasterrecovery.vermont.gov/themes/custom/agency_template/assets/css/styles.css?svwgkf" />
+
+    <script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" defer crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/releases/v5.12.0/js/v4-shims.js" defer crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            /* UPDATED: Font changed back to Roboto */
+            --font-sans: "Roboto", sans-serif;
+            --color-primary-brand: #003300;
+            --color-text: #212121;
+        }
+        
+        html {
+            box-sizing: border-box;
+            font-family: sans-serif;
+            line-height: 1.15;
+        }
+        
+        *,:after,:before {
+            box-sizing: inherit;
+        }
+        
+        body {
+            margin: 0;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--color-text);
+            text-align: left;
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 576px) { .container { max-width: 540px; } }
+        @media (min-width: 768px) { .container { max-width: 720px; } }
+        @media (min-width: 992px) { .container { max-width: 960px; } }
+        @media (min-width: 1200px) { .container { max-width: 1160px; } }
+        @media (min-width: 1400px) { .container { max-width: 1360px; } }
+        @media (min-width: 1600px) { .container { max-width: 1720px; } }
+        
+        a {
+            text-decoration: none;
+            background-color: transparent;
+        }
+
+        img {
+            border-style: none;
+            vertical-align: middle;
+        }
+        
+        .header-top {
+            background-color: var(--color-primary-brand);
+            color: #fff;
+            font-size: .875rem;
+        }
+        
+        .header-top-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 3rem;
+        }
+        
+        .header-top a {
+            color: #fff;
+        }
+
+        .header-top-left .vermont-logo__text {
+            display: inline-block;
+        }
+
+        .header-top-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .state-logo-top-right {
+            margin-left: 1.5rem;
+        }
+
+        /*SoV Stylesheet Override for Footer BG Consistency */
+        footer {
+            background-color: #e0e0e0 !important;
+            overflow: hidden; /* Add overflow for completeness */
+        }
+
+        /* Force font styles onto the footer AND every element inside it */
+        footer, footer * {
+            font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif !important;
+            font-size: 1.06rem !important;
+            line-height: 1.5 !important;
+        }
+
+        footer a {
+             text-decoration: underline !important; /* Add underline to links */
+        }
+
+        footer a.usa-button {
+            text-decoration: none !important;
+        }
+
+        footer h2 {
+             font-size: 2.13rem !important;
+             line-height: 1.1 !important;
+             font-weight: 700 !important;
+        }
+
+        footer h3 {
+             font-size: 1.46rem !important;
+             line-height: 1.1 !important;
+             font-weight: 700 !important;
+        }
+
+        footer.usa-footer .return-to-top-icon svg.svg-inline--fa {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            vertical-align: middle;
+        }
+        
+        footer.usa-footer .usa-card__container {
+            border-color: #cdcdcd !important;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="header-top">
+        <div class="container">
+            <div class="header-top-content">
+                <div class="header-top-left">
+                    <span class="vermont-logo__text">An Official <span style="font-weight: 500;">Vermont</span> Government Website</span>
+                </div>
+                <div class="header-top-right">
+                    <a href="https://www.vermont.gov/" class="state-logo-top-right" target="_blank" rel="noopener noreferrer">
+                        <img src="https://files.vcgi.vermont.gov/logo/vermont-logo-white.png" alt="State of Vermont" style="height: 18px; width: auto;">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="storymaps-root"></div>
+
+    <script>
+        window.storyMapsEmbedConfig = {
+            "storyId": "3b1a0279e17c439cb0d84f4062c6fb38",
+            "rootNode": ".storymaps-root"
+        }
+    </script>
+    <script src="https://storymaps.arcgis.com/embed/view"></script>
+
+</body>
+</html>
