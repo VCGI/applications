@@ -68,7 +68,7 @@
 - William Krajeski <bill@nemcvt.com>
 - Matt Krajeski <mattkraj09@gmail.com>
 
-## CAMA SAMPLE VIEWER - Dwelling Unit Methodology
+## CAMA SAMPLE VIEWER Dwelling Unit Methodology
 
 Summary of how (residential) dwellings calculated from Aumentum Sample:
 
@@ -114,17 +114,19 @@ If neither of the above yields a result, the system iterates through the list of
 - If a `kit_count` (Kitchen Count) exists, it adds the number of kitchens (assuming 1 kitchen = 1 dwelling).
 - If no kitchen count exists, it defaults to adding **1**.
 
-- **Note:** If the final count is derived from this method—specifically involving Apartments—the system marks the value as an "estimate" (see Visual Indicators below).
+**Note:** If the final count is derived from this method—specifically involving Apartments—the system marks the value as an "estimate" (see Visual Indicators below).
 
 ### 3. Visual Indicators
 
 The application adds specific symbols to the final number to indicate data quality or context:
 
-- **The Tilde (`~`):**
+**The Tilde (`~`):**
+
 - **Meaning:** The value is an estimate.
 - **Trigger:** This appears if the count was derived from **Priority C** (Improvement Enumeration) involving Apartment types where specific unit data might be ambiguous.
 
-- **The Asterisk (`*`):**
+**The Asterisk (`*`):**
+
 - **Meaning:** Indicates a Condo or Duplex where the unit count might be undercounted in the source data (e.g., the record might represent only *one* side of a duplex).
 - **Trigger:**
 - The Property Class Code indicates a Condo (130-135, 230-235) or a specific commercial code (337).
