@@ -141,7 +141,8 @@
             "Assessment Info": ["EXP_MAIN"],
             "Building Details": ["EXP_SECTION", "EXP_EXTWALL", "EXP_ROOF", "EXP_FLOOR", "EXP_HEAT", "EXP_FEATURES"], 
             "Sales History": ["EXP_TRANHIST"],
-            "Land": ["EXP_LAND", "EXP_SITEIMP"], // Added EXP_SITEIMP here
+            "Valuation History": ["EXP_OYVAL"], // New Group
+            "Land": ["EXP_LAND", "EXP_SITEIMP"],
             "Improvements": ["EXP_IMPROVE"], 
             "Outbuildings": ["EXP_OUTBUILD", "EXP_GARAGE", "EXP_PORCH"],
             "Photos": ["EXP_PHOTOS"]
@@ -151,6 +152,7 @@
             "Assessment Info": "fa-file-invoice-dollar",
             "Building Details": "fa-hammer",
             "Sales History": "fa-handshake",
+            "Valuation History": "fa-clock-rotate-left", // New Icon
             "Land": "fa-tree",
             "Improvements": "fa-house",
             "Outbuildings": "fa-warehouse",
@@ -648,6 +650,17 @@
                     if (file === 'EXP_PORCH') relatedRecords = relatedRecords.filter(r => cleanValue(r.area) !== '0');
                     if (file === 'EXP_HEAT') relatedRecords = relatedRecords.filter(r => cleanValue(r.percent) !== '0');
                     if (file === 'EXP_FEATURES') relatedRecords = relatedRecords.filter(r => cleanValue(r.name) !== '' && parseFloat(cleanValue(r.quantity)) !== 0);
+                    if (file === 'EXP_SITEIMP') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0');
+
+                    // NEW: Filter and Sort Valuation History
+                    if (file === 'EXP_OYVAL') {
+                        // Sort by nperiod (Year) Descending (Newest First)
+                        relatedRecords.sort((a, b) => {
+                            const yearA = parseInt(cleanValue(a.nperiod)) || 0;
+                            const yearB = parseInt(cleanValue(b.nperiod)) || 0;
+                            return yearB - yearA;
+                        });
+                    }
                     
                     // NEW: Filter Site Improvements
                     if (file === 'EXP_SITEIMP') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0');
