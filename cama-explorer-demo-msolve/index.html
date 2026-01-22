@@ -139,10 +139,11 @@
         // We will map the new files to the UI categories later. 
         // For now, we load them but won't process them until we define their schemas.
         const RELATED_FILES = {
-            "Assessment Info": ["EXP_MAIN"], // Contains values like cama_total
+            "Assessment Info": ["EXP_MAIN"],
+            "Building Details": ["EXP_SECTION", "EXP_FLOOR", "EXP_EXTWALL", "EXP_ROOF"], // Added EXP_SECTION here
             "Sales History": ["EXP_TRANHIST"],
             "Land": ["EXP_LAND"],
-            "Improvements": ["EXP_IMPROVE", "EXP_EXTWALL", "EXP_ROOF", "EXP_FLOOR", "EXP_HEAT"],
+            "Improvements": ["EXP_IMPROVE"], 
             "Outbuildings": ["EXP_OUTBUILD", "EXP_GARAGE", "EXP_PORCH"],
             "Photos": ["EXP_PHOTOS"]
         };
@@ -553,53 +554,140 @@
         // --- HIERARCHICAL VIEW LOGIC ---
         // updated for microsolve
         async function showDetailView(lrsn) {
-            // Find the record using the raw ID
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             if (!parcelData) return;
 
             const cleanLrsn = cleanValue(lrsn);
             const spanId = cleanValue(parcelData[SPAN_KEY]);
 
-            // Zoom map to this parcel
             if(spanId) await zoomToParcelByTaxId(spanId);
 
             mainView.classList.add('hidden');
             detailView.classList.remove('hidden');
 
-            // --- BUILD BASIC DETAILS FROM EXP_MAIN ---
+            // --- 1. BASIC DETAILS (EXP_MAIN) ---
             const address = cleanValue(parcelData.prop_locat);
             const owner = cleanValue(parcelData.owner_name);
             const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
-            const acres = cleanValue(parcelData.factorj); // Assuming 'factorj' is acres based on sample value 0.22/0.32
-            const builtYear = cleanValue(parcelData.year_built) || 'N/A'; // We need to check EXP_IMPROVE later for this
+            const acres = cleanValue(parcelData.factorj); 
 
-            let html = `<div class="bg-white p-6 rounded-lg shadow-md">
-                            <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-4">
-                                <i class="fa-solid fa-circle-info mr-3" style="color: #003300;"></i>Property Details
-                            </h2>
-                            <p class="text-lg text-[#003300] font-bold">${address}</p>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 mt-4">
+            // --- 2. BUILDING DETAILS (EXP_SECTION) ---
+            // Find sections linked to this parcel
+            const sectionRecords = (dataCache['EXP_SECTION'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
+            
+            // specific variables for the summary card
+            let yearBuilt = 'N/A';
+            let effAge = 'N/A';
+            let sqFt = 'N/A';
+            let beds = 'N/A';
+            let baths = 'N/A';
+            let rooms = 'N/A';
+            let style = 'N/A';
+            let stories = 'N/A';
+
+            // If we have section data, extract values from the first section (usually main dwelling)
+            if (sectionRecords.length > 0) {
+                const mainSec = sectionRecords[0];
+                yearBuilt = cleanValue(mainSec.year_built) || 'N/A';
+                effAge = cleanValue(mainSec.effect_age) || 'N/A';
+                sqFt = cleanValue(mainSec.bldg_sqft) ? parseInt(cleanValue(mainSec.bldg_sqft)).toLocaleString() + ' sq ft' : 'N/A';
+                beds = cleanValue(mainSec.bedrooms) || '0';
+                
+                const full = cleanValue(mainSec.full_baths) || '0';
+                const half = cleanValue(mainSec.half_baths) || '0';
+                baths = `${full} Full / ${half} Half`;
+
+                rooms = cleanValue(mainSec.total_room) || 'N/A';
+                style = cleanValue(mainSec.style) || 'N/A'; // This is likely a code (e.g. "4"), we might need a lookup map later.
+                stories = cleanValue(mainSec.stories) || 'N/A';
+            }
+
+            // --- BUILD HTML ---
+            let html = `<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                            <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>Owner:</strong> ${owner}</p>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>Parcel ID:</strong> ${cleanLrsn}</p>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>SPAN:</strong> ${spanId}</p>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>Acres:</strong> ${acres}</p>
+                                    <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-2">
+                                        <i class="fa-solid fa-house-user mr-3" style="color: #003300;"></i>Property Details
+                                    </h2>
+                                    <p class="text-xl text-[#003300] font-bold mb-4">${address}</p>
                                 </div>
+                                <div class="text-right">
+                                    <p class="text-2xl font-bold text-gray-800">${totalValue}</p>
+                                    <p class="text-sm text-gray-500">Total Assessed Value</p>
+                                </div>
+                            </div>
+                            
+                            <hr class="border-gray-200 my-4">
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>Total Value:</strong> ${totalValue}</p>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>Land Value:</strong> ${landValue}</p>
-                                    <p class="mt-1 text-sm text-gray-600"><strong>Dwelling Value:</strong> ${dwellValue}</p>
+                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Ownership</h3>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Owner:</span> ${owner}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Parcel ID:</span> ${cleanLrsn}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">SPAN:</span> ${spanId}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Acres:</span> ${acres}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Building Info</h3>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Year Built:</span> ${yearBuilt}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Living Area:</span> ${sqFt}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Bedrooms:</span> ${beds}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Bathrooms:</span> ${baths}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Total Rooms:</span> ${rooms}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Valuation Breakdown</h3>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Land:</span> <span>${landValue}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Dwelling:</span> <span>${dwellValue}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between mt-2 pt-2 border-t border-gray-100"><span class="font-bold">Total:</span> <span class="font-bold">${totalValue}</span></p>
                                 </div>
                             </div>
                         </div>`;
+
+            // --- RENDER RELATED SECTIONS ---
+            // We loop through the RELATED_FILES config to generate the tables below the card
+            html += `<div class="space-y-6">`;
             
-            // Placeholder for where we will loop through other files later
-            html += `<div class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
-                        <p class="text-yellow-700">Detailed sections (Improvements, Land, etc.) will be configured in the next steps.</p>
-                     </div>`;
+            for (const group in RELATED_FILES) {
+                // Skip 'Assessment Info' as it's already in the card
+                if (group === "Assessment Info") continue;
+
+                let groupHtml = '';
+                let hasData = false;
+
+                RELATED_FILES[group].forEach(file => {
+                    const rawRecords = dataCache[file] || [];
+                    
+                    // Filter records for this parcel
+                    let relatedRecords = rawRecords.filter(r => cleanValue(r.parcel_id) === cleanLrsn);
+
+                    // SPECIAL HANDLING: Filter out empty rows in EXP_IMPROVE
+                    if (file === 'EXP_IMPROVE') {
+                        relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '' && cleanValue(r.total) !== '0');
+                    }
+
+                    if (relatedRecords.length > 0) {
+                        hasData = true;
+                        groupHtml += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file}</h4>`;
+                        groupHtml += createHtmlTable(relatedRecords);
+                    }
+                });
+
+                if (hasData) {
+                    const iconClass = SECTION_ICONS[group] || 'fa-folder';
+                    html += `<section class="bg-white p-6 rounded-lg shadow-md">
+                                <h3 class="text-xl font-semibold text-gray-800 flex items-center border-b pb-2 mb-4">
+                                    <i class="fa-solid ${iconClass} mr-3" style="color: #003300;"></i>${group}
+                                </h3>
+                                ${groupHtml}
+                             </section>`;
+                }
+            }
+            html += `</div>`;
 
             detailContent.innerHTML = html;
             leftPane.scrollTo(0, 0);
