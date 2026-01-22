@@ -140,16 +140,18 @@
         // For now, we load them but won't process them until we define their schemas.
         const RELATED_FILES = {
             "Assessment Info": ["EXP_MAIN"],
-            "Building Details": ["EXP_SECTION", "EXP_FLOOR", "EXP_EXTWALL", "EXP_ROOF"], // Added EXP_SECTION here
+            // Grouping all construction details together
+            "Building Details": ["EXP_SECTION", "EXP_EXTWALL", "EXP_ROOF", "EXP_FLOOR"], 
             "Sales History": ["EXP_TRANHIST"],
             "Land": ["EXP_LAND"],
             "Improvements": ["EXP_IMPROVE"], 
             "Outbuildings": ["EXP_OUTBUILD", "EXP_GARAGE", "EXP_PORCH"],
-            "Photos": ["EXP_PHOTOS"]
+            "Photos": ["EXP_PHOTOS"] // Added Photos
         };
-
+        
         const SECTION_ICONS = {
             "Assessment Info": "fa-file-invoice-dollar",
+            "Building Details": "fa-hammer",
             "Sales History": "fa-handshake",
             "Land": "fa-tree",
             "Improvements": "fa-house",
@@ -662,14 +664,10 @@
                     const rawRecords = dataCache[file] || [];
                     let relatedRecords = rawRecords.filter(r => cleanValue(r.parcel_id) === cleanLrsn);
 
-                    // --- FILTERING LOGIC ---
-
-                    // 1. Filter Empty Improvements
+                    // --- FILTERING ---
                     if (file === 'EXP_IMPROVE') {
                         relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '' && cleanValue(r.total) !== '0');
                     }
-                    
-                    // 2. Filter Empty Transactions
                     if (file === 'EXP_TRANHIST') {
                         relatedRecords = relatedRecords.filter(r => {
                             const price = parseFloat(cleanValue(r.sale_price));
@@ -678,26 +676,40 @@
                         });
                         relatedRecords.sort((a, b) => parseFloat(cleanValue(b.sale_price)) - parseFloat(cleanValue(a.sale_price)));
                     }
-
-                    // 3. Filter Outbuildings (New!)
                     if (file === 'EXP_OUTBUILD') {
-                        // Filter out records where Type is "0"
                         relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.type) !== '');
                     }
-
-                    // 4. Filter Garages (New!)
                     if (file === 'EXP_GARAGE') {
-                        // Filter out records where Type is "0" or Area is "0"
                         relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.area) !== '0');
                     }
-
-                    // 5. Filter Porches (New!)
                     if (file === 'EXP_PORCH') {
-                        // Filter out records where Area is "0"
                         relatedRecords = relatedRecords.filter(r => cleanValue(r.area) !== '0');
                     }
 
-                    // --- RENDER ---
+                    // --- RENDER PHOTOS ---
+                    if (file === 'EXP_PHOTOS' && relatedRecords.length > 0) {
+                        hasData = true;
+                        groupHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">`;
+                        relatedRecords.forEach(photo => {
+                            // Construct a guess for the image URL based on common patterns
+                            // We assume there might be an 'images' folder next to the json files
+                            const photoId = cleanValue(photo.photoid);
+                            // Try parcel_id.jpg as a default guess for the main image
+                            const imgUrl = `${S3_BASE_URL}images/${cleanLrsn}.jpg`;
+                            
+                            groupHtml += `
+                                <div class="border rounded-lg overflow-hidden shadow-sm">
+                                    <img src="${imgUrl}" alt="Property Photo ${photoId}" 
+                                         class="w-full h-auto object-cover"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=No+Image+Available'; this.parentElement.innerHTML+='<p class=\'p-2 text-xs text-red-500\'>Image not found at expected path</p>';">
+                                    <div class="p-2 bg-gray-50 text-xs text-gray-500">Photo ID: ${photoId}</div>
+                                </div>`;
+                        });
+                        groupHtml += `</div>`;
+                        return; // Skip the table generation for photos
+                    }
+
+                    // --- RENDER TABLES ---
                     if (relatedRecords.length > 0) {
                         hasData = true;
                         groupHtml += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace('EXP_', '')}</h4>`;
@@ -903,6 +915,11 @@
                              // We could add " sq ft" here, but dimension1 in Outbuildings is linear feet, 
                              // so we will just comma-separate it for now to be safe.
                          }
+                    }
+
+                    // New: Format Percentages
+                    if (h === 'percent') {
+                         val = val + '%';
                     }
 
                     table += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">${val}</td>`;
