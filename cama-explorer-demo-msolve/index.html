@@ -653,7 +653,6 @@
             html += `<div class="space-y-6">`;
             
             for (const group in RELATED_FILES) {
-                // Skip 'Assessment Info' as it's already in the card
                 if (group === "Assessment Info") continue;
 
                 let groupHtml = '';
@@ -663,27 +662,45 @@
                     const rawRecords = dataCache[file] || [];
                     let relatedRecords = rawRecords.filter(r => cleanValue(r.parcel_id) === cleanLrsn);
 
+                    // --- FILTERING LOGIC ---
+
                     // 1. Filter Empty Improvements
                     if (file === 'EXP_IMPROVE') {
                         relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '' && cleanValue(r.total) !== '0');
                     }
                     
-                    // 2. Filter Empty Transactions (New!)
+                    // 2. Filter Empty Transactions
                     if (file === 'EXP_TRANHIST') {
                         relatedRecords = relatedRecords.filter(r => {
                             const price = parseFloat(cleanValue(r.sale_price));
                             const date = cleanValue(r.sale_date);
-                            // Only show if price > 0 OR date is valid (not / /)
                             return price > 0 || (date && date !== '/  /');
                         });
-                        // Sort by sale date (descending) if possible, or just price for now
-                         relatedRecords.sort((a, b) => parseFloat(cleanValue(b.sale_price)) - parseFloat(cleanValue(a.sale_price)));
+                        relatedRecords.sort((a, b) => parseFloat(cleanValue(b.sale_price)) - parseFloat(cleanValue(a.sale_price)));
                     }
 
+                    // 3. Filter Outbuildings (New!)
+                    if (file === 'EXP_OUTBUILD') {
+                        // Filter out records where Type is "0"
+                        relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.type) !== '');
+                    }
+
+                    // 4. Filter Garages (New!)
+                    if (file === 'EXP_GARAGE') {
+                        // Filter out records where Type is "0" or Area is "0"
+                        relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.area) !== '0');
+                    }
+
+                    // 5. Filter Porches (New!)
+                    if (file === 'EXP_PORCH') {
+                        // Filter out records where Area is "0"
+                        relatedRecords = relatedRecords.filter(r => cleanValue(r.area) !== '0');
+                    }
+
+                    // --- RENDER ---
                     if (relatedRecords.length > 0) {
                         hasData = true;
-                        groupHtml += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file}</h4>`;
-                        // For Land, we use the table; for others, we also use the table
+                        groupHtml += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace('EXP_', '')}</h4>`;
                         groupHtml += createHtmlTable(relatedRecords);
                     }
                 });
@@ -868,8 +885,7 @@
                 headers.forEach(h => {
                     let val = cleanValue(r[h]);
                     
-                    // Format Currency
-                    if (['sale_price', 'land_value', 'land_tot', 'cu_value', 'ex_value'].includes(h)) {
+                    if (['sale_price', 'land_value', 'land_tot', 'cu_value', 'ex_value', 'cama_total', 'cama_land', 'cama_dwell'].includes(h)) {
                         const num = parseFloat(val);
                         val = isNaN(num) ? val : num.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
                     }
@@ -877,6 +893,16 @@
                     // Format Dates
                     if (h === 'sale_date' && val === '/  /') {
                         val = 'N/A';
+                    }
+
+                    // New: Format Area
+                    if (['area', 'fin_sqft', 'dimension1'].includes(h) && val !== '0' && val !== '') {
+                         // Only append if it looks like a number
+                         if (!isNaN(parseFloat(val))) {
+                             val = `${parseFloat(val).toLocaleString()}`; 
+                             // We could add " sq ft" here, but dimension1 in Outbuildings is linear feet, 
+                             // so we will just comma-separate it for now to be safe.
+                         }
                     }
 
                     table += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">${val}</td>`;
