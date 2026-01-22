@@ -15,6 +15,8 @@
 |           |                                                                                                                                                                                            |                               |                               |                 |               |                                                                                                                                                                    |
 | 100%      | 260                                                                                                                                                                                        |                               |                               |                 |               |                                                                                                                                                                    |
 
+*Status Docs and Dummy Data: Documents - VCGI\VCGI-Administration\Program_Admin\Parcels\General Program Administration\Tax Dept\CAMA Data*
+
 ## CAMA Vendors
 
 ### NEMRC
