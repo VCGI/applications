@@ -137,16 +137,15 @@
         const ESSENTIAL_FILES = ['EXP_MAIN'];
         
         // We will map the new files to the UI categories later. 
-        // For now, we load them but won't process them until we define their schemas.
         const RELATED_FILES = {
             "Assessment Info": ["EXP_MAIN"],
-            // Grouping all construction details together
-            "Building Details": ["EXP_SECTION", "EXP_EXTWALL", "EXP_ROOF", "EXP_FLOOR"], 
+            // Added EXP_HEAT and EXP_FEATURES here
+            "Building Details": ["EXP_SECTION", "EXP_EXTWALL", "EXP_ROOF", "EXP_FLOOR", "EXP_HEAT", "EXP_FEATURES"], 
             "Sales History": ["EXP_TRANHIST"],
             "Land": ["EXP_LAND"],
             "Improvements": ["EXP_IMPROVE"], 
             "Outbuildings": ["EXP_OUTBUILD", "EXP_GARAGE", "EXP_PORCH"],
-            "Photos": ["EXP_PHOTOS"] // Added Photos
+            "Photos": ["EXP_PHOTOS"]
         };
         
         const SECTION_ICONS = {
@@ -664,7 +663,7 @@
                     const rawRecords = dataCache[file] || [];
                     let relatedRecords = rawRecords.filter(r => cleanValue(r.parcel_id) === cleanLrsn);
 
-                    // --- FILTERING ---
+                    // --- EXISTING FILTERS ---
                     if (file === 'EXP_IMPROVE') {
                         relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '' && cleanValue(r.total) !== '0');
                     }
@@ -686,17 +685,30 @@
                         relatedRecords = relatedRecords.filter(r => cleanValue(r.area) !== '0');
                     }
 
+                    // --- NEW FILTERS ---
+
+                    // 1. Filter Heat: Exclude records with 0 percent
+                    if (file === 'EXP_HEAT') {
+                        relatedRecords = relatedRecords.filter(r => cleanValue(r.percent) !== '0' && cleanValue(r.percent) !== '');
+                    }
+
+                    // 2. Filter Features: Exclude records with empty names or 0 quantity
+                    if (file === 'EXP_FEATURES') {
+                        relatedRecords = relatedRecords.filter(r => {
+                            const name = cleanValue(r.name);
+                            const qty = parseFloat(cleanValue(r.quantity));
+                            return name !== '' && qty !== 0;
+                        });
+                    }
+
                     // --- RENDER PHOTOS ---
                     if (file === 'EXP_PHOTOS' && relatedRecords.length > 0) {
-                        hasData = true;
+                        // ... (keep existing photo logic) ...
+                         hasData = true;
                         groupHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">`;
                         relatedRecords.forEach(photo => {
-                            // Construct a guess for the image URL based on common patterns
-                            // We assume there might be an 'images' folder next to the json files
                             const photoId = cleanValue(photo.photoid);
-                            // Try parcel_id.jpg as a default guess for the main image
                             const imgUrl = `${S3_BASE_URL}images/${cleanLrsn}.jpg`;
-                            
                             groupHtml += `
                                 <div class="border rounded-lg overflow-hidden shadow-sm">
                                     <img src="${imgUrl}" alt="Property Photo ${photoId}" 
@@ -706,13 +718,15 @@
                                 </div>`;
                         });
                         groupHtml += `</div>`;
-                        return; // Skip the table generation for photos
+                        return; 
                     }
 
                     // --- RENDER TABLES ---
                     if (relatedRecords.length > 0) {
                         hasData = true;
-                        groupHtml += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${file.replace('EXP_', '')}</h4>`;
+                        // Clean up the header title (remove EXP_)
+                        const title = file.replace('EXP_', '');
+                        groupHtml += `<h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">${title}</h4>`;
                         groupHtml += createHtmlTable(relatedRecords);
                     }
                 });
