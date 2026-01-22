@@ -286,7 +286,8 @@
                         };
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
-                            definitionExpression: "TOWN = 'BARRE TOWN'",
+                            // CHANGED: Filter for LINCOLN instead of BARRE TOWN
+                            definitionExpression: "TOWN = 'LINCOLN'",
                             outFields: ["SPAN"],
                             popupEnabled: false, 
                             renderer: parcelRenderer,
@@ -309,7 +310,8 @@
                         mapView = new MapView({
                             container: "map-view",
                             map: map,
-                            center: [-72.485, 44.187],
+                            // CHANGED: Coordinates for Lincoln, VT
+                            center: [-72.995, 44.098], 
                             zoom: 13,
                             highlightOptions: {
                                 color: "#c3d600",
@@ -457,7 +459,9 @@
         
         function resetMapView() {
             if (mapView) {
-                mapView.goTo({ center: [-72.485, 44.187], zoom: 13 }).catch(err => err.name !== "view:goto-interrupted" && console.error(err));
+                // CHANGED: Update to Lincoln coordinates
+                mapView.goTo({ center: [-72.995, 44.098], zoom: 13 })
+                    .catch(err => err.name !== "view:goto-interrupted" && console.error(err));
                 clearMapHighlight();
             }
         }
