@@ -2,7 +2,7 @@
 
 ## CAMA SAMPLE VIEWER Dwelling Unit Methodology
 
-Summary of how (residential) dwellings are calculated from the Aumentum Sample data:
+Summary of how (residential) dwellings are calculated from the [Aumentum Sample data](https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample/):
 
 The "Dwellings" value displayed in the **Property Details** card is determined through a prioritized hierarchy of logic. The application attempts to calculate the unit count using three different methods, accepting the first "positive" result it finds in specific order.
 
