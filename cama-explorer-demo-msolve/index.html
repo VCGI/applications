@@ -132,7 +132,7 @@
         const PROPERTY_CLASS_CODES_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json';
         
         const MASTER_FILE = 'EXP_MAIN';
-        const ESSENTIAL_FILES = ['EXP_MAIN', 'EXP_LOOKUP']; // Added EXP_LOOKUP here
+        const ESSENTIAL_FILES = ['EXP_MAIN', 'EXP_LOOKUP', 'EXP_LABELS']; [cite_start]// <--- ADDED EXP_LABELS [cite: 530, 636]
         
         const RELATED_FILES = {
             "Assessment Info": ["EXP_MAIN"],
@@ -202,6 +202,7 @@
         let filteredData = [];
         let dataCache = {};
         let lookupData = {}; // Stores the loaded EXP_LOOKUP content
+        let labelData = {}; // <--- ADDED STATE VARIABLE
         let currentPage = 1;
         let mapView = null;
         let parcelLayer = null;
@@ -487,11 +488,11 @@
                     dataCache[file] = await response.json();
                 }));
                 masterData = dataCache[MASTER_FILE];
-                lookupData = dataCache['EXP_LOOKUP'] || {}; // Store lookup data
+                lookupData = dataCache['EXP_LOOKUP'] || {};
+                labelData = dataCache['EXP_LABELS'] || {}; // <--- ADDED
                 filteredData = masterData;
             } catch (error) {
-                showError('Failed to load initial property data. The application cannot start.');
-                console.error(error);
+                // ... error handling ...
             }
         }
 
@@ -854,11 +855,17 @@
             headers.forEach(h => {
                 let displayHeader = h.replace(/_/g, ' ').toUpperCase();
                 
-                // Friendly Headers
-                if (h === 'nperiod') displayHeader = 'YEAR';
-                if (h === 'cama_total') displayHeader = 'TOTAL VALUE';
+                // --- NEW LABEL LOGIC START ---
+                [cite_start]// If we have a specific label for this file and field, use it [cite: 651]
+                if (labelData[fileName] && labelData[fileName][h]) {
+                    displayHeader = labelData[fileName][h];
+                } 
+                // Fallback global overrides (optional, can keep or remove since JSON covers them)
+                else if (h === 'nperiod') displayHeader = 'Assessment Year';
+                else if (h === 'cama_total') displayHeader = 'Total Value';
+                // --- NEW LABEL LOGIC END ---
                 
-                table += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${displayHeader}</th>`;
+                table += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">${displayHeader}</th>`;
             });
             table += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
             
