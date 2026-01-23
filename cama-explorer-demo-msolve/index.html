@@ -166,7 +166,6 @@
                 "frame": "FRAME",
                 "foundation": "FOUNDATION",
                 "condition": "CONDITION"
-                // Quality is often decimal (2.25) so exact lookup might fail, usually left as raw number
             },
             "EXP_EXTWALL": { "type": "SIDING" },
             "EXP_ROOF": { "type": "ROOF_COVER" },
@@ -176,8 +175,21 @@
                 "type": "LAND_TYPE",
                 "calc_meth": "LAND_CALC"
             },
-            "EXP_OUTBUILD": { "type": "OUTBUILDING_TYPE" },
-            "EXP_GARAGE": { "type": "GARAGE_TYPE" },
+            "EXP_OUTBUILD": { 
+                "type": "OUTBUILDING_TYPE",
+                "siding": "SIDING"  // <--- ADDED [cite: 530]
+            },
+            "EXP_GARAGE": { 
+                "type": "GARAGE_TYPE",
+                "siding": "SIDING", // <--- ADDED [cite: 636]
+                "floor": "GARAGE_FLOOR" // We might need to check if this lookup exists, see step 2 below
+            },
+            "EXP_PORCH": { 
+                // <--- ADDED ALL BELOW [cite: 620, 621]
+                "floor": "PORCH_FLOOR",
+                "wall": "PORCH_WALL",
+                "roof": "PORCH_ROOF" 
+            },
             "EXP_SITEIMP": { "type": "SITEIMP_TYPE" }
         };
 

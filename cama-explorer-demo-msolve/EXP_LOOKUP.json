@@ -252,5 +252,11 @@
         "4": "Partition",
         "5": "Finish Apt",
         "6": "Dirt Floor"
+    },
+    "GARAGE_FLOOR": {
+        "1": "Concrete",
+        "2": "Asphalt",
+        "3": "Dirt",
+        "4": "Wood"
     }
 }
