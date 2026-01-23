@@ -555,19 +555,37 @@
             mainView.classList.add('hidden');
             detailView.classList.remove('hidden');
 
-            // --- 1. HEADER CARD ---
-            const address = cleanValue(parcelData.prop_locat);
-            const owner = cleanValue(parcelData.owner_name);
-            const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
-            const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
-            const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
-            const acres = cleanValue(parcelData.factorj); 
+            // --- 1. GATHER DATA FOR SUMMARY ---
+            // Dwellings (EXP_SECTION)
+            const sectionRecords = (dataCache['EXP_SECTION'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
             
-            // Get Assessment Year
-            // Try 'assess_yea' from main file first, otherwise default to "Current"
+            // Outbuildings (EXP_OUTBUILD)
+            const outbuildRecords = (dataCache['EXP_OUTBUILD'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn && cleanValue(r.type) !== '0');
+            
+            // Site Improvements (EXP_SITEIMP)
+            const siteImpRecords = (dataCache['EXP_SITEIMP'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn && cleanValue(r.type) !== '0');
+
+            // --- 2. CALCULATE STATS ---
+            const totalStructures = sectionRecords.length + outbuildRecords.length;
+            
+            // Check for Mobile Home (Bldg Type 9, or Design 10/12)
+            const isMobileHome = sectionRecords.some(r => {
+                const bType = cleanValue(r.bldg_type);
+                const design = cleanValue(r.design);
+                return bType === '9' || design === '10' || design === '12';
+            });
+
+            // Check for Water/Sewer in Site Improvements
+            const hasWater = siteImpRecords.some(r => cleanValue(r.type) === '1');
+            const hasSewer = siteImpRecords.some(r => cleanValue(r.type) === '2');
+            let utilities = [];
+            if (hasWater) utilities.push("Water");
+            if (hasSewer) utilities.push("Sewer");
+            const utilityText = utilities.length > 0 ? utilities.join(" & ") : "None Recorded";
+
+            // Assessment Year Logic
             let assessYear = cleanValue(parcelData.assess_yea);
             if (assessYear === '0' || assessYear === '') {
-                 // Fallback: Check if we have valuation history and take the max year
                  const history = (dataCache['EXP_OYVAL'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
                  if (history.length > 0) {
                      const years = history.map(h => parseInt(cleanValue(h.nperiod))).filter(y => !isNaN(y));
@@ -576,10 +594,8 @@
             }
             const yearLabel = assessYear && assessYear !== '0' ? `(${assessYear})` : '';
 
-            // Extract Building Summary
-            const sectionRecords = (dataCache['EXP_SECTION'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
+            // Main Building Details
             let yearBuilt = 'N/A', sqFt = 'N/A', beds = 'N/A', baths = 'N/A', style = 'N/A';
-            
             if (sectionRecords.length > 0) {
                 const mainSec = sectionRecords[0];
                 yearBuilt = cleanValue(mainSec.year_built) || 'N/A';
@@ -590,6 +606,14 @@
                 baths = `${full} Full / ${half} Half`;
                 style = getLookupValue('EXP_SECTION', 'style', mainSec.style);
             }
+
+            // --- 3. BUILD HEADER HTML ---
+            const address = cleanValue(parcelData.prop_locat);
+            const owner = cleanValue(parcelData.owner_name);
+            const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
+            const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
+            const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
+            const acres = cleanValue(parcelData.factorj); 
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md mb-6">
                             <div class="flex justify-between items-start">
@@ -604,6 +628,17 @@
                                     <p class="text-sm text-gray-500">Total Assessed Value ${yearLabel}</p>
                                 </div>
                             </div>
+                            
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    ${totalStructures} Structure(s)
+                                </span>
+                                ${isMobileHome ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Mobile Home</span>` : ''}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    ${utilityText}
+                                </span>
+                            </div>
+
                             <hr class="border-gray-200 my-4">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
@@ -631,7 +666,7 @@
                             </div>
                         </div>`;
 
-            // --- 2. PREPARE TABS ---
+            // --- 4. PREPARE TABS ---
             let tabsHtml = `<div class="mb-4 border-b border-gray-200"><ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs">`;
             let contentHtml = `<div id="tab-content">`;
             let activeTabId = null;
@@ -646,7 +681,7 @@
                     const rawRecords = dataCache[file] || [];
                     let relatedRecords = rawRecords.filter(r => cleanValue(r.parcel_id) === cleanLrsn);
 
-                    // --- FILTERS ---
+                    // Filters
                     if (file === 'EXP_IMPROVE') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '' && cleanValue(r.total) !== '0');
                     if (file === 'EXP_OUTBUILD') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.type) !== '');
                     if (file === 'EXP_GARAGE') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.area) !== '0');
@@ -672,7 +707,7 @@
                         relatedRecords.sort((a, b) => parseFloat(cleanValue(b.sale_price)) - parseFloat(cleanValue(a.sale_price)));
                     }
 
-                    // --- RENDER CONTENT ---
+                    // Render Content
                     if (file === 'EXP_PHOTOS' && relatedRecords.length > 0) {
                         hasData = true;
                         groupContent += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">`;
@@ -718,8 +753,19 @@
             tabsHtml += `</ul></div>`;
             contentHtml += `</div>`;
 
-            detailContent.innerHTML = html + tabsHtml + contentHtml;
+            // --- 5. BOTTOM BACK TO TOP BUTTON ---
+            const footerHtml = `
+                <div class="mt-8 mb-4 text-center">
+                    <button id="detail-back-top" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                        <i class="fa-solid fa-arrow-up mr-2"></i> Back to Top
+                    </button>
+                </div>
+            `;
 
+            detailContent.innerHTML = html + tabsHtml + contentHtml + footerHtml;
+
+            // --- EVENT LISTENERS ---
+            // Tab Switching
             const tabBtns = detailContent.querySelectorAll('.tab-btn');
             const tabPanes = detailContent.querySelectorAll('.tab-pane');
 
@@ -739,6 +785,11 @@
                         }
                     });
                 });
+            });
+
+            // Inline Back to Top
+            document.getElementById('detail-back-top').addEventListener('click', () => {
+                leftPane.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
             leftPane.scrollTo(0, 0);
