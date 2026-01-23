@@ -1,0 +1,110 @@
+{
+    "EXP_MAIN": {
+        "parcel_id": "Parcel ID",
+        "owner_name": "Owner Name",
+        "owner_nam2": "Co-Owner",
+        "owner_addr": "Mailing Address",
+        "city": "City",
+        "state": "State",
+        "zip_code": "Zip Code",
+        "prop_locat": "Property Location",
+        "tax_map_nu": "Tax Map #",
+        "cama_total": "Total Appraised Value",
+        "cama_land": "Land Value",
+        "cama_dwell": "Dwelling Value",
+        "cama_outb": "Outbuilding Value",
+        "assess_yea": "Assessment Year",
+        "prop_type": "Property Category",
+        "nbhd": "Neighborhood",
+        "span": "SPAN"
+    },
+    "EXP_SECTION": {
+        "secid": "Section ID",
+        "bldg_type": "Building Type",
+        "year_built": "Year Built",
+        "effect_age": "Effective Age",
+        "bldg_sqft": "Building Sq Ft",
+        "stories": "Stories",
+        "style": "Style",
+        "quality": "Quality",
+        "condition": "Condition",
+        "bedrooms": "Bedrooms",
+        "full_baths": "Full Baths",
+        "half_baths": "Half Baths",
+        "kitchens": "Kitchens",
+        "tot_rooms": "Total Rooms",
+        "ext_wall": "Exterior Wall",
+        "roof_cover": "Roof Cover",
+        "heat_type": "Heat Type"
+    },
+    "EXP_LAND": {
+        "type": "Land Type",
+        "area": "Acres/Area",
+        "land_value": "Assessed Value",
+        "calc_meth": "Calc Method",
+        "grade": "Grade",
+        "frontage": "Frontage",
+        "depth": "Depth"
+    },
+    "EXP_OUTBUILD": {
+        "type": "Structure Type",
+        "dimension1": "Area/Dim",
+        "year_built": "Year Built",
+        "grade": "Grade",
+        "condition": "Condition",
+        "siding": "Siding",
+        "cu_value": "Value"
+    },
+    "EXP_GARAGE": {
+        "type": "Garage Type",
+        "area": "Area (Sq Ft)",
+        "capacity": "Capacity",
+        "finish": "Finish",
+        "siding": "Siding"
+    },
+    "EXP_PORCH": {
+        "area": "Area (Sq Ft)",
+        "floor": "Floor Type",
+        "wall": "Wall Type",
+        "roof": "Roof Type",
+        "tot_prch_v": "Total Value"
+    },
+    "EXP_EXTWALL": {
+        "type": "Wall Material",
+        "percent": "Percentage"
+    },
+    "EXP_ROOF": {
+        "type": "Roof Material",
+        "percent": "Percentage"
+    },
+    "EXP_FLOOR": {
+        "type": "Flooring Material",
+        "percent": "Percentage"
+    },
+    "EXP_HEAT": {
+        "type": "Heating System",
+        "percent": "Percentage"
+    },
+    "EXP_TRANHIST": {
+        "sale_date": "Sale Date",
+        "sale_price": "Sale Price",
+        "grantor": "Seller",
+        "grantee": "Buyer",
+        "book": "Book",
+        "page": "Page",
+        "validity": "Validity Code"
+    },
+    "EXP_OYVAL": {
+        "nperiod": "Assessment Year",
+        "cama_total": "Total Value",
+        "cama_land": "Land Value",
+        "cama_dwell": "Dwelling Value",
+        "cama_outb": "Outbuilding Value"
+    },
+    "EXP_SITEIMP": {
+        "type": "Improvement Type",
+        "quantity": "Quantity",
+        "quality": "Quality",
+        "cu_value": "Value"
+    }
+}
