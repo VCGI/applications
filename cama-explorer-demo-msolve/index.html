@@ -129,19 +129,16 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
         const S3_BASE_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/sample-microsolve/';
-        // We will keep the property class codes for now, though they might not match the new schema perfectly yet.
         const PROPERTY_CLASS_CODES_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json';
         
-        // EXP_MAIN acts as both the Site_Address and Parcel_Main equivalents
         const MASTER_FILE = 'EXP_MAIN';
-        const ESSENTIAL_FILES = ['EXP_MAIN'];
+        const ESSENTIAL_FILES = ['EXP_MAIN', 'EXP_LOOKUP']; // Added EXP_LOOKUP here
         
-        // We will map the new files to the UI categories later. 
         const RELATED_FILES = {
             "Assessment Info": ["EXP_MAIN"],
             "Building Details": ["EXP_SECTION", "EXP_EXTWALL", "EXP_ROOF", "EXP_FLOOR", "EXP_HEAT", "EXP_FEATURES"], 
             "Sales History": ["EXP_TRANHIST"],
-            "Valuation History": ["EXP_OYVAL"], // New Group
+            "Valuation History": ["EXP_OYVAL"], 
             "Land": ["EXP_LAND", "EXP_SITEIMP"],
             "Improvements": ["EXP_IMPROVE"], 
             "Outbuildings": ["EXP_OUTBUILD", "EXP_GARAGE", "EXP_PORCH"],
@@ -152,25 +149,47 @@
             "Assessment Info": "fa-file-invoice-dollar",
             "Building Details": "fa-hammer",
             "Sales History": "fa-handshake",
-            "Valuation History": "fa-clock-rotate-left", // New Icon
+            "Valuation History": "fa-clock-rotate-left",
             "Land": "fa-tree",
             "Improvements": "fa-house",
             "Outbuildings": "fa-warehouse",
             "Photos": "fa-camera"
         };
 
-        const USE_CARD_VIEW = ['EXP_MAIN', 'EXP_TRANHIST'];
+        // --- DECODER RING MAPPING ---
+        // Maps "Filename" -> "Field Name" -> "Lookup Category in EXP_LOOKUP.json"
+        const LOOKUP_MAPPING = {
+            "EXP_SECTION": {
+                "style": "SECTION_STYLE",
+                "design": "SECTION_DESIGN",
+                "bldg_type": "BUILDING_TYPE",
+                "frame": "FRAME",
+                "foundation": "FOUNDATION",
+                "condition": "CONDITION"
+                // Quality is often decimal (2.25) so exact lookup might fail, usually left as raw number
+            },
+            "EXP_EXTWALL": { "type": "SIDING" },
+            "EXP_ROOF": { "type": "ROOF_COVER" },
+            "EXP_FLOOR": { "type": "FLOOR_COVER" },
+            "EXP_HEAT": { "type": "HEATING" },
+            "EXP_LAND": {
+                "type": "LAND_TYPE",
+                "calc_meth": "LAND_CALC"
+            },
+            "EXP_OUTBUILD": { "type": "OUTBUILDING_TYPE" },
+            "EXP_GARAGE": { "type": "GARAGE_TYPE" },
+            "EXP_SITEIMP": { "type": "SITEIMP_TYPE" }
+        };
+
         const ROWS_PER_PAGE = 10;
-        
-        // New Keys
-        const LRSN_KEY = 'parcel_id'; // The unique ID for joining tables
-        const SPAN_KEY = 'parc_span'; // The ID used to link to the Map
+        const LRSN_KEY = 'parcel_id'; 
+        const SPAN_KEY = 'parc_span'; 
 
         // --- STATE ---
         let masterData = [];
         let filteredData = [];
         let dataCache = {};
-        let propertyClassCodes = {};
+        let lookupData = {}; // Stores the loaded EXP_LOOKUP content
         let currentPage = 1;
         let mapView = null;
         let parcelLayer = null;
@@ -193,20 +212,17 @@
         const leftPane = document.getElementById('left-pane');
         const toTopBtn = document.getElementById('to-top-btn');
 
-        // --- DEFAULT SEARCH RESULT AREA DISPLAY ---
         function showInitialMessage() {
             tableWrapper.classList.add('hidden');
             statusMessage.innerHTML = '<p class="text-gray-500 text-lg text-center">Click on a parcel on the map or use the search bar to explore property data.</p>';
             statusMessage.classList.remove('hidden');
         }
 
-        // --- INITIALIZATION ---
         async function initialize() {
             showLoading('Loading property data...');
             await initializeMap();
-            await loadPropertyClassCodes();
             await loadInitialData();
-            showInitialMessage(); // Changed from renderMainTable()
+            showInitialMessage(); 
             loadRelatedDataInBackground();
             
             searchInput.addEventListener('input', handleSearch);
@@ -289,7 +305,6 @@
                         };
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
-                            // CHANGED: Filter for LINCOLN instead of BARRE TOWN
                             definitionExpression: "TOWN = 'LINCOLN'",
                             outFields: ["SPAN"],
                             popupEnabled: false, 
@@ -313,7 +328,6 @@
                         mapView = new MapView({
                             container: "map-view",
                             map: map,
-                            // CHANGED: Coordinates for Lincoln, VT
                             center: [-72.995, 44.098], 
                             zoom: 13,
                             highlightOptions: {
@@ -329,16 +343,12 @@
                         });
                         await mapView.when();
 
-                        // --- Layer and Renderer Setup (Must complete before adding UI widgets) ---
                         const rendererParams = {
                             layer: e911Layer,
                             view: mapView,
-                            visualVariables: {
-                                type: "size"
-                            }
+                            visualVariables: { type: "size" }
                         };
                         const rendererResponse = await locationRendererCreator.createRenderer(rendererParams);
-                        
                         const newSymbol = rendererResponse.renderer.symbol.clone();
                         newSymbol.color = "#333333";
                         newSymbol.outline = { color: "#ffffff", width: "1px" };
@@ -346,28 +356,19 @@
                         e911Layer.renderer = rendererResponse.renderer;
 
                         const e911LabelClass = {
-                            labelExpressionInfo: {
-                                expression: "$feature.PRIMARYADDRESS" 
-                            },
+                            labelExpressionInfo: { expression: "$feature.PRIMARYADDRESS" },
                             symbol: {
                                 type: "text",
                                 color: "#2b2b2b",
                                 haloColor: "#d3d3d3",
                                 haloSize: 1,
-                                font: {
-                                    family: "Arial",
-                                    size: 7,
-                                    weight: "bold"
-                                }
+                                font: { family: "Arial", size: 7, weight: "bold" }
                             },
                             labelPlacement: "above-center"
                         };
                         e911Layer.labelingInfo = [e911LabelClass];
 
-                        // --- UI Widget Setup (Moved to the end) ---
-                        const compass = new Compass({
-                            view: mapView
-                        });
+                        const compass = new Compass({ view: mapView });
                         mapView.ui.add(compass, "top-left");
 
                         const toggleContainer = document.createElement("div");
@@ -382,32 +383,23 @@
 
                         const e911Toggle = toggleContainer.querySelector('#e911-toggle');
                         e911Toggle.addEventListener('change', (event) => {
-                            if (e911Layer) {
-                                e911Layer.visible = event.target.checked;
-                            }
+                            if (e911Layer) e911Layer.visible = event.target.checked;
                         });
 
-                        // --- Map Event Listeners ---
-                        // mapView.on("click...") updated for microsolve
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
-                                
                                 if (parcelResult) {
                                     const taxId = parcelResult.graphic.attributes.SPAN;
-                                    
                                     if (taxId) {
                                         const taxIdStr = String(taxId).trim();
-                                        
-                                        // SEARCH: Look for this SPAN in our new EXP_MAIN data
-                                        // We have to clean the values in masterData before comparing because they contain extra quotes
                                         const pRec = masterData.find(p => {
                                             const cleanSpan = cleanValue(p[SPAN_KEY]);
                                             return cleanSpan === taxIdStr;
                                         });
 
                                         if (pRec) {
-                                            const lrsn = pRec[LRSN_KEY]; // Get the joining ID (parcel_id)
+                                            const lrsn = pRec[LRSN_KEY]; 
                                             showDetailView(lrsn);
                                         } else {
                                             showError(`No CAMA data found for parcel (Tax ID: ${taxIdStr}).`);
@@ -427,10 +419,7 @@
         }
         
         async function highlightParcel(graphic) {
-            // Atomically update the highlight: clear the old one first.
             clearMapHighlight();
-            
-            // Create the new highlight and set the handle once it's ready.
             const newHandle = await mapView.whenLayerView(graphic.layer).then(layerView => {
                 return layerView.highlight(graphic);
             });
@@ -462,7 +451,6 @@
         
         function resetMapView() {
             if (mapView) {
-                // CHANGED: Update to Lincoln coordinates
                 mapView.goTo({ center: [-72.995, 44.098], zoom: 13 })
                     .catch(err => err.name !== "view:goto-interrupted" && console.error(err));
                 clearMapHighlight();
@@ -472,41 +460,13 @@
         function clearMapFilter() {
             filteredData = masterData;
             currentPage = 1;
-            showInitialMessage(); // Changed from renderMainTable()
+            showInitialMessage(); 
             filterStatus.classList.add('hidden');
             searchInput.value = '';
             resetMapView();
         }
 
         // --- DATA FETCHING & HANDLING ---
-        async function loadPropertyClassCodes() {
-            try {
-                const response = await fetch(PROPERTY_CLASS_CODES_URL);
-                if (!response.ok) throw new Error(`Failed to fetch property codes: ${response.statusText}`);
-                const data = await response.json();
-
-                propertyClassCodes = {}; 
-
-                for (const primaryType in data) {
-                    if (data.hasOwnProperty(primaryType)) {
-                        const secondaryTypes = data[primaryType];
-                        for (const code in secondaryTypes) {
-                            if (secondaryTypes.hasOwnProperty(code)) {
-                                const secondaryType = secondaryTypes[code];
-                                propertyClassCodes[code] = {
-                                    primary: primaryType,
-                                    secondary: secondaryType
-                                };
-                            }
-                        }
-                    }
-                }
-                console.log("Property Class Codes Lookup Table successfully created.");
-            } catch (error) {
-                console.error("Error loading property class codes:", error);
-            }
-        }
-        
         async function loadInitialData() {
             try {
                 await Promise.all(ESSENTIAL_FILES.map(async (file) => {
@@ -515,6 +475,7 @@
                     dataCache[file] = await response.json();
                 }));
                 masterData = dataCache[MASTER_FILE];
+                lookupData = dataCache['EXP_LOOKUP'] || {}; // Store lookup data
                 filteredData = masterData;
             } catch (error) {
                 showError('Failed to load initial property data. The application cannot start.');
@@ -541,21 +502,35 @@
             filterStatus.classList.add('hidden');
             const searchTerm = searchInput.value.toLowerCase();
 
-            // If the search term is empty, show the initial message and stop.
             if (!searchTerm) {
                 showInitialMessage();
                 return;
             }
             
-            // Otherwise, filter the data and render the results table.
             filteredData = masterData.filter(row => Object.values(row).some(v => String(v).toLowerCase().includes(searchTerm)));
             currentPage = 1;
             renderMainTable();
         }
 
+        // --- LOOKUP HELPER ---
+        // Tries to find a text description for a numeric code based on filename and fieldname
+        function getLookupValue(fileName, fieldName, value) {
+            if (!value) return '';
+            const rawValue = cleanValue(value); // Ensure we don't have extra quotes
+            
+            // Check if we have a mapping for this file and field
+            if (LOOKUP_MAPPING[fileName] && LOOKUP_MAPPING[fileName][fieldName]) {
+                const lookupCategory = LOOKUP_MAPPING[fileName][fieldName];
+                
+                // If the lookup category exists in our loaded data
+                if (lookupData[lookupCategory] && lookupData[lookupCategory][rawValue]) {
+                    return lookupData[lookupCategory][rawValue]; // Return decoded text (e.g. "Wood Siding")
+                }
+            }
+            return rawValue; // Fallback to original number if no match found
+        }
+
         // --- HIERARCHICAL VIEW LOGIC ---
-        // updated for microsolve
-        // updated with tabbed display
         async function showDetailView(lrsn) {
             const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
             if (!parcelData) return;
@@ -568,7 +543,7 @@
             mainView.classList.add('hidden');
             detailView.classList.remove('hidden');
 
-            // --- 1. HEADER CARD (Always Visible) ---
+            // --- 1. HEADER CARD ---
             const address = cleanValue(parcelData.prop_locat);
             const owner = cleanValue(parcelData.owner_name);
             const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
@@ -578,7 +553,7 @@
 
             // Extract Building Summary
             const sectionRecords = (dataCache['EXP_SECTION'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
-            let yearBuilt = 'N/A', sqFt = 'N/A', beds = 'N/A', baths = 'N/A';
+            let yearBuilt = 'N/A', sqFt = 'N/A', beds = 'N/A', baths = 'N/A', style = 'N/A';
             
             if (sectionRecords.length > 0) {
                 const mainSec = sectionRecords[0];
@@ -588,6 +563,9 @@
                 const full = cleanValue(mainSec.full_baths) || '0';
                 const half = cleanValue(mainSec.half_baths) || '0';
                 baths = `${full} Full / ${half} Half`;
+                
+                // Use lookup for style
+                style = getLookupValue('EXP_SECTION', 'style', mainSec.style);
             }
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -615,6 +593,7 @@
                                 <div>
                                     <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Building Info</h3>
                                     <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Year Built:</span> ${yearBuilt}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Style:</span> ${style}</p>
                                     <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Living Area:</span> ${sqFt}</p>
                                     <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Bedrooms:</span> ${beds}</p>
                                     <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Bathrooms:</span> ${baths}</p>
@@ -652,9 +631,7 @@
                     if (file === 'EXP_FEATURES') relatedRecords = relatedRecords.filter(r => cleanValue(r.name) !== '' && parseFloat(cleanValue(r.quantity)) !== 0);
                     if (file === 'EXP_SITEIMP') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0');
 
-                    // NEW: Filter and Sort Valuation History
                     if (file === 'EXP_OYVAL') {
-                        // Sort by nperiod (Year) Descending (Newest First)
                         relatedRecords.sort((a, b) => {
                             const yearA = parseInt(cleanValue(a.nperiod)) || 0;
                             const yearB = parseInt(cleanValue(b.nperiod)) || 0;
@@ -662,9 +639,6 @@
                         });
                     }
                     
-                    // NEW: Filter Site Improvements
-                    if (file === 'EXP_SITEIMP') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0');
-
                     if (file === 'EXP_TRANHIST') {
                         relatedRecords = relatedRecords.filter(r => {
                             const price = parseFloat(cleanValue(r.sale_price));
@@ -692,17 +666,17 @@
                     } else if (relatedRecords.length > 0) {
                         hasData = true;
                         groupContent += `<h4 class="text-md font-semibold text-gray-700 mt-6 mb-2">${file.replace('EXP_', '')}</h4>`;
-                        groupContent += createHtmlTable(relatedRecords);
+                        // pass the filename so createHtmlTable knows which lookups to apply
+                        groupContent += createHtmlTable(relatedRecords, file);
                     }
                 });
 
                 if (hasData) {
                     const tabId = `tab-${group.replace(/\s+/g, '-')}`;
-                    if (!activeTabId) activeTabId = tabId; // First tab with data becomes active
+                    if (!activeTabId) activeTabId = tabId; 
 
                     const iconClass = SECTION_ICONS[group] || 'fa-folder';
                     
-                    // Add Tab Button
                     tabsHtml += `
                         <li class="mr-2">
                             <button class="tab-btn inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 group ${activeTabId === tabId ? 'border-[#003300] text-[#003300]' : 'border-transparent'}" 
@@ -711,7 +685,6 @@
                             </button>
                         </li>`;
 
-                    // Add Tab Content Pane
                     contentHtml += `
                         <div id="${tabId}" class="tab-pane bg-white p-6 rounded-lg shadow-md ${activeTabId === tabId ? '' : 'hidden'}">
                             ${groupContent}
@@ -722,22 +695,18 @@
             tabsHtml += `</ul></div>`;
             contentHtml += `</div>`;
 
-            // Combine all parts
             detailContent.innerHTML = html + tabsHtml + contentHtml;
 
-            // --- 3. ADD TAB EVENT LISTENERS ---
             const tabBtns = detailContent.querySelectorAll('.tab-btn');
             const tabPanes = detailContent.querySelectorAll('.tab-pane');
 
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // Update Button Styles
                     tabBtns.forEach(b => {
                         b.className = 'tab-btn inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 group';
                     });
                     btn.className = 'tab-btn inline-flex items-center p-4 border-b-2 border-[#003300] text-[#003300] rounded-t-lg group';
 
-                    // Show/Hide Content
                     const targetId = btn.getAttribute('data-target');
                     tabPanes.forEach(pane => {
                         if (pane.id === targetId) {
@@ -782,7 +751,6 @@
             tableHead.appendChild(headerRow);
         }
 
-        // updated function renderMainTablePage for microsolve
         function renderMainTablePage() {
             const tableBody = dataTable.querySelector('tbody');
             tableBody.innerHTML = '';
@@ -800,11 +768,9 @@
             pageData.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.className = 'main-table-row';
-                // Store the clean ID for clicking
                 const rawId = row[LRSN_KEY]; 
                 tr.dataset.lrsn = rawId; 
 
-                // Clean the display values
                 const displayId = cleanValue(row[LRSN_KEY]);
                 const address = cleanValue(row.prop_locat); 
                 const city = cleanValue(row.city);
@@ -817,7 +783,6 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${zip}</td>
                 `;
                 
-                // Pass the raw ID to the detail view (we'll handle cleaning inside showDetailView later)
                 tr.addEventListener('click', () => showDetailView(rawId));
                 tableBody.appendChild(tr);
             });
@@ -846,97 +811,66 @@
             });
         }
 
-        // --- UTILITY FUNCTIONS ---
-        function formatDateString(value) {
-            return (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}/)) ? value.substring(0, 10) : value;
-        }
-
-        function formatLastUpdateDate(dateString) {
-            if (!dateString || dateString === 'N/A') {
-                return 'N/A';
-            }
-            try {
-                const date = new Date(dateString);
-                // An invalid date's time is NaN
-                if (isNaN(date.getTime())) {
-                    return 'N/A';
-                }
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                return date.toLocaleDateString('en-US', options);
-            } catch (error) {
-                console.error("Could not format date:", dateString, error);
-                return 'N/A';
-            }
-        }
-
-        // added cleanValue for microsolve json data
         function cleanValue(val) {
             if (val === null || val === undefined) return '';
             const str = String(val).trim();
-            // Remove surrounding double quotes if they exist (e.g. "VT" -> VT)
             if (str.startsWith('"') && str.endsWith('"')) {
                 return str.substring(1, str.length - 1);
             }
             return str;
         }
 
-        function createDetailList(records) {
-            if (!records || records.length === 0) return '';
-            let listHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">`;
-            const record = records[0]; 
-            for (const key in record) {
-                const value = formatDateString(String(record[key]).trim());
-                if (value && value !== '\u0000') {
-                    const fKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    listHtml += `<div class="detail-card"><strong class="block text-xs text-gray-500">${fKey}</strong><span class="text-gray-900">${value}</span></div>`;
-                }
-            }
-            return listHtml + `</div>`;
-        }
-
-        function createHtmlTable(records) {
+        // Updated to support lookups via fileName
+        function createHtmlTable(records, fileName) {
             if (!records || records.length === 0) return '<p class="text-sm text-gray-500">No records found.</p>';
             
-            // Get headers from first record
             const headers = Object.keys(records[0]);
             
             let table = '<div class="overflow-x-auto table-container"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr>';
             
-            // Render Headers
             headers.forEach(h => {
-                // Skip internal ID columns if you want, or just clean the name
-                const displayHeader = h.replace(/_/g, ' ').toUpperCase();
+                let displayHeader = h.replace(/_/g, ' ').toUpperCase();
+                
+                // Friendly Headers
+                if (h === 'nperiod') displayHeader = 'YEAR';
+                if (h === 'cama_total') displayHeader = 'TOTAL VALUE';
+                
                 table += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${displayHeader}</th>`;
             });
             table += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
             
-            // Render Rows
             records.forEach(r => {
                 table += '<tr>';
                 headers.forEach(h => {
                     let val = cleanValue(r[h]);
                     
+                    // 1. Apply Decoders/Lookups
+                    if (fileName) {
+                        const translated = getLookupValue(fileName, h, val);
+                        if (translated && translated !== val) {
+                            val = translated;
+                        }
+                    }
+
+                    // 2. Format Currency
                     if (['sale_price', 'land_value', 'land_tot', 'cu_value', 'ex_value', 'cama_total', 'cama_land', 'cama_dwell'].includes(h)) {
                         const num = parseFloat(val);
                         val = isNaN(num) ? val : num.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
                     }
                     
-                    // Format Dates
+                    // 3. Format Dates
                     if (h === 'sale_date' && val === '/  /') {
                         val = 'N/A';
                     }
 
-                    // New: Format Area
+                    // 4. Format Areas
                     if (['area', 'fin_sqft', 'dimension1'].includes(h) && val !== '0' && val !== '') {
-                         // Only append if it looks like a number
                          if (!isNaN(parseFloat(val))) {
                              val = `${parseFloat(val).toLocaleString()}`; 
-                             // We could add " sq ft" here, but dimension1 in Outbuildings is linear feet, 
-                             // so we will just comma-separate it for now to be safe.
                          }
                     }
 
-                    // New: Format Percentages
+                    // 5. Format Percentages
                     if (h === 'percent') {
                          val = val + '%';
                     }
@@ -947,59 +881,6 @@
             });
             
             return table + '</tbody></table></div>';
-        }
-
-        function drawSketch(lrsn, canvas) {
-            const vectors = (dataCache['Sketch_Vector'] || []).filter(v => v.lrsn === lrsn || v.LRSN === lrsn);
-            if (vectors.length === 0) return;
-            const ctx = canvas.getContext('2d');
-            const padding = 40;
-            const segments = vectors.reduce((acc, v) => {
-                acc[v.segment_id] = acc[v.segment_id] || [];
-                acc[v.segment_id].push(v);
-                return acc;
-            }, {});
-            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity, cX = 0, cY = 0;
-            Object.values(segments).forEach(sVecs => {
-                cX = 0; cY = 0;
-                sVecs.forEach(v => {
-                    const run = parseFloat(v.run) || 0, rise = parseFloat(v.rise) || 0;
-                    minX = Math.min(minX, cX); minY = Math.min(minY, cY);
-                    maxX = Math.max(maxX, cX); maxY = Math.max(maxY, cY);
-                    cX += run; cY -= rise;
-                    minX = Math.min(minX, cX); minY = Math.min(minY, cY);
-                    maxX = Math.max(maxX, cX); maxY = Math.max(maxY, cY);
-                });
-            });
-            const sketchW = maxX - minX, sketchH = maxY - minY;
-            if (sketchW === 0 || sketchH === 0) return;
-            const scale = Math.min((canvas.width - padding * 2) / sketchW, (canvas.height - padding * 2) / sketchH);
-            const offX = (canvas.width - sketchW * scale) / 2 - minX * scale;
-            const offY = (canvas.height - sketchH * scale) / 2 - minY * scale;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 2; ctx.font = '10px Inter'; ctx.fillStyle = '#4b5563';
-            Object.values(segments).forEach(sVecs => {
-                cX = 0; cY = 0;
-                ctx.beginPath();
-                ctx.moveTo(offX, offY);
-                sVecs.forEach(v => {
-                    const run = parseFloat(v.run) || 0, rise = parseFloat(v.rise) || 0, len = parseFloat(v.vector_length) || 0;
-                    const sX = cX * scale + offX, sY = cY * scale + offY;
-                    cX += run; cY -= rise;
-                    const eX = cX * scale + offX, eY = cY * scale + offY;
-                    ctx.lineTo(eX, eY);
-                    if (len > 0) {
-                        const mX = (sX + eX) / 2, mY = (sY + eY) / 2, ang = Math.atan2(eY - sY, eX - sX);
-                        const lOffX = Math.sin(ang) * 10, lOffY = -Math.cos(ang) * 10;
-                        ctx.save();
-                        ctx.translate(mX + lOffX, mY + lOffY);
-                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                        ctx.fillText(len.toFixed(1), 0, 0);
-                        ctx.restore();
-                    }
-                });
-                ctx.stroke();
-            });
         }
 
         function showLoading(message) {
@@ -1016,59 +897,6 @@
             const end = Math.min(endIndex, filteredData.length);
             const start = filteredData.length > 0 ? startIndex + 1 : 0;
             tableInfo.textContent = `Showing ${start} to ${end} of ${filteredData.length} properties.`;
-        }
-
-        function getNeighborhoodData(lrsn) {
-            const results = {
-                main: null,
-                res: null,
-                com: null,
-                land: null,
-                landDetails: [],
-                hfFactors: []
-            };
-
-            // Step 1: Find the parcel's neighborhood ID from Parcel_Main
-            const parcelMainRecord = (dataCache['Parcel_Main'] || []).find(p => 
-                (p.lrsn && String(p.lrsn).trim() === String(lrsn).trim()) || 
-                (p.LRSN && String(p.LRSN).trim() === String(lrsn).trim())
-            );
-            if (!parcelMainRecord) {
-                console.log("Could not find Parcel_Main record for LRSN:", lrsn);
-                return results; // Return empty results
-            }
-            
-            const neighborhoodId = parcelMainRecord.neighborhood || parcelMainRecord.NEIGHBORHOOD;
-            if (!neighborhoodId) {
-                console.log("Neighborhood ID not found on Parcel_Main record for LRSN:", lrsn);
-                return results;
-            }
-
-            // Step 2: Use the neighborhood ID to get the main neighborhood records
-            results.main = (dataCache['Nbhd_Main'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) == neighborhoodId);
-            results.res = (dataCache['Nbhd_Res'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) == neighborhoodId);
-            results.com = (dataCache['Nbhd_Com'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) == neighborhoodId);
-            results.land = (dataCache['Nbhd_Land'] || []).find(r => (r.neighborhood || r.NEIGHBORHOOD) == neighborhoodId);
-
-            // Step 3: Use model numbers from the main records to get detail records
-            if (results.land) {
-                const landModelSerial = results.land.land_model_serial || results.land.LAND_MODEL_SERIAL;
-                if (landModelSerial) {
-                    results.landDetails = (dataCache['Nbhd_Land_Detail'] || []).filter(
-                        r => (r.model_ser_numb === landModelSerial || r.MODEL_SER_NUMB === landModelSerial) && 
-                             ((r.neighborhood || r.NEIGHBORHOOD) == neighborhoodId)
-                    );
-                }
-            }
-
-            if (results.res) {
-                const hfModelNumber = results.res.hf_model_number || results.res.HF_MODEL_NUMBER;
-                if (hfModelNumber) {
-                    results.hfFactors = (dataCache['Nbhd_HF'] || []).filter(r => r.hf_model_number === hfModelNumber || r.HF_MODEL_NUMBER === hfModelNumber);
-                }
-            }
-
-            return results;
         }
 
         initialize();
