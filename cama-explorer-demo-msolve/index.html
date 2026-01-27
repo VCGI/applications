@@ -563,9 +563,12 @@
             // --- 2. CALCULATE STATS & BADGES ---
             const totalStructures = sectionRecords.length + outbuildRecords.length;
             
-            // Residential Count: Exclude '10' (Camp).
+            // Residential Count
             const residentialTypes = ['1', '9']; 
             const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
+
+            // Homestead Check (2 = Yes)
+            const isHomestead = cleanValue(parcelData.homestead) === '2';
 
             let isMobileHome = false;
             let hasCamp = false;
@@ -616,21 +619,15 @@
                     const style = getLookupValue('EXP_SECTION', 'style', sec.style);
                     
                     const bType = cleanValue(sec.bldg_type);
+                    const campTag = bType === '10' ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>` : '';
+                    
+                    // Add Mobile Home Tag to list item if applicable
+                    let typeTags = campTag;
                     const design = cleanValue(sec.design);
-
-                    // --- VISUAL TAGS FOR MINI-LIST ---
-                    let typeTags = '';
-                    
-                    // Camp Tag
-                    if (bType === '10') {
-                        typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>`;
-                    }
-                    
-                    // Mobile Home Tag (Type 9, Design 10 or 12)
                     if (bType === '9' || design === '10' || design === '12') {
                         typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800">MOBILE HOME</span>`;
                     }
-                    
+
                     const buildingLabel = sectionRecords.length > 1 ? `<span class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 block">Building ${index + 1}</span>` : '';
 
                     buildingListHtml += `
@@ -671,6 +668,11 @@
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Building(s)</span>`;
             }
             
+            // Homestead Badge (New)
+            if (isHomestead) {
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200 shadow-sm"><i class="fa-solid fa-house-chimney-user mr-1"></i> Homestead Declared</span>`;
+            }
+
             if (hasCamp) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200 shadow-sm"><i class="fa-solid fa-campground mr-1"></i> Camp</span>`;
             }
