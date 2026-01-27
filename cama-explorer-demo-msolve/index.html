@@ -322,7 +322,7 @@
                             labelingInfo: [parcelLabelClass]
                         });
                         
-                        // 3. E911 Building Footprints (UPDATED WITH POPUP)
+                        // 3. E911 Building Footprints
                         const footprintRenderer = {
                             type: "simple",
                             symbol: {
@@ -342,8 +342,8 @@
                             visible: false, // Default Off
                             definitionExpression: "E911TOWN = 'LINCOLN'",
                             renderer: footprintRenderer,
-                            minScale: 25000, // Performance: Only show when zoomed in
-                            outFields: ["POLY_ID"], // Fetch the ID
+                            minScale: 25000, 
+                            outFields: ["POLY_ID"], 
                             popupEnabled: true,
                             popupTemplate: {
                                 title: "Building Footprint",
@@ -371,7 +371,6 @@
                         });
 
                         // 5. Initialize Map with Layer Ordering
-                        // Bottom: Parcels -> Middle: Footprints -> Top: Addresses
                         const map = new Map({ 
                             basemap: satelliteBasemap, 
                             layers: [parcelLayer, footprintLayer, e911Layer]
@@ -387,7 +386,7 @@
                                 fillOpacity: 0.4
                             },
                             popup: {
-                                dockEnabled: true, // Enabled to allow footprint popups
+                                dockEnabled: true, 
                                 dockOptions: { buttonEnabled: false, breakpoint: false },
                                 collapseEnabled: false
                             }
@@ -424,7 +423,6 @@
                         const compass = new Compass({ view: mapView });
                         mapView.ui.add(compass, "top-left");
 
-                        // Updated Layer Toggle Widget
                         const toggleContainer = document.createElement("div");
                         toggleContainer.innerHTML = `
                             <div class="p-2 space-y-2">
@@ -441,7 +439,6 @@
                         toggleContainer.className = "esri-widget bg-white shadow-md rounded-md"; 
                         mapView.ui.add(toggleContainer, "top-right");
 
-                        // Toggle Event Listeners
                         const e911Toggle = toggleContainer.querySelector('#e911-toggle');
                         e911Toggle.addEventListener('change', (event) => {
                             if (e911Layer) e911Layer.visible = event.target.checked;
@@ -455,10 +452,9 @@
                         // 8. Click Interactions
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
-                                // Check for footprint click first (if visible) to allow popup
+                                // Check for footprint click first (if visible)
                                 const footprintResult = response.results.find(r => r.graphic && r.graphic.layer === footprintLayer);
                                 if (footprintResult && footprintLayer.visible) {
-                                    // Let the default popup behavior happen for footprints
                                     return; 
                                 }
 
@@ -477,8 +473,11 @@
                                             const lrsn = pRec[LRSN_KEY]; 
                                             showDetailView(lrsn);
                                         } else {
+                                            // Handle "No Data" without resetting map
                                             showError(`No CAMA data found for parcel (Tax ID: ${taxIdStr}).`);
-                                            showMainView();
+                                            // Manually switch view visibility to keep map state
+                                            detailView.classList.add('hidden');
+                                            mainView.classList.remove('hidden');
                                         }
                                     }
                                 } else {
@@ -651,7 +650,6 @@
             // --- 2. CALCULATE STATS & BADGES ---
             const totalStructures = sectionRecords.length + outbuildRecords.length;
             
-            // Residential Count
             const residentialTypes = ['1', '9']; 
             const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
 
@@ -699,7 +697,7 @@
                     const yearBuilt = cleanValue(sec.year_built) || 'N/A';
                     const sqFt = cleanValue(sec.bldg_sqft) ? parseInt(cleanValue(sec.bldg_sqft)).toLocaleString() + ' sq ft' : 'N/A';
                     const beds = cleanValue(sec.bedrooms) || '0';
-                    const totalRooms = cleanValue(sec.tot_rooms) || '0'; // NEW: Total Rooms
+                    const totalRooms = cleanValue(sec.tot_rooms) || '0';
                     const kitchens = cleanValue(sec.kitchens) || '0';
                     const full = cleanValue(sec.full_baths) || '0';
                     const half = cleanValue(sec.half_baths) || '0';
@@ -709,23 +707,10 @@
                     const bType = cleanValue(sec.bldg_type);
                     const design = cleanValue(sec.design);
                     
-                    // --- VISUAL TAGS FOR MINI-LIST ---
                     let typeTags = '';
-
-                    // Single Family Tag (Blue/Indigo to match top badge)
-                    if (bType === '1') {
-                        typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-indigo-100 text-indigo-800">SINGLE FAMILY</span>`;
-                    }
-                    
-                    // Camp Tag
-                    if (bType === '10') {
-                        typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>`;
-                    }
-                    
-                    // Mobile Home Tag
-                    if (bType === '9' || design === '10' || design === '12') {
-                        typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800">MOBILE HOME</span>`;
-                    }
+                    if (bType === '1') typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-indigo-100 text-indigo-800">SINGLE FAMILY</span>`;
+                    if (bType === '10') typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>`;
+                    if (bType === '9' || design === '10' || design === '12') typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800">MOBILE HOME</span>`;
 
                     const buildingLabel = sectionRecords.length > 1 ? `<span class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 block">Building ${index + 1}</span>` : '';
 
@@ -758,8 +743,8 @@
             const homesteadCode = cleanValue(parcelData.homestead);
             const homesteadStatus = homesteadCode === '2' ? 'Homestead Declared' : 'Non-homestead';
             const township = "Lincoln (354)"; 
+            const parcelStatus = cleanValue(parcelData.parcstatus); // <--- NEW FIELD
 
-            // Record Data
             const taxMap = cleanValue(parcelData.tax_map_nu) || 'N/A';
             const book = cleanValue(parcelData.book) || 'N/A';
             const page = cleanValue(parcelData.page) || 'N/A';
@@ -780,7 +765,6 @@
             const outbValue = parseFloat(cleanValue(parcelData.cama_outb)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
             const siteiValue = parseFloat(cleanValue(parcelData.cama_sitei)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
 
-            // Badges
             let badgesHtml = '';
             badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">${totalStructures} Total Structure(s)</span>`;
             if (residentialCount > 0) {
@@ -802,7 +786,6 @@
             const utilIcon = utilities.length > 0 ? '<i class="fa-solid fa-faucet-drip mr-1"></i>' : '<i class="fa-solid fa-ban mr-1"></i>';
             badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${utilColor} border shadow-sm">${utilIcon} ${utilityText}</span>`;
 
-            // --- BUILD HTML LAYOUT ---
             let html = `<div class="bg-white p-6 rounded-lg shadow-md mb-6">
                             <div class="flex justify-between items-start">
                                 <div>
@@ -830,7 +813,7 @@
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Owner:</span> ${owner}</p>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Parcel ID:</span> ${cleanLrsn}</p>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">SPAN:</span> ${spanId}</p>
-                                    </div>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Status:</span> ${parcelStatus}</p> </div>
                                     <div>
                                         <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Site</h3>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Type:</span> ${propTypeDesc}</p>
@@ -868,8 +851,6 @@
                             </div>
                         </div>`;
 
-            // --- 5. PREPARE TABS (REORDERED) ---
-            // Define specific order for tabs
             const TAB_ORDER = ["Building Details", "Land", "Outbuildings", "Valuation History", "Photos", "Sales History", "Improvements", "Assessment Info"];
             
             let tabsHtml = `<div class="mb-4 border-b border-gray-200"><ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs">`;
@@ -877,7 +858,6 @@
             let activeTabId = null;
 
             TAB_ORDER.forEach(group => {
-                // Skip if group is not in our RELATED_FILES or is excluded (Assessment Info usually excluded)
                 if (!RELATED_FILES[group] || group === "Assessment Info") return;
 
                 let groupContent = '';
