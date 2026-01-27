@@ -12,6 +12,8 @@ Data are a dummy cut from NEMRC Microsolve dated December 2025, with no modifica
 
 - **Data Source URL:** https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/sample-microsolve/
 
+    - View in Browser: https://vtopendata-prd.s3-us-east-2.amazonaws.com/index.html#_Other/CAMA/sample-microsolve/
+    
 - **Lookup Source URL:** https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json
 
 - **Primary Key:** `parcel_id` (Internal LRSN)
