@@ -588,7 +588,6 @@
             // --- 2. CALCULATE STATS & BADGES ---
             const totalStructures = sectionRecords.length + outbuildRecords.length;
             
-            // Residential Count
             const residentialTypes = ['1', '9']; 
             const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
 
@@ -671,7 +670,7 @@
                 buildingListHtml = `<p class="text-sm text-gray-500 italic">No building details available.</p>`;
             }
 
-            // --- 4. PREPARE SITE DATA ---
+            // --- 4. PREPARE DISPLAY VARIABLES ---
             const address = cleanValue(parcelData.prop_locat);
             const owner = cleanValue(parcelData.owner_name);
             const acres = cleanValue(parcelData.factorj); 
@@ -680,42 +679,43 @@
             const neighborhood = cleanValue(parcelData.neighborho);
             const homesteadCode = cleanValue(parcelData.homestead);
             const homesteadStatus = homesteadCode === '2' ? 'Homestead Declared' : 'Non-homestead';
-            
-            // --- FIXED PROPERTY TYPE LOOKUP ---
+            const township = "Lincoln (354)"; // Hardcoded placeholder
+
+            // Record Data
+            const taxMap = cleanValue(parcelData.tax_map_nu) || 'N/A';
+            const book = cleanValue(parcelData.book) || 'N/A';
+            const page = cleanValue(parcelData.page) || 'N/A';
+            const lastUpdate = cleanValue(parcelData.lastupdate) || 'N/A';
+
+            // Property Type Lookup
             let propTypeDesc = propCode || 'N/A';
             if (propCode) {
-                // Pad with zeros to match JSON keys (e.g., "1" -> "001", "101" -> "101")
                 const cleanCode = String(propCode).trim().padStart(3, '0');
                 if (propertyClassData[cleanCode]) {
                     const match = propertyClassData[cleanCode];
-                    // Format: "Category - Specific Type"
                     propTypeDesc = `${match.primary} - ${match.secondary}`;
                 }
             }
 
-            // Valuation Formatting
+            // Valuation
             const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const outbValue = parseFloat(cleanValue(parcelData.cama_outb)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
             const siteiValue = parseFloat(cleanValue(parcelData.cama_sitei)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
 
-            // Generate Badges
+            // Badges
             let badgesHtml = '';
             badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">${totalStructures} Total Structure(s)</span>`;
-            
             if (residentialCount > 0) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Building(s)</span>`;
             }
-            
             if (isHomestead) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200 shadow-sm"><i class="fa-solid fa-house-chimney-user mr-1"></i> Homestead Declared</span>`;
             }
-
             if (hasCamp) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200 shadow-sm"><i class="fa-solid fa-campground mr-1"></i> Camp</span>`;
             }
-
             if (isMobileHome) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm"><i class="fa-solid fa-trailer mr-1"></i> Mobile Home</span>`;
             }
@@ -760,6 +760,7 @@
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Type:</span> ${propTypeDesc}</p>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Description:</span> ${propDesc}</p>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Acres:</span> ${acres}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Township:</span> ${township}</p>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Neighborhood #:</span> ${neighborhood}</p>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Homestead:</span> ${homesteadStatus}</p>
                                     </div>
@@ -770,14 +771,24 @@
                                     ${buildingListHtml}
                                 </div>
 
-                                <div>
-                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Valuation Breakdown</h3>
-                                    <p class="text-sm text-gray-600 flex justify-between"><span>Assessment Year:</span> <span class="font-medium">${assessYear || 'N/A'}</span></p>
-                                    <p class="text-sm text-gray-600 flex justify-between"><span>Land:</span> <span>${landValue}</span></p>
-                                    <p class="text-sm text-gray-600 flex justify-between"><span>Dwelling:</span> <span>${dwellValue}</span></p>
-                                    <p class="text-sm text-gray-600 flex justify-between"><span>Outbuildings:</span> <span>${outbValue}</span></p>
-                                    <p class="text-sm text-gray-600 flex justify-between"><span>Site Improvements:</span> <span>${siteiValue}</span></p>
-                                    <p class="text-sm text-gray-600 flex justify-between mt-2 pt-2 border-t border-gray-100"><span class="font-bold">Total:</span> <span class="font-bold">${totalValue}</span></p>
+                                <div class="space-y-6">
+                                    <div>
+                                        <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Valuation Breakdown</h3>
+                                        <p class="text-sm text-gray-600 flex justify-between"><span>Assessment Year:</span> <span class="font-medium">${assessYear || 'N/A'}</span></p>
+                                        <p class="text-sm text-gray-600 flex justify-between"><span>Land:</span> <span>${landValue}</span></p>
+                                        <p class="text-sm text-gray-600 flex justify-between"><span>Dwelling:</span> <span>${dwellValue}</span></p>
+                                        <p class="text-sm text-gray-600 flex justify-between"><span>Outbuildings:</span> <span>${outbValue}</span></p>
+                                        <p class="text-sm text-gray-600 flex justify-between"><span>Site Improvements:</span> <span>${siteiValue}</span></p>
+                                        <p class="text-sm text-gray-600 flex justify-between mt-2 pt-2 border-t border-gray-100"><span class="font-bold">Total:</span> <span class="font-bold">${totalValue}</span></p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Record</h3>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Tax Map #:</span> ${taxMap}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Book:</span> ${book}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Page:</span> ${page}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Last Update:</span> ${lastUpdate}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>`;
