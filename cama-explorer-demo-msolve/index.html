@@ -78,7 +78,7 @@
 
                     <div class="bg-white p-4 rounded-lg shadow-md mb-6">
                         <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                            <i class="fa-solid fa-magnifying-glass mr-2" style="color: #003300;"></i>Search by Address or LRSN
+                            <i class="fa-solid fa-magnifying-glass mr-2" style="color: #003300;"></i>Search by Address or SPAN
                         </label>
                         <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#003300] focus:border-[#003300]">
                     </div>
@@ -132,7 +132,7 @@
         const PROPERTY_CLASS_CODES_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json';
         
         const MASTER_FILE = 'EXP_MAIN';
-        const ESSENTIAL_FILES = ['EXP_MAIN', 'EXP_LOOKUP', 'EXP_LABELS']; // <--- ADDED EXP_LABELS
+        const ESSENTIAL_FILES = ['EXP_MAIN', 'EXP_LOOKUP', 'EXP_LABELS']; 
         
         const RELATED_FILES = {
             "Assessment Info": ["EXP_MAIN"],
@@ -157,7 +157,6 @@
         };
 
         // --- DECODER RING MAPPING ---
-        // Maps "Filename" -> "Field Name" -> "Lookup Category in EXP_LOOKUP.json"
         const LOOKUP_MAPPING = {
             "EXP_SECTION": {
                 "style": "SECTION_STYLE",
@@ -200,8 +199,8 @@
         let masterData = [];
         let filteredData = [];
         let dataCache = {};
-        let lookupData = {}; // Stores the loaded EXP_LOOKUP content
-        let labelData = {}; // <--- ADDED STATE VARIABLE
+        let lookupData = {}; 
+        let labelData = {}; 
         let currentPage = 1;
         let mapView = null;
         let parcelLayer = null;
@@ -488,7 +487,7 @@
                 }));
                 masterData = dataCache[MASTER_FILE];
                 lookupData = dataCache['EXP_LOOKUP'] || {};
-                labelData = dataCache['EXP_LABELS'] || {}; // <--- ADDED
+                labelData = dataCache['EXP_LABELS'] || {}; 
                 filteredData = masterData;
             } catch (error) {
                 // ... error handling ...
@@ -525,21 +524,18 @@
         }
 
         // --- LOOKUP HELPER ---
-        // Tries to find a text description for a numeric code based on filename and fieldname
         function getLookupValue(fileName, fieldName, value) {
             if (!value) return '';
-            const rawValue = cleanValue(value); // Ensure we don't have extra quotes
+            const rawValue = cleanValue(value); 
             
-            // Check if we have a mapping for this file and field
             if (LOOKUP_MAPPING[fileName] && LOOKUP_MAPPING[fileName][fieldName]) {
                 const lookupCategory = LOOKUP_MAPPING[fileName][fieldName];
                 
-                // If the lookup category exists in our loaded data
                 if (lookupData[lookupCategory] && lookupData[lookupCategory][rawValue]) {
-                    return lookupData[lookupCategory][rawValue]; // Return decoded text (e.g. "Wood Siding")
+                    return lookupData[lookupCategory][rawValue]; 
                 }
             }
-            return rawValue; // Fallback to original number if no match found
+            return rawValue; 
         }
 
         // --- HIERARCHICAL VIEW LOGIC ---
@@ -563,7 +559,7 @@
             // --- 2. CALCULATE STATS & BADGES ---
             const totalStructures = sectionRecords.length + outbuildRecords.length;
             
-            // Residential Count
+            // Residential Count: Exclude '10' (Camp).
             const residentialTypes = ['1', '9']; 
             const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
 
@@ -668,7 +664,7 @@
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Building(s)</span>`;
             }
             
-            // Homestead Badge (New)
+            // Homestead Badge
             if (isHomestead) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200 shadow-sm"><i class="fa-solid fa-house-chimney-user mr-1"></i> Homestead Declared</span>`;
             }
@@ -874,7 +870,7 @@
             const tableHead = dataTable.querySelector('thead');
             tableHead.innerHTML = '';
             if (masterData.length === 0) return;
-            const headers = ['LRSN', 'Address', 'City', 'Zip'];
+            const headers = ['SPAN', 'Address', 'City', 'Zip']; // CHANGED LRSN TO SPAN
             const headerRow = document.createElement('tr');
             headers.forEach(h => {
                 const th = document.createElement('th');
@@ -905,13 +901,13 @@
                 const rawId = row[LRSN_KEY]; 
                 tr.dataset.lrsn = rawId; 
 
-                const displayId = cleanValue(row[LRSN_KEY]);
+                const displaySpan = cleanValue(row[SPAN_KEY]); // CHANGED TO DISPLAY SPAN
                 const address = cleanValue(row.prop_locat); 
                 const city = cleanValue(row.city);
                 const zip = cleanValue(row.zip_code);
 
                 tr.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${displayId}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${displaySpan}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${address}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${city}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${zip}</td>
@@ -993,7 +989,7 @@
                     }
 
                     // 2. Format Currency
-                    if (['sale_price', 'land_value', 'land_tot', 'cu_value', 'ex_value', 'cama_total', 'cama_land', 'cama_dwell'].includes(h)) {
+                    if (['sale_price', 'land_value', 'land_tot', 'cu_value', 'ex_value', 'cama_total', 'cama_land', 'cama_dwell', 'cama_outb', 'cama_sitei'].includes(h)) {
                         const num = parseFloat(val);
                         val = isNaN(num) ? val : num.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
                     }
