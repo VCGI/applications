@@ -322,7 +322,7 @@
                             labelingInfo: [parcelLabelClass]
                         });
                         
-                        // 3. E911 Building Footprints (NEW)
+                        // 3. E911 Building Footprints (UPDATED WITH POPUP)
                         const footprintRenderer = {
                             type: "simple",
                             symbol: {
@@ -342,7 +342,23 @@
                             visible: false, // Default Off
                             definitionExpression: "E911TOWN = 'LINCOLN'",
                             renderer: footprintRenderer,
-                            minScale: 25000 // Performance: Only show when zoomed in
+                            minScale: 25000, // Performance: Only show when zoomed in
+                            outFields: ["POLY_ID"], // Fetch the ID
+                            popupEnabled: true,
+                            popupTemplate: {
+                                title: "Building Footprint",
+                                content: [
+                                    {
+                                        type: "fields",
+                                        fieldInfos: [
+                                            {
+                                                fieldName: "POLY_ID",
+                                                label: "Poly ID"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
                         });
 
                         // 4. E911 Address Points
@@ -371,10 +387,9 @@
                                 fillOpacity: 0.4
                             },
                             popup: {
-                                dockEnabled: false,
+                                dockEnabled: true, // Enabled to allow footprint popups
                                 dockOptions: { buttonEnabled: false, breakpoint: false },
-                                collapseEnabled: false,
-                                actions: []
+                                collapseEnabled: false
                             }
                         });
                         await mapView.when();
@@ -440,6 +455,14 @@
                         // 8. Click Interactions
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
+                                // Check for footprint click first (if visible) to allow popup
+                                const footprintResult = response.results.find(r => r.graphic && r.graphic.layer === footprintLayer);
+                                if (footprintResult && footprintLayer.visible) {
+                                    // Let the default popup behavior happen for footprints
+                                    return; 
+                                }
+
+                                // If not a footprint, check for parcel click
                                 const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
                                 if (parcelResult) {
                                     const taxId = parcelResult.graphic.attributes.SPAN;
