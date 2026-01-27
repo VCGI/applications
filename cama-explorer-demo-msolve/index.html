@@ -588,6 +588,7 @@
             // --- 2. CALCULATE STATS & BADGES ---
             const totalStructures = sectionRecords.length + outbuildRecords.length;
             
+            // Residential Count
             const residentialTypes = ['1', '9']; 
             const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
 
@@ -635,6 +636,7 @@
                     const yearBuilt = cleanValue(sec.year_built) || 'N/A';
                     const sqFt = cleanValue(sec.bldg_sqft) ? parseInt(cleanValue(sec.bldg_sqft)).toLocaleString() + ' sq ft' : 'N/A';
                     const beds = cleanValue(sec.bedrooms) || '0';
+                    const totalRooms = cleanValue(sec.tot_rooms) || '0'; // NEW: Total Rooms
                     const kitchens = cleanValue(sec.kitchens) || '0';
                     const full = cleanValue(sec.full_baths) || '0';
                     const half = cleanValue(sec.half_baths) || '0';
@@ -642,10 +644,22 @@
                     const style = getLookupValue('EXP_SECTION', 'style', sec.style);
                     
                     const bType = cleanValue(sec.bldg_type);
-                    const campTag = bType === '10' ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>` : '';
-                    
-                    let typeTags = campTag;
                     const design = cleanValue(sec.design);
+                    
+                    // --- VISUAL TAGS FOR MINI-LIST ---
+                    let typeTags = '';
+
+                    // Single Family Tag (Blue/Indigo to match top badge)
+                    if (bType === '1') {
+                        typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-indigo-100 text-indigo-800">SINGLE FAMILY</span>`;
+                    }
+                    
+                    // Camp Tag
+                    if (bType === '10') {
+                        typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>`;
+                    }
+                    
+                    // Mobile Home Tag
                     if (bType === '9' || design === '10' || design === '12') {
                         typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800">MOBILE HOME</span>`;
                     }
@@ -661,6 +675,7 @@
                                 <p><span class="font-medium text-gray-900">Living Area:</span> ${sqFt}</p>
                                 <p><span class="font-medium text-gray-900">Bedrooms:</span> ${beds}</p>
                                 <p><span class="font-medium text-gray-900">Bathrooms:</span> ${baths}</p>
+                                <p><span class="font-medium text-gray-900">Total Rooms:</span> ${totalRooms}</p>
                                 <p><span class="font-medium text-gray-900">Kitchens:</span> ${kitchens}</p>
                             </div>
                         </div>`;
@@ -670,7 +685,7 @@
                 buildingListHtml = `<p class="text-sm text-gray-500 italic">No building details available.</p>`;
             }
 
-            // --- 4. PREPARE DISPLAY VARIABLES ---
+            // --- 4. PREPARE SITE DATA ---
             const address = cleanValue(parcelData.prop_locat);
             const owner = cleanValue(parcelData.owner_name);
             const acres = cleanValue(parcelData.factorj); 
@@ -679,7 +694,7 @@
             const neighborhood = cleanValue(parcelData.neighborho);
             const homesteadCode = cleanValue(parcelData.homestead);
             const homesteadStatus = homesteadCode === '2' ? 'Homestead Declared' : 'Non-homestead';
-            const township = "Lincoln (354)"; // Hardcoded placeholder
+            const township = "Lincoln (354)"; 
 
             // Record Data
             const taxMap = cleanValue(parcelData.tax_map_nu) || 'N/A';
@@ -687,7 +702,6 @@
             const page = cleanValue(parcelData.page) || 'N/A';
             const lastUpdate = cleanValue(parcelData.lastupdate) || 'N/A';
 
-            // Property Type Lookup
             let propTypeDesc = propCode || 'N/A';
             if (propCode) {
                 const cleanCode = String(propCode).trim().padStart(3, '0');
@@ -697,7 +711,6 @@
                 }
             }
 
-            // Valuation
             const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
@@ -781,7 +794,6 @@
                                         <p class="text-sm text-gray-600 flex justify-between"><span>Site Improvements:</span> <span>${siteiValue}</span></p>
                                         <p class="text-sm text-gray-600 flex justify-between mt-2 pt-2 border-t border-gray-100"><span class="font-bold">Total:</span> <span class="font-bold">${totalValue}</span></p>
                                     </div>
-                                    
                                     <div>
                                         <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Record</h3>
                                         <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Tax Map #:</span> ${taxMap}</p>
@@ -793,13 +805,17 @@
                             </div>
                         </div>`;
 
-            // --- 5. PREPARE TABS ---
+            // --- 5. PREPARE TABS (REORDERED) ---
+            // Define specific order for tabs
+            const TAB_ORDER = ["Building Details", "Land", "Outbuildings", "Valuation History", "Photos", "Sales History", "Improvements", "Assessment Info"];
+            
             let tabsHtml = `<div class="mb-4 border-b border-gray-200"><ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs">`;
             let contentHtml = `<div id="tab-content">`;
             let activeTabId = null;
 
-            for (const group in RELATED_FILES) {
-                if (group === "Assessment Info") continue;
+            TAB_ORDER.forEach(group => {
+                // Skip if group is not in our RELATED_FILES or is excluded (Assessment Info usually excluded)
+                if (!RELATED_FILES[group] || group === "Assessment Info") return;
 
                 let groupContent = '';
                 let hasData = false;
@@ -873,7 +889,7 @@
                             ${groupContent}
                         </div>`;
                 }
-            }
+            });
 
             tabsHtml += `</ul></div>`;
             contentHtml += `</div>`;
