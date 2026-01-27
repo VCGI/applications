@@ -201,6 +201,7 @@
         let dataCache = {};
         let lookupData = {}; 
         let labelData = {}; 
+        let propertyClassData = []; // <--- NEW: Store property class codes
         let currentPage = 1;
         let mapView = null;
         let parcelLayer = null;
@@ -480,17 +481,45 @@
         // --- DATA FETCHING & HANDLING ---
         async function loadInitialData() {
             try {
+                // 1. Load Essential Files
                 await Promise.all(ESSENTIAL_FILES.map(async (file) => {
                     const response = await fetch(`${S3_BASE_URL}${file}.json`);
                     if (!response.ok) throw new Error(`Failed to load: ${file}`);
                     dataCache[file] = await response.json();
                 }));
+
+                // 2. Load Property Class Codes (FIXED LOGIC)
+                try {
+                    const classResponse = await fetch(PROPERTY_CLASS_CODES_URL);
+                    if (classResponse.ok) {
+                        const rawData = await classResponse.json();
+                        // Transform nested object { "Category": { "Code": "Desc" } } into flat lookup { "Code": { primary, secondary } }
+                        propertyClassData = {}; 
+                        for (const primaryType in rawData) {
+                            if (rawData.hasOwnProperty(primaryType)) {
+                                const secondaryTypes = rawData[primaryType];
+                                for (const code in secondaryTypes) {
+                                    if (secondaryTypes.hasOwnProperty(code)) {
+                                        propertyClassData[code] = {
+                                            primary: primaryType,
+                                            secondary: secondaryTypes[code]
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Could not load property class codes", e);
+                }
+
                 masterData = dataCache[MASTER_FILE];
                 lookupData = dataCache['EXP_LOOKUP'] || {};
                 labelData = dataCache['EXP_LABELS'] || {}; 
                 filteredData = masterData;
             } catch (error) {
-                // ... error handling ...
+                showError('Failed to load initial property data. The application cannot start.');
+                console.error(error);
             }
         }
 
@@ -559,11 +588,10 @@
             // --- 2. CALCULATE STATS & BADGES ---
             const totalStructures = sectionRecords.length + outbuildRecords.length;
             
-            // Residential Count: Exclude '10' (Camp).
+            // Residential Count
             const residentialTypes = ['1', '9']; 
             const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
 
-            // Homestead Check (2 = Yes)
             const isHomestead = cleanValue(parcelData.homestead) === '2';
 
             let isMobileHome = false;
@@ -617,7 +645,6 @@
                     const bType = cleanValue(sec.bldg_type);
                     const campTag = bType === '10' ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>` : '';
                     
-                    // Add Mobile Home Tag to list item if applicable
                     let typeTags = campTag;
                     const design = cleanValue(sec.design);
                     if (bType === '9' || design === '10' || design === '12') {
@@ -644,17 +671,34 @@
                 buildingListHtml = `<p class="text-sm text-gray-500 italic">No building details available.</p>`;
             }
 
-            // --- 4. BUILD HEADER HTML ---
+            // --- 4. PREPARE SITE DATA ---
             const address = cleanValue(parcelData.prop_locat);
             const owner = cleanValue(parcelData.owner_name);
+            const acres = cleanValue(parcelData.factorj); 
+            const propDesc = cleanValue(parcelData.factorh);
+            const propCode = cleanValue(parcelData.factori);
+            const neighborhood = cleanValue(parcelData.neighborho);
+            const homesteadCode = cleanValue(parcelData.homestead);
+            const homesteadStatus = homesteadCode === '2' ? 'Homestead Declared' : 'Non-homestead';
             
+            // --- FIXED PROPERTY TYPE LOOKUP ---
+            let propTypeDesc = propCode || 'N/A';
+            if (propCode) {
+                // Pad with zeros to match JSON keys (e.g., "1" -> "001", "101" -> "101")
+                const cleanCode = String(propCode).trim().padStart(3, '0');
+                if (propertyClassData[cleanCode]) {
+                    const match = propertyClassData[cleanCode];
+                    // Format: "Category - Specific Type"
+                    propTypeDesc = `${match.primary} - ${match.secondary}`;
+                }
+            }
+
             // Valuation Formatting
             const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const outbValue = parseFloat(cleanValue(parcelData.cama_outb)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
             const siteiValue = parseFloat(cleanValue(parcelData.cama_sitei)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
-            const acres = cleanValue(parcelData.factorj); 
 
             // Generate Badges
             let badgesHtml = '';
@@ -664,7 +708,6 @@
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Building(s)</span>`;
             }
             
-            // Homestead Badge
             if (isHomestead) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200 shadow-sm"><i class="fa-solid fa-house-chimney-user mr-1"></i> Homestead Declared</span>`;
             }
@@ -683,6 +726,7 @@
             const utilIcon = utilities.length > 0 ? '<i class="fa-solid fa-faucet-drip mr-1"></i>' : '<i class="fa-solid fa-ban mr-1"></i>';
             badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${utilColor} border shadow-sm">${utilIcon} ${utilityText}</span>`;
 
+            // --- BUILD HTML LAYOUT ---
             let html = `<div class="bg-white p-6 rounded-lg shadow-md mb-6">
                             <div class="flex justify-between items-start">
                                 <div>
@@ -703,14 +747,24 @@
 
                             <hr class="border-gray-200 my-4">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Ownership</h3>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Owner:</span> ${owner}</p>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Parcel ID:</span> ${cleanLrsn}</p>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">SPAN:</span> ${spanId}</p>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Acres:</span> ${acres}</p>
-                                </div>
                                 
+                                <div class="space-y-6">
+                                    <div>
+                                        <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Ownership</h3>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Owner:</span> ${owner}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Parcel ID:</span> ${cleanLrsn}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">SPAN:</span> ${spanId}</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Site</h3>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Type:</span> ${propTypeDesc}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Description:</span> ${propDesc}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Acres:</span> ${acres}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Neighborhood #:</span> ${neighborhood}</p>
+                                        <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Homestead:</span> ${homesteadStatus}</p>
+                                    </div>
+                                </div>
+
                                 <div>
                                     <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Building Info</h3>
                                     ${buildingListHtml}
