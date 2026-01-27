@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vermont CAMA Sample Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+    <style>
+        html, body {
+            overflow: hidden; /* Prevent body scrolling */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        #map-view {
+            height: 100%; /* Make map fill its container */
+            width: 100%;
+        }
+        #map-view:focus,
+        #map-view:focus-within,
+        .esri-view-surface--is-focused {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        div {
+            -webkit-tap-highlight-color: transparent;
+        }
+        div:focus {
+            outline: none;
+        }
+        .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #555; }
+        .loader { border-top-color: #3498db; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .main-table-row { cursor: pointer; }
+        .main-table-row:hover { background-color: #e6f0e6; }
+        .related-section h3 {
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        #sketch-canvas {
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+        .detail-card {
+            background-color: #f9fafb;
+            border-left: 4px solid #003300;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+        }
+        .esri-popup .esri-popup__main-container {
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="flex h-screen">
+        <div class="w-3/5 h-screen overflow-y-auto relative" id="left-pane">
+            <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <header class="mb-8 text-left">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Vermont CAMA Sample Viewer</h1>
+                    <p class="mt-2 text-md text-gray-600"><b>For demo purposes only</b> | NEMRC Microsolve sample data</p>
+                </header>
+
+                <div id="main-view">
+                    <div id="filter-status" class="hidden mb-4 p-4 bg-[#e6f0e6] border-l-4 border-[#003300] text-[#003300] rounded-md flex justify-between items-center">
+                        <p>Showing data for parcel selected on map.</p>
+                        <button id="clear-filter-btn" class="font-bold hover:underline">Clear Map Filter</button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                        <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="fa-solid fa-magnifying-glass mr-2" style="color: #003300;"></i>Search by Address or SPAN
+                        </label>
+                        <input type="text" id="search-input" placeholder="e.g., 'Main St' or '1234'" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#003300] focus:border-[#003300]">
+                    </div>
+
+                    <main id="data-container" class="bg-white p-4 rounded-lg shadow-md min-h-[400px] flex flex-col">
+                        <div id="status-message" class="flex flex-grow items-center justify-center"></div>
+                        <div id="table-wrapper" class="hidden">
+                            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                                <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                                    <i class="fa-solid fa-sign-hanging mr-3" style="color: #003300;"></i>Properties
+                                </h2>
+                                <div id="table-info" class="text-sm text-gray-600"></div>
+                            </div>
+                            <div class="overflow-x-auto table-container">
+                                <table id="data-table" class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50"></thead>
+                                    <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                            <div id="pagination-controls" class="mt-4 flex justify-between items-center"></div>
+                        </div>
+                    </main>
+                </div>
+
+                <div id="detail-view" class="hidden">
+                    <button id="back-button" class="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#003300] hover:bg-[#002a00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#003300]">
+                        &larr; Back to Search Results
+                    </button>
+                    <div id="detail-content" class="space-y-8"></div>
+                </div>
+
+                <div class="mt-8 text-left text-xs text-gray-500 border-t pt-4">
+                    <p>Parcel and CAMA data here are <b>for reference only</b> and are sourced from Vermont municipalities. Neither the State of Vermont nor the contributors of data, services, and products provided here or through the Vermont Open Geodata Portal shall be held liable for any improper or incorrect use of those data, services, and products and assume no responsibility for anyone's use of those data, services, and products. In no event shall the State of Vermont or the contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement or substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory.</p>
+                </div>
+            </div>
+             <button id="to-top-btn" title="Go to top" class="opacity-0 invisible fixed bottom-8 right-[41%] z-20 bg-[#003300] text-white rounded-full text-2xl w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#002a00] transition-all duration-300">
+                <i class="fa-solid fa-circle-arrow-up"></i>
+            </button>
+        </div>
+
+        <div class="w-2/5 h-screen">
+            <div id="map-view" class="shadow-lg"></div>
+        </div>
+    </div>
+    
+<script src="https://js.arcgis.com/4.29/"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- CONFIGURATION ---
+        const S3_BASE_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/sample-microsolve/';
+        const PROPERTY_CLASS_CODES_URL = 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json';
+        
+        const MASTER_FILE = 'EXP_MAIN';
+        const ESSENTIAL_FILES = ['EXP_MAIN', 'EXP_LOOKUP', 'EXP_LABELS']; 
+        
+        const RELATED_FILES = {
+            "Assessment Info": ["EXP_MAIN"],
+            "Building Details": ["EXP_SECTION", "EXP_EXTWALL", "EXP_ROOF", "EXP_FLOOR", "EXP_HEAT", "EXP_FEATURES"], 
+            "Sales History": ["EXP_TRANHIST"],
+            "Valuation History": ["EXP_OYVAL"], 
+            "Land": ["EXP_LAND", "EXP_SITEIMP"],
+            "Improvements": ["EXP_IMPROVE"], 
+            "Outbuildings": ["EXP_OUTBUILD", "EXP_GARAGE", "EXP_PORCH"],
+            "Photos": ["EXP_PHOTOS"]
+        };
+        
+        const SECTION_ICONS = {
+            "Assessment Info": "fa-file-invoice-dollar",
+            "Building Details": "fa-hammer",
+            "Sales History": "fa-handshake",
+            "Valuation History": "fa-clock-rotate-left",
+            "Land": "fa-tree",
+            "Improvements": "fa-house",
+            "Outbuildings": "fa-warehouse",
+            "Photos": "fa-camera"
+        };
+
+        // --- DECODER RING MAPPING ---
+        const LOOKUP_MAPPING = {
+            "EXP_SECTION": {
+                "style": "SECTION_STYLE",
+                "design": "SECTION_DESIGN",
+                "bldg_type": "BUILDING_TYPE",
+                "frame": "FRAME",
+                "foundation": "FOUNDATION",
+                "condition": "CONDITION"
+            },
+            "EXP_EXTWALL": { "type": "SIDING" },
+            "EXP_ROOF": { "type": "ROOF_COVER" },
+            "EXP_FLOOR": { "type": "FLOOR_COVER" },
+            "EXP_HEAT": { "type": "HEATING" },
+            "EXP_LAND": {
+                "type": "LAND_TYPE",
+                "calc_meth": "LAND_CALC"
+            },
+            "EXP_OUTBUILD": { 
+                "type": "OUTBUILDING_TYPE",
+                "siding": "SIDING" 
+            },
+            "EXP_GARAGE": { 
+                "type": "GARAGE_TYPE",
+                "siding": "SIDING", 
+                "floor": "GARAGE_FLOOR" 
+            },
+            "EXP_PORCH": { 
+                "floor": "PORCH_FLOOR",
+                "wall": "PORCH_WALL",
+                "roof": "PORCH_ROOF" 
+            },
+            "EXP_SITEIMP": { "type": "SITEIMP_TYPE" }
+        };
+
+        const ROWS_PER_PAGE = 10;
+        const LRSN_KEY = 'parcel_id'; 
+        const SPAN_KEY = 'parc_span'; 
+
+        // --- STATE ---
+        let masterData = [];
+        let filteredData = [];
+        let dataCache = {};
+        let lookupData = {}; 
+        let labelData = {}; 
+        let currentPage = 1;
+        let mapView = null;
+        let parcelLayer = null;
+        let highlightHandle = null;
+        let e911Layer = null;
+
+        // --- DOM ELEMENTS ---
+        const searchInput = document.getElementById('search-input');
+        const statusMessage = document.getElementById('status-message');
+        const tableWrapper = document.getElementById('table-wrapper');
+        const dataTable = document.getElementById('data-table');
+        const tableInfo = document.getElementById('table-info');
+        const paginationControls = document.getElementById('pagination-controls');
+        const mainView = document.getElementById('main-view');
+        const detailView = document.getElementById('detail-view');
+        const detailContent = document.getElementById('detail-content');
+        const backButton = document.getElementById('back-button');
+        const filterStatus = document.getElementById('filter-status');
+        const clearFilterBtn = document.getElementById('clear-filter-btn');
+        const leftPane = document.getElementById('left-pane');
+        const toTopBtn = document.getElementById('to-top-btn');
+
+        function showInitialMessage() {
+            tableWrapper.classList.add('hidden');
+            statusMessage.innerHTML = '<p class="text-gray-500 text-lg text-center">Click on a parcel on the map or use the search bar to explore property data.</p>';
+            statusMessage.classList.remove('hidden');
+        }
+
+        async function initialize() {
+            showLoading('Loading property data...');
+            await initializeMap();
+            await loadInitialData();
+            showInitialMessage(); 
+            loadRelatedDataInBackground();
+            
+            searchInput.addEventListener('input', handleSearch);
+            backButton.addEventListener('click', showMainView);
+            clearFilterBtn.addEventListener('click', clearMapFilter);
+            
+            toTopBtn.addEventListener('click', () => {
+                leftPane.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            leftPane.addEventListener('scroll', () => {
+                if (leftPane.scrollTop > 200) {
+                    toTopBtn.classList.remove('opacity-0', 'invisible');
+                } else {
+                    toTopBtn.classList.add('opacity-0', 'invisible');
+                }
+            });
+        }
+
+        // --- MAP LOGIC ---
+        async function initializeMap() {
+            return new Promise((resolve, reject) => {
+                require([
+                    "esri/Map",
+                    "esri/views/MapView",
+                    "esri/layers/FeatureLayer",
+                    "esri/layers/VectorTileLayer",
+                    "esri/Basemap",
+                    "esri/layers/TileLayer",
+                    "esri/smartMapping/renderers/location",
+                    "esri/widgets/Compass"
+                ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer, locationRendererCreator, Compass) => {
+
+                    async function setupMap() {
+                        const imageryLayer = new TileLayer({
+                            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+                            title: "Satellite Imagery"
+                        });
+
+                        const labelLayer = new VectorTileLayer({
+                            url: "https://www.arcgis.com/sharing/rest/content/items/ba52238d338745b1a355407ec9df6768/resources/styles/root.json",
+                            title: "Custom Styled Labels"
+                        });
+
+                        const satelliteBasemap = new Basemap({
+                            baseLayers: [imageryLayer],
+                            referenceLayers: [labelLayer],
+                            title: "Imagery with Custom Labels",
+                            id: "imagery-with-custom-labels"
+                        });
+
+                        const parcelLabelClass = {
+                            symbol: {
+                                type: "text",
+                                color: "#fff",
+                                haloColor: "#333333",
+                                haloSize: "1pt",
+                                font: { family: "Arial", size: "8pt", weight: "bold" }
+                            },
+                            labelPlacement: "always-horizontal",
+                            labelExpressionInfo: {
+                                expression: `
+                                    if (IsEmpty($feature.SPAN)) {
+                                        return "No SPAN Assigned to Parcel";
+                                    } else {
+                                        return $feature.SPAN;
+                                    }
+                                `
+                            },
+                            minScale: 5000
+                        };
+                        const parcelRenderer = {
+                            type: "simple",
+                            symbol: {
+                                type: "simple-fill",
+                                style: "solid",
+                                color: [0, 0, 0, 0], 
+                                outline: { color: [211, 211, 211, 0.9], width: "1px" }
+                            }
+                        };
+                        parcelLayer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
+                            definitionExpression: "TOWN = 'LINCOLN'",
+                            outFields: ["SPAN"],
+                            popupEnabled: false, 
+                            renderer: parcelRenderer,
+                            labelingInfo: [parcelLabelClass]
+                        });
+                        
+                        e911Layer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Emergency_ESITE_point_SP_v1/FeatureServer/0",
+                            title: "E-911 Site Locations",
+                            visible: false,
+                            minScale: 4514,
+                            outFields: ["PRIMARYADDRESS"]
+                        });
+
+                        const map = new Map({ 
+                            basemap: satelliteBasemap, 
+                            layers: [parcelLayer, e911Layer]
+                        });
+
+                        mapView = new MapView({
+                            container: "map-view",
+                            map: map,
+                            center: [-72.995, 44.098], 
+                            zoom: 13,
+                            highlightOptions: {
+                                color: "#c3d600",
+                                fillOpacity: 0.4
+                            },
+                            popup: {
+                                dockEnabled: false,
+                                dockOptions: { buttonEnabled: false, breakpoint: false },
+                                collapseEnabled: false,
+                                actions: []
+                            }
+                        });
+                        await mapView.when();
+
+                        const rendererParams = {
+                            layer: e911Layer,
+                            view: mapView,
+                            visualVariables: { type: "size" }
+                        };
+                        const rendererResponse = await locationRendererCreator.createRenderer(rendererParams);
+                        const newSymbol = rendererResponse.renderer.symbol.clone();
+                        newSymbol.color = "#333333";
+                        newSymbol.outline = { color: "#ffffff", width: "1px" };
+                        rendererResponse.renderer.symbol = newSymbol;
+                        e911Layer.renderer = rendererResponse.renderer;
+
+                        const e911LabelClass = {
+                            labelExpressionInfo: { expression: "$feature.PRIMARYADDRESS" },
+                            symbol: {
+                                type: "text",
+                                color: "#2b2b2b",
+                                haloColor: "#d3d3d3",
+                                haloSize: 1,
+                                font: { family: "Arial", size: 7, weight: "bold" }
+                            },
+                            labelPlacement: "above-center"
+                        };
+                        e911Layer.labelingInfo = [e911LabelClass];
+
+                        const compass = new Compass({ view: mapView });
+                        mapView.ui.add(compass, "top-left");
+
+                        const toggleContainer = document.createElement("div");
+                        toggleContainer.innerHTML = `
+                            <label for="e911-toggle" class="flex items-center cursor-pointer p-1">
+                                <input type="checkbox" id="e911-toggle" class="h-4 w-4 rounded border-gray-300 text-[#003300] focus:ring-[#003300]">
+                                <span class="ml-2 text-sm font-medium text-gray-700">Show E911 Address Points</span>
+                            </label>
+                        `;
+                        toggleContainer.className = "esri-widget bg-white shadow-md"; 
+                        mapView.ui.add(toggleContainer, "top-right");
+
+                        const e911Toggle = toggleContainer.querySelector('#e911-toggle');
+                        e911Toggle.addEventListener('change', (event) => {
+                            if (e911Layer) e911Layer.visible = event.target.checked;
+                        });
+
+                        mapView.on("click", (event) => {
+                            mapView.hitTest(event).then((response) => {
+                                const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
+                                if (parcelResult) {
+                                    const taxId = parcelResult.graphic.attributes.SPAN;
+                                    if (taxId) {
+                                        const taxIdStr = String(taxId).trim();
+                                        const pRec = masterData.find(p => {
+                                            const cleanSpan = cleanValue(p[SPAN_KEY]);
+                                            return cleanSpan === taxIdStr;
+                                        });
+
+                                        if (pRec) {
+                                            const lrsn = pRec[LRSN_KEY]; 
+                                            showDetailView(lrsn);
+                                        } else {
+                                            showError(`No CAMA data found for parcel (Tax ID: ${taxIdStr}).`);
+                                            showMainView();
+                                        }
+                                    }
+                                } else {
+                                    clearMapHighlight();
+                                }
+                            });
+                        });
+                        resolve();
+                    }
+                    setupMap().catch(err => reject(err));
+                });
+            });
+        }
+        
+        async function highlightParcel(graphic) {
+            clearMapHighlight();
+            const newHandle = await mapView.whenLayerView(graphic.layer).then(layerView => {
+                return layerView.highlight(graphic);
+            });
+            highlightHandle = newHandle;
+        }
+
+        function clearMapHighlight() {
+            if (highlightHandle) {
+                highlightHandle.remove();
+                highlightHandle = null;
+            }
+        }
+        
+        async function zoomToParcelByTaxId(taxId) {
+            if (!parcelLayer || !taxId) return;
+            const query = parcelLayer.createQuery();
+            query.where = `SPAN = '${taxId}'`;
+            query.returnGeometry = true;
+            try {
+                const { features } = await parcelLayer.queryFeatures(query);
+                if (features.length > 0) {
+                    mapView.goTo(features[0].geometry).catch(err => err.name !== "view:goto-interrupted" && console.error(err));
+                    await highlightParcel(features[0]);
+                }
+            } catch(error) {
+                console.error("Failed to zoom to feature:", error);
+            }
+        }
+        
+        function resetMapView() {
+            if (mapView) {
+                mapView.goTo({ center: [-72.995, 44.098], zoom: 13 })
+                    .catch(err => err.name !== "view:goto-interrupted" && console.error(err));
+                clearMapHighlight();
+            }
+        }
+
+        function clearMapFilter() {
+            filteredData = masterData;
+            currentPage = 1;
+            showInitialMessage(); 
+            filterStatus.classList.add('hidden');
+            searchInput.value = '';
+            resetMapView();
+        }
+
+        // --- DATA FETCHING & HANDLING ---
+        async function loadInitialData() {
+            try {
+                await Promise.all(ESSENTIAL_FILES.map(async (file) => {
+                    const response = await fetch(`${S3_BASE_URL}${file}.json`);
+                    if (!response.ok) throw new Error(`Failed to load: ${file}`);
+                    dataCache[file] = await response.json();
+                }));
+                masterData = dataCache[MASTER_FILE];
+                lookupData = dataCache['EXP_LOOKUP'] || {};
+                labelData = dataCache['EXP_LABELS'] || {}; 
+                filteredData = masterData;
+            } catch (error) {
+                // ... error handling ...
+            }
+        }
+
+        async function loadRelatedDataInBackground() {
+            const allFiles = Object.values(RELATED_FILES).flat();
+            const filesToLoad = allFiles.filter(file => !ESSENTIAL_FILES.includes(file));
+            Promise.all(filesToLoad.map(async (file) => {
+                try {
+                    const response = await fetch(`${S3_BASE_URL}${file}.json`);
+                    if (response.ok) dataCache[file] = await response.json();
+                } catch (fetchError) {
+                     console.error(`Could not fetch ${file}:`, fetchError);
+                     dataCache[file] = [];
+                }
+            }));
+        }
+
+        function handleSearch() {
+            resetMapView();
+            filterStatus.classList.add('hidden');
+            const searchTerm = searchInput.value.toLowerCase();
+
+            if (!searchTerm) {
+                showInitialMessage();
+                return;
+            }
+            
+            filteredData = masterData.filter(row => Object.values(row).some(v => String(v).toLowerCase().includes(searchTerm)));
+            currentPage = 1;
+            renderMainTable();
+        }
+
+        // --- LOOKUP HELPER ---
+        function getLookupValue(fileName, fieldName, value) {
+            if (!value) return '';
+            const rawValue = cleanValue(value); 
+            
+            if (LOOKUP_MAPPING[fileName] && LOOKUP_MAPPING[fileName][fieldName]) {
+                const lookupCategory = LOOKUP_MAPPING[fileName][fieldName];
+                
+                if (lookupData[lookupCategory] && lookupData[lookupCategory][rawValue]) {
+                    return lookupData[lookupCategory][rawValue]; 
+                }
+            }
+            return rawValue; 
+        }
+
+        // --- HIERARCHICAL VIEW LOGIC ---
+        async function showDetailView(lrsn) {
+            const parcelData = masterData.find(p => p[LRSN_KEY] === lrsn);
+            if (!parcelData) return;
+
+            const cleanLrsn = cleanValue(lrsn);
+            const spanId = cleanValue(parcelData[SPAN_KEY]);
+
+            if(spanId) await zoomToParcelByTaxId(spanId);
+
+            mainView.classList.add('hidden');
+            detailView.classList.remove('hidden');
+
+            // --- 1. GATHER DATA ---
+            const sectionRecords = (dataCache['EXP_SECTION'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
+            const outbuildRecords = (dataCache['EXP_OUTBUILD'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn && cleanValue(r.type) !== '0');
+            const siteImpRecords = (dataCache['EXP_SITEIMP'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn && cleanValue(r.type) !== '0');
+
+            // --- 2. CALCULATE STATS & BADGES ---
+            const totalStructures = sectionRecords.length + outbuildRecords.length;
+            
+            // Residential Count: Exclude '10' (Camp).
+            const residentialTypes = ['1', '9']; 
+            const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
+
+            // Homestead Check (2 = Yes)
+            const isHomestead = cleanValue(parcelData.homestead) === '2';
+
+            let isMobileHome = false;
+            let hasCamp = false;
+            let specialBadges = new Set(); 
+
+            sectionRecords.forEach(r => {
+                const bType = cleanValue(r.bldg_type);
+                const design = cleanValue(r.design);
+                
+                if (bType === '9' || design === '10' || design === '12') isMobileHome = true;
+                if (bType === '10') hasCamp = true; 
+
+                if (design === '7') specialBadges.add("Apartment House");
+                if (design === '8') specialBadges.add("Duplex");
+                if (design === '20') specialBadges.add("Condo");
+                if (design === '21') specialBadges.add("Res. Commercial");
+            });
+
+            const hasWater = siteImpRecords.some(r => cleanValue(r.type) === '1');
+            const hasSewer = siteImpRecords.some(r => cleanValue(r.type) === '2');
+            let utilities = [];
+            if (hasWater) utilities.push("Water");
+            if (hasSewer) utilities.push("Sewer");
+            const utilityText = utilities.length > 0 ? utilities.join(" & ") : "No Water & Sewer Recorded";
+
+            let assessYear = cleanValue(parcelData.assess_yea);
+            if (assessYear === '0' || assessYear === '') {
+                 const history = (dataCache['EXP_OYVAL'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
+                 if (history.length > 0) {
+                     const years = history.map(h => parseInt(cleanValue(h.nperiod))).filter(y => !isNaN(y));
+                     if (years.length > 0) assessYear = Math.max(...years);
+                 }
+            }
+            const yearLabel = assessYear && assessYear !== '0' ? `(${assessYear})` : '';
+
+            // --- 3. GENERATE BUILDING MINI-LIST ---
+            let buildingListHtml = '';
+            if (sectionRecords.length > 0) {
+                buildingListHtml = `<div class="space-y-4">`;
+                sectionRecords.forEach((sec, index) => {
+                    const yearBuilt = cleanValue(sec.year_built) || 'N/A';
+                    const sqFt = cleanValue(sec.bldg_sqft) ? parseInt(cleanValue(sec.bldg_sqft)).toLocaleString() + ' sq ft' : 'N/A';
+                    const beds = cleanValue(sec.bedrooms) || '0';
+                    const kitchens = cleanValue(sec.kitchens) || '0';
+                    const full = cleanValue(sec.full_baths) || '0';
+                    const half = cleanValue(sec.half_baths) || '0';
+                    const baths = `${full} Full / ${half} Half`;
+                    const style = getLookupValue('EXP_SECTION', 'style', sec.style);
+                    
+                    const bType = cleanValue(sec.bldg_type);
+                    const campTag = bType === '10' ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>` : '';
+                    
+                    // Add Mobile Home Tag to list item if applicable
+                    let typeTags = campTag;
+                    const design = cleanValue(sec.design);
+                    if (bType === '9' || design === '10' || design === '12') {
+                        typeTags += `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800">MOBILE HOME</span>`;
+                    }
+
+                    const buildingLabel = sectionRecords.length > 1 ? `<span class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 block">Building ${index + 1}</span>` : '';
+
+                    buildingListHtml += `
+                        <div class="${index > 0 ? 'pt-4 border-t border-gray-100' : ''}">
+                            ${buildingLabel}
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-600">
+                                <p><span class="font-medium text-gray-900">Style:</span> ${style} ${typeTags}</p>
+                                <p><span class="font-medium text-gray-900">Year Built:</span> ${yearBuilt}</p>
+                                <p><span class="font-medium text-gray-900">Living Area:</span> ${sqFt}</p>
+                                <p><span class="font-medium text-gray-900">Bedrooms:</span> ${beds}</p>
+                                <p><span class="font-medium text-gray-900">Bathrooms:</span> ${baths}</p>
+                                <p><span class="font-medium text-gray-900">Kitchens:</span> ${kitchens}</p>
+                            </div>
+                        </div>`;
+                });
+                buildingListHtml += `</div>`;
+            } else {
+                buildingListHtml = `<p class="text-sm text-gray-500 italic">No building details available.</p>`;
+            }
+
+            // --- 4. BUILD HEADER HTML ---
+            const address = cleanValue(parcelData.prop_locat);
+            const owner = cleanValue(parcelData.owner_name);
+            
+            // Valuation Formatting
+            const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
+            const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
+            const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
+            const outbValue = parseFloat(cleanValue(parcelData.cama_outb)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
+            const siteiValue = parseFloat(cleanValue(parcelData.cama_sitei)).toLocaleString('en-US', {style:'currency', currency:'USD'}); 
+            const acres = cleanValue(parcelData.factorj); 
+
+            // Generate Badges
+            let badgesHtml = '';
+            badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">${totalStructures} Total Structure(s)</span>`;
+            
+            if (residentialCount > 0) {
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Building(s)</span>`;
+            }
+            
+            // Homestead Badge
+            if (isHomestead) {
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-200 shadow-sm"><i class="fa-solid fa-house-chimney-user mr-1"></i> Homestead Declared</span>`;
+            }
+
+            if (hasCamp) {
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200 shadow-sm"><i class="fa-solid fa-campground mr-1"></i> Camp</span>`;
+            }
+
+            if (isMobileHome) {
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm"><i class="fa-solid fa-trailer mr-1"></i> Mobile Home</span>`;
+            }
+            specialBadges.forEach(badge => {
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 shadow-sm"><i class="fa-solid fa-building mr-1"></i> ${badge}</span>`;
+            });
+            const utilColor = utilities.length > 0 ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-600 border-gray-200';
+            const utilIcon = utilities.length > 0 ? '<i class="fa-solid fa-faucet-drip mr-1"></i>' : '<i class="fa-solid fa-ban mr-1"></i>';
+            badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${utilColor} border shadow-sm">${utilIcon} ${utilityText}</span>`;
+
+            let html = `<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-2">
+                                        <i class="fa-solid fa-house-user mr-3" style="color: #003300;"></i>Property Details
+                                    </h2>
+                                    <p class="text-xl text-[#003300] font-bold mb-4">${address}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-2xl font-bold text-gray-800">${totalValue}</p>
+                                    <p class="text-sm text-gray-500">Total Assessed Value ${yearLabel}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                ${badgesHtml}
+                            </div>
+
+                            <hr class="border-gray-200 my-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Ownership</h3>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Owner:</span> ${owner}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Parcel ID:</span> ${cleanLrsn}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">SPAN:</span> ${spanId}</p>
+                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Acres:</span> ${acres}</p>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Building Info</h3>
+                                    ${buildingListHtml}
+                                </div>
+
+                                <div>
+                                    <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Valuation Breakdown</h3>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Assessment Year:</span> <span class="font-medium">${assessYear || 'N/A'}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Land:</span> <span>${landValue}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Dwelling:</span> <span>${dwellValue}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Outbuildings:</span> <span>${outbValue}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Site Improvements:</span> <span>${siteiValue}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between mt-2 pt-2 border-t border-gray-100"><span class="font-bold">Total:</span> <span class="font-bold">${totalValue}</span></p>
+                                </div>
+                            </div>
+                        </div>`;
+
+            // --- 5. PREPARE TABS ---
+            let tabsHtml = `<div class="mb-4 border-b border-gray-200"><ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs">`;
+            let contentHtml = `<div id="tab-content">`;
+            let activeTabId = null;
+
+            for (const group in RELATED_FILES) {
+                if (group === "Assessment Info") continue;
+
+                let groupContent = '';
+                let hasData = false;
+
+                RELATED_FILES[group].forEach(file => {
+                    const rawRecords = dataCache[file] || [];
+                    let relatedRecords = rawRecords.filter(r => cleanValue(r.parcel_id) === cleanLrsn);
+
+                    if (file === 'EXP_IMPROVE') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '' && cleanValue(r.total) !== '0');
+                    if (file === 'EXP_OUTBUILD') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.type) !== '');
+                    if (file === 'EXP_GARAGE') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.area) !== '0');
+                    if (file === 'EXP_PORCH') relatedRecords = relatedRecords.filter(r => cleanValue(r.area) !== '0');
+                    if (file === 'EXP_HEAT') relatedRecords = relatedRecords.filter(r => cleanValue(r.percent) !== '0');
+                    if (file === 'EXP_FEATURES') relatedRecords = relatedRecords.filter(r => cleanValue(r.name) !== '' && parseFloat(cleanValue(r.quantity)) !== 0);
+                    if (file === 'EXP_SITEIMP') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0');
+
+                    if (file === 'EXP_OYVAL') {
+                        relatedRecords.sort((a, b) => {
+                            const yearA = parseInt(cleanValue(a.nperiod)) || 0;
+                            const yearB = parseInt(cleanValue(b.nperiod)) || 0;
+                            return yearB - yearA;
+                        });
+                    }
+                    
+                    if (file === 'EXP_TRANHIST') {
+                        relatedRecords = relatedRecords.filter(r => {
+                            const price = parseFloat(cleanValue(r.sale_price));
+                            const date = cleanValue(r.sale_date);
+                            return price > 0 || (date && date !== '/  /');
+                        });
+                        relatedRecords.sort((a, b) => parseFloat(cleanValue(b.sale_price)) - parseFloat(cleanValue(a.sale_price)));
+                    }
+
+                    if (file === 'EXP_PHOTOS' && relatedRecords.length > 0) {
+                        hasData = true;
+                        groupContent += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">`;
+                        relatedRecords.forEach(photo => {
+                            const photoId = cleanValue(photo.photoid);
+                            const imgUrl = `${S3_BASE_URL}images/${cleanLrsn}.jpg`;
+                            groupContent += `
+                                <div class="border rounded-lg overflow-hidden shadow-sm">
+                                    <img src="${imgUrl}" alt="Photo ${photoId}" class="w-full h-auto object-cover"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=No+Image';">
+                                    <div class="p-2 bg-gray-50 text-xs text-gray-500">Photo ID: ${photoId}</div>
+                                </div>`;
+                        });
+                        groupContent += `</div>`;
+                    } else if (relatedRecords.length > 0) {
+                        hasData = true;
+                        groupContent += `<h4 class="text-md font-semibold text-gray-700 mt-6 mb-2">${file.replace('EXP_', '')}</h4>`;
+                        groupContent += createHtmlTable(relatedRecords, file);
+                    }
+                });
+
+                if (hasData) {
+                    const tabId = `tab-${group.replace(/\s+/g, '-')}`;
+                    if (!activeTabId) activeTabId = tabId; 
+
+                    const iconClass = SECTION_ICONS[group] || 'fa-folder';
+                    
+                    tabsHtml += `
+                        <li class="mr-2">
+                            <button class="tab-btn inline-flex items-center p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 group ${activeTabId === tabId ? 'border-[#003300] text-[#003300]' : 'border-transparent'}" 
+                                    data-target="${tabId}">
+                                <i class="fa-solid ${iconClass} mr-2"></i>${group}
+                            </button>
+                        </li>`;
+
+                    contentHtml += `
+                        <div id="${tabId}" class="tab-pane bg-white p-6 rounded-lg shadow-md ${activeTabId === tabId ? '' : 'hidden'}">
+                            ${groupContent}
+                        </div>`;
+                }
+            }
+
+            tabsHtml += `</ul></div>`;
+            contentHtml += `</div>`;
+
+            const footerHtml = `
+                <div class="mt-8 mb-4 text-center">
+                    <button id="detail-back-top" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                        <i class="fa-solid fa-arrow-up mr-2"></i> Back to Top
+                    </button>
+                </div>
+            `;
+
+            detailContent.innerHTML = html + tabsHtml + contentHtml + footerHtml;
+
+            const tabBtns = detailContent.querySelectorAll('.tab-btn');
+            const tabPanes = detailContent.querySelectorAll('.tab-pane');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => {
+                        b.className = 'tab-btn inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 group';
+                    });
+                    btn.className = 'tab-btn inline-flex items-center p-4 border-b-2 border-[#003300] text-[#003300] rounded-t-lg group';
+
+                    const targetId = btn.getAttribute('data-target');
+                    tabPanes.forEach(pane => {
+                        if (pane.id === targetId) {
+                            pane.classList.remove('hidden');
+                        } else {
+                            pane.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            document.getElementById('detail-back-top').addEventListener('click', () => {
+                leftPane.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            leftPane.scrollTo(0, 0);
+        }
+        
+        function showMainView() {
+            detailView.classList.add('hidden');
+            mainView.classList.remove('hidden');
+            resetMapView();
+        }
+
+        // --- UI RENDERING ---
+        function renderMainTable() {
+            statusMessage.classList.add('hidden');
+            tableWrapper.classList.remove('hidden');
+            renderMainTableHeaders();
+            renderMainTablePage();
+            renderPagination();
+        }
+
+        function renderMainTableHeaders() {
+            const tableHead = dataTable.querySelector('thead');
+            tableHead.innerHTML = '';
+            if (masterData.length === 0) return;
+            const headers = ['SPAN', 'Address', 'City', 'Zip']; // CHANGED LRSN TO SPAN
+            const headerRow = document.createElement('tr');
+            headers.forEach(h => {
+                const th = document.createElement('th');
+                th.className = 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+                th.textContent = h;
+                headerRow.appendChild(th);
+            });
+            tableHead.appendChild(headerRow);
+        }
+
+        function renderMainTablePage() {
+            const tableBody = dataTable.querySelector('tbody');
+            tableBody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-gray-500">No properties found.</td></tr>`;
+                updateTableInfo(0, 0);
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+            const endIndex = startIndex + ROWS_PER_PAGE;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            pageData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'main-table-row';
+                const rawId = row[LRSN_KEY]; 
+                tr.dataset.lrsn = rawId; 
+
+                const displaySpan = cleanValue(row[SPAN_KEY]); // CHANGED TO DISPLAY SPAN
+                const address = cleanValue(row.prop_locat); 
+                const city = cleanValue(row.city);
+                const zip = cleanValue(row.zip_code);
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${displaySpan}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${address}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${city}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${zip}</td>
+                `;
+                
+                tr.addEventListener('click', () => showDetailView(rawId));
+                tableBody.appendChild(tr);
+            });
+
+            updateTableInfo(startIndex, endIndex);
+        }
+
+        function renderPagination() {
+            paginationControls.innerHTML = '';
+            const totalPages = Math.ceil(filteredData.length / ROWS_PER_PAGE);
+            if (totalPages <= 1) return;
+            let html = `<div class="text-sm text-gray-700">Page <span class="font-medium">${currentPage}</span> of <span class="font-medium">${totalPages}</span></div>`;
+            html += `<div class="flex items-center gap-2">
+                        <button class="pagination-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+                        <button class="pagination-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+                     </div>`;
+            paginationControls.innerHTML = html;
+            document.querySelectorAll('.pagination-btn').forEach(button => {
+                button.className = 'relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed';
+                button.addEventListener('click', (e) => {
+                    currentPage = parseInt(e.target.dataset.page);
+                    renderMainTablePage();
+                    renderPagination();
+                    dataTable.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        function cleanValue(val) {
+            if (val === null || val === undefined) return '';
+            const str = String(val).trim();
+            if (str.startsWith('"') && str.endsWith('"')) {
+                return str.substring(1, str.length - 1);
+            }
+            return str;
+        }
+
+        // Updated to support lookups via fileName
+        function createHtmlTable(records, fileName) {
+            if (!records || records.length === 0) return '<p class="text-sm text-gray-500">No records found.</p>';
+            
+            const headers = Object.keys(records[0]);
+            
+            let table = '<div class="overflow-x-auto table-container"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr>';
+            
+            headers.forEach(h => {
+                let displayHeader = h.replace(/_/g, ' ').toUpperCase();
+                
+                // --- NEW LABEL LOGIC START ---
+                // If we have a specific label for this file and field, use it
+                if (labelData[fileName] && labelData[fileName][h]) {
+                    displayHeader = labelData[fileName][h];
+                } 
+                // Fallback global overrides (optional, can keep or remove since JSON covers them)
+                else if (h === 'nperiod') displayHeader = 'Assessment Year';
+                else if (h === 'cama_total') displayHeader = 'Total Value';
+                // --- NEW LABEL LOGIC END ---
+                
+                table += `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">${displayHeader}</th>`;
+            });
+            table += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+            
+            records.forEach(r => {
+                table += '<tr>';
+                headers.forEach(h => {
+                    let val = cleanValue(r[h]);
+                    
+                    // 1. Apply Decoders/Lookups
+                    if (fileName) {
+                        const translated = getLookupValue(fileName, h, val);
+                        if (translated && translated !== val) {
+                            val = translated;
+                        }
+                    }
+
+                    // 2. Format Currency
+                    if (['sale_price', 'land_value', 'land_tot', 'cu_value', 'ex_value', 'cama_total', 'cama_land', 'cama_dwell', 'cama_outb', 'cama_sitei'].includes(h)) {
+                        const num = parseFloat(val);
+                        val = isNaN(num) ? val : num.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+                    }
+                    
+                    // 3. Format Dates
+                    if (h === 'sale_date' && val === '/  /') {
+                        val = 'N/A';
+                    }
+
+                    // 4. Format Areas
+                    if (['area', 'fin_sqft', 'dimension1'].includes(h) && val !== '0' && val !== '') {
+                         if (!isNaN(parseFloat(val))) {
+                             val = `${parseFloat(val).toLocaleString()}`; 
+                         }
+                    }
+
+                    // 5. Format Percentages
+                    if (h === 'percent') {
+                         val = val + '%';
+                    }
+
+                    table += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">${val}</td>`;
+                });
+                table += '</tr>';
+            });
+            
+            return table + '</tbody></table></div>';
+        }
+
+        function showLoading(message) {
+            statusMessage.innerHTML = `<div class="flex flex-col items-center gap-4"><div class="loader h-12 w-12 rounded-full border-4 border-gray-200"></div><p class="text-gray-500 text-lg">${message}</p></div>`;
+            statusMessage.classList.remove('hidden');
+            tableWrapper.classList.add('hidden');
+        }
+
+        function showError(message) {
+            statusMessage.innerHTML = `<p class="text-red-600 bg-red-100 p-4 rounded-md">${message}</p>`;
+        }
+        
+        function updateTableInfo(startIndex, endIndex) {
+            const end = Math.min(endIndex, filteredData.length);
+            const start = filteredData.length > 0 ? startIndex + 1 : 0;
+            tableInfo.textContent = `Showing ${start} to ${end} of ${filteredData.length} properties.`;
+        }
+
+        initialize();
+    });
+    </script>
+</body>
+</html>
