@@ -555,44 +555,29 @@
             mainView.classList.add('hidden');
             detailView.classList.remove('hidden');
 
-            // --- 1. GATHER DATA FOR SUMMARY ---
+            // --- 1. GATHER DATA ---
             const sectionRecords = (dataCache['EXP_SECTION'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
             const outbuildRecords = (dataCache['EXP_OUTBUILD'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn && cleanValue(r.type) !== '0');
             const siteImpRecords = (dataCache['EXP_SITEIMP'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn && cleanValue(r.type) !== '0');
 
             // --- 2. CALCULATE STATS & BADGES ---
-            
-            // A. Total Structures Count (All Sections + Valid Outbuildings)
             const totalStructures = sectionRecords.length + outbuildRecords.length;
-
-            // B. Residential Structures Count (Building Types 1, 9, 10)
             const residentialTypes = ['1', '9', '10'];
-            const residentialCount = sectionRecords.filter(r => {
-                const type = cleanValue(r.bldg_type);
-                return residentialTypes.includes(type);
-            }).length;
+            const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
 
-            // C. Special Design Types Detection
             let isMobileHome = false;
-            let specialBadges = new Set(); // Use Set to avoid duplicate badges (e.g. 2 Duplex sections)
+            let specialBadges = new Set(); 
 
             sectionRecords.forEach(r => {
                 const bType = cleanValue(r.bldg_type);
                 const design = cleanValue(r.design);
-
-                // Mobile Home / Double Wide Logic
-                if (bType === '9' || design === '10' || design === '12') {
-                    isMobileHome = true;
-                }
-
-                // Multi-Family / Special Residential Logic
+                if (bType === '9' || design === '10' || design === '12') isMobileHome = true;
                 if (design === '7') specialBadges.add("Apartment House");
                 if (design === '8') specialBadges.add("Duplex");
                 if (design === '20') specialBadges.add("Condo");
                 if (design === '21') specialBadges.add("Res. Commercial");
             });
 
-            // D. Utilities
             const hasWater = siteImpRecords.some(r => cleanValue(r.type) === '1');
             const hasSewer = siteImpRecords.some(r => cleanValue(r.type) === '2');
             let utilities = [];
@@ -600,7 +585,6 @@
             if (hasSewer) utilities.push("Sewer");
             const utilityText = utilities.length > 0 ? utilities.join(" & ") : "No Water & Sewer Recorded";
 
-            // E. Assessment Year
             let assessYear = cleanValue(parcelData.assess_yea);
             if (assessYear === '0' || assessYear === '') {
                  const history = (dataCache['EXP_OYVAL'] || []).filter(r => cleanValue(r.parcel_id) === cleanLrsn);
@@ -611,20 +595,40 @@
             }
             const yearLabel = assessYear && assessYear !== '0' ? `(${assessYear})` : '';
 
-            // F. Main Building Details (for the card body)
-            let yearBuilt = 'N/A', sqFt = 'N/A', beds = 'N/A', baths = 'N/A', style = 'N/A';
+            // --- 3. GENERATE BUILDING MINI-LIST ---
+            let buildingListHtml = '';
             if (sectionRecords.length > 0) {
-                const mainSec = sectionRecords[0];
-                yearBuilt = cleanValue(mainSec.year_built) || 'N/A';
-                sqFt = cleanValue(mainSec.bldg_sqft) ? parseInt(cleanValue(mainSec.bldg_sqft)).toLocaleString() + ' sq ft' : 'N/A';
-                beds = cleanValue(mainSec.bedrooms) || '0';
-                const full = cleanValue(mainSec.full_baths) || '0';
-                const half = cleanValue(mainSec.half_baths) || '0';
-                baths = `${full} Full / ${half} Half`;
-                style = getLookupValue('EXP_SECTION', 'style', mainSec.style);
+                buildingListHtml = `<div class="space-y-4">`;
+                sectionRecords.forEach((sec, index) => {
+                    const yearBuilt = cleanValue(sec.year_built) || 'N/A';
+                    const sqFt = cleanValue(sec.bldg_sqft) ? parseInt(cleanValue(sec.bldg_sqft)).toLocaleString() + ' sq ft' : 'N/A';
+                    const beds = cleanValue(sec.bedrooms) || '0';
+                    const kitchens = cleanValue(sec.kitchens) || '0';
+                    const full = cleanValue(sec.full_baths) || '0';
+                    const half = cleanValue(sec.half_baths) || '0';
+                    const baths = `${full} Full / ${half} Half`;
+                    const style = getLookupValue('EXP_SECTION', 'style', sec.style);
+                    const buildingLabel = sectionRecords.length > 1 ? `<span class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 block">Building ${index + 1}</span>` : '';
+
+                    buildingListHtml += `
+                        <div class="${index > 0 ? 'pt-4 border-t border-gray-100' : ''}">
+                            ${buildingLabel}
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-600">
+                                <p><span class="font-medium text-gray-900">Style:</span> ${style}</p>
+                                <p><span class="font-medium text-gray-900">Year Built:</span> ${yearBuilt}</p>
+                                <p><span class="font-medium text-gray-900">Living Area:</span> ${sqFt}</p>
+                                <p><span class="font-medium text-gray-900">Bedrooms:</span> ${beds}</p>
+                                <p><span class="font-medium text-gray-900">Bathrooms:</span> ${baths}</p>
+                                <p><span class="font-medium text-gray-900">Kitchens:</span> ${kitchens}</p>
+                            </div>
+                        </div>`;
+                });
+                buildingListHtml += `</div>`;
+            } else {
+                buildingListHtml = `<p class="text-sm text-gray-500 italic">No building details available.</p>`;
             }
 
-            // --- 3. BUILD HEADER HTML ---
+            // --- 4. BUILD HEADER HTML ---
             const address = cleanValue(parcelData.prop_locat);
             const owner = cleanValue(parcelData.owner_name);
             const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
@@ -632,32 +636,21 @@
             const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const acres = cleanValue(parcelData.factorj); 
 
-            // Generate Badge HTML
+            // Generate Badges
             let badgesHtml = '';
-            
-            // 1. Total Structures Badge
             badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">${totalStructures} Total Structure(s)</span>`;
-            
-            // 2. Residential Count Badge (only if > 0)
             if (residentialCount > 0) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Unit(s)</span>`;
             }
-
-            // 3. Mobile Home Badge
             if (isMobileHome) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm"><i class="fa-solid fa-trailer mr-1"></i> Mobile Home</span>`;
             }
-
-            // 4. Special Design Badges (Duplex, Condo, etc.)
             specialBadges.forEach(badge => {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 shadow-sm"><i class="fa-solid fa-building mr-1"></i> ${badge}</span>`;
             });
-
-            // 5. Utilities Badge
             const utilColor = utilities.length > 0 ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-600 border-gray-200';
             const utilIcon = utilities.length > 0 ? '<i class="fa-solid fa-faucet-drip mr-1"></i>' : '<i class="fa-solid fa-ban mr-1"></i>';
             badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${utilColor} border shadow-sm">${utilIcon} ${utilityText}</span>`;
-
 
             let html = `<div class="bg-white p-6 rounded-lg shadow-md mb-6">
                             <div class="flex justify-between items-start">
@@ -686,14 +679,12 @@
                                     <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">SPAN:</span> ${spanId}</p>
                                     <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Acres:</span> ${acres}</p>
                                 </div>
+                                
                                 <div>
                                     <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Building Info</h3>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Year Built:</span> ${yearBuilt}</p>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Style:</span> ${style}</p>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Living Area:</span> ${sqFt}</p>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Bedrooms:</span> ${beds}</p>
-                                    <p class="text-sm text-gray-600"><span class="font-medium text-gray-900">Bathrooms:</span> ${baths}</p>
+                                    ${buildingListHtml}
                                 </div>
+
                                 <div>
                                     <h3 class="font-semibold text-gray-700 mb-2 border-b pb-1">Valuation Breakdown</h3>
                                     <p class="text-sm text-gray-600 flex justify-between"><span>Assessment Year:</span> <span class="font-medium">${assessYear || 'N/A'}</span></p>
@@ -704,7 +695,7 @@
                             </div>
                         </div>`;
 
-            // --- 4. PREPARE TABS ---
+            // --- 5. PREPARE TABS ---
             let tabsHtml = `<div class="mb-4 border-b border-gray-200"><ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs">`;
             let contentHtml = `<div id="tab-content">`;
             let activeTabId = null;
@@ -719,7 +710,6 @@
                     const rawRecords = dataCache[file] || [];
                     let relatedRecords = rawRecords.filter(r => cleanValue(r.parcel_id) === cleanLrsn);
 
-                    // Filters
                     if (file === 'EXP_IMPROVE') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '' && cleanValue(r.total) !== '0');
                     if (file === 'EXP_OUTBUILD') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.type) !== '');
                     if (file === 'EXP_GARAGE') relatedRecords = relatedRecords.filter(r => cleanValue(r.type) !== '0' && cleanValue(r.area) !== '0');
@@ -745,7 +735,6 @@
                         relatedRecords.sort((a, b) => parseFloat(cleanValue(b.sale_price)) - parseFloat(cleanValue(a.sale_price)));
                     }
 
-                    // Render Content
                     if (file === 'EXP_PHOTOS' && relatedRecords.length > 0) {
                         hasData = true;
                         groupContent += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">`;
@@ -791,7 +780,7 @@
             tabsHtml += `</ul></div>`;
             contentHtml += `</div>`;
 
-            // --- 5. BOTTOM BACK TO TOP BUTTON ---
+            // --- 6. BOTTOM BACK TO TOP BUTTON ---
             const footerHtml = `
                 <div class="mt-8 mb-4 text-center">
                     <button id="detail-back-top" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
@@ -802,8 +791,6 @@
 
             detailContent.innerHTML = html + tabsHtml + contentHtml + footerHtml;
 
-            // --- EVENT LISTENERS ---
-            // Tab Switching
             const tabBtns = detailContent.querySelectorAll('.tab-btn');
             const tabPanes = detailContent.querySelectorAll('.tab-pane');
 
@@ -825,7 +812,6 @@
                 });
             });
 
-            // Inline Back to Top
             document.getElementById('detail-back-top').addEventListener('click', () => {
                 leftPane.scrollTo({ top: 0, behavior: 'smooth' });
             });
