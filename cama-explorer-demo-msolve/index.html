@@ -562,16 +562,24 @@
 
             // --- 2. CALCULATE STATS & BADGES ---
             const totalStructures = sectionRecords.length + outbuildRecords.length;
-            const residentialTypes = ['1', '9', '10'];
+            
+            // Residential Count: Exclude '10' (Camp). Only '1' (Single) and '9' (Mobile) count as standard residential here.
+            const residentialTypes = ['1', '9']; 
             const residentialCount = sectionRecords.filter(r => residentialTypes.includes(cleanValue(r.bldg_type))).length;
 
             let isMobileHome = false;
+            let hasCamp = false;
             let specialBadges = new Set(); 
 
             sectionRecords.forEach(r => {
                 const bType = cleanValue(r.bldg_type);
                 const design = cleanValue(r.design);
+                
+                // Detect Special Types
                 if (bType === '9' || design === '10' || design === '12') isMobileHome = true;
+                if (bType === '10') hasCamp = true; // Check for Camp
+
+                // Detect Designs for Badges
                 if (design === '7') specialBadges.add("Apartment House");
                 if (design === '8') specialBadges.add("Duplex");
                 if (design === '20') specialBadges.add("Condo");
@@ -608,13 +616,18 @@
                     const half = cleanValue(sec.half_baths) || '0';
                     const baths = `${full} Full / ${half} Half`;
                     const style = getLookupValue('EXP_SECTION', 'style', sec.style);
+                    
+                    // Specific visual indicator if this specific building is a Camp
+                    const bType = cleanValue(sec.bldg_type);
+                    const campTag = bType === '10' ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800">CAMP</span>` : '';
+                    
                     const buildingLabel = sectionRecords.length > 1 ? `<span class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 block">Building ${index + 1}</span>` : '';
 
                     buildingListHtml += `
                         <div class="${index > 0 ? 'pt-4 border-t border-gray-100' : ''}">
                             ${buildingLabel}
                             <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-600">
-                                <p><span class="font-medium text-gray-900">Style:</span> ${style}</p>
+                                <p><span class="font-medium text-gray-900">Style:</span> ${style} ${campTag}</p>
                                 <p><span class="font-medium text-gray-900">Year Built:</span> ${yearBuilt}</p>
                                 <p><span class="font-medium text-gray-900">Living Area:</span> ${sqFt}</p>
                                 <p><span class="font-medium text-gray-900">Bedrooms:</span> ${beds}</p>
@@ -631,17 +644,28 @@
             // --- 4. BUILD HEADER HTML ---
             const address = cleanValue(parcelData.prop_locat);
             const owner = cleanValue(parcelData.owner_name);
+            
+            // Valuation Formatting
             const totalValue = parseFloat(cleanValue(parcelData.cama_total)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const landValue = parseFloat(cleanValue(parcelData.cama_land)).toLocaleString('en-US', {style:'currency', currency:'USD'});
             const dwellValue = parseFloat(cleanValue(parcelData.cama_dwell)).toLocaleString('en-US', {style:'currency', currency:'USD'});
+            const outbValue = parseFloat(cleanValue(parcelData.cama_outb)).toLocaleString('en-US', {style:'currency', currency:'USD'}); // New Field
             const acres = cleanValue(parcelData.factorj); 
 
             // Generate Badges
             let badgesHtml = '';
             badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">${totalStructures} Total Structure(s)</span>`;
+            
+            // Residential Building Badge (No Camps)
             if (residentialCount > 0) {
-                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Unit(s)</span>`;
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm">${residentialCount} Residential Building(s)</span>`;
             }
+            
+            // Camp Badge
+            if (hasCamp) {
+                badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200 shadow-sm"><i class="fa-solid fa-campground mr-1"></i> Camp</span>`;
+            }
+
             if (isMobileHome) {
                 badgesHtml += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm"><i class="fa-solid fa-trailer mr-1"></i> Mobile Home</span>`;
             }
@@ -690,6 +714,7 @@
                                     <p class="text-sm text-gray-600 flex justify-between"><span>Assessment Year:</span> <span class="font-medium">${assessYear || 'N/A'}</span></p>
                                     <p class="text-sm text-gray-600 flex justify-between"><span>Land:</span> <span>${landValue}</span></p>
                                     <p class="text-sm text-gray-600 flex justify-between"><span>Dwelling:</span> <span>${dwellValue}</span></p>
+                                    <p class="text-sm text-gray-600 flex justify-between"><span>Outbuildings:</span> <span>${outbValue}</span></p>
                                     <p class="text-sm text-gray-600 flex justify-between mt-2 pt-2 border-t border-gray-100"><span class="font-bold">Total:</span> <span class="font-bold">${totalValue}</span></p>
                                 </div>
                             </div>
@@ -780,7 +805,6 @@
             tabsHtml += `</ul></div>`;
             contentHtml += `</div>`;
 
-            // --- 6. BOTTOM BACK TO TOP BUTTON ---
             const footerHtml = `
                 <div class="mt-8 mb-4 text-center">
                     <button id="detail-back-top" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
