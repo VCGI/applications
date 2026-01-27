@@ -269,6 +269,7 @@
                 ], (Map, MapView, FeatureLayer, VectorTileLayer, Basemap, TileLayer, locationRendererCreator, Compass) => {
 
                     async function setupMap() {
+                        // 1. Basemap Layers
                         const imageryLayer = new TileLayer({
                             url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
                             title: "Satellite Imagery"
@@ -286,6 +287,7 @@
                             id: "imagery-with-custom-labels"
                         });
 
+                        // 2. Parcel Layer
                         const parcelLabelClass = {
                             symbol: {
                                 type: "text",
@@ -296,16 +298,11 @@
                             },
                             labelPlacement: "always-horizontal",
                             labelExpressionInfo: {
-                                expression: `
-                                    if (IsEmpty($feature.SPAN)) {
-                                        return "No SPAN Assigned to Parcel";
-                                    } else {
-                                        return $feature.SPAN;
-                                    }
-                                `
+                                expression: `if (IsEmpty($feature.SPAN)) { return "No SPAN"; } else { return $feature.SPAN; }`
                             },
                             minScale: 5000
                         };
+                        
                         const parcelRenderer = {
                             type: "simple",
                             symbol: {
@@ -315,6 +312,7 @@
                                 outline: { color: [211, 211, 211, 0.9], width: "1px" }
                             }
                         };
+                        
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
                             definitionExpression: "TOWN = 'LINCOLN'",
@@ -324,6 +322,30 @@
                             labelingInfo: [parcelLabelClass]
                         });
                         
+                        // 3. E911 Building Footprints (NEW)
+                        const footprintRenderer = {
+                            type: "simple",
+                            symbol: {
+                                type: "simple-fill",
+                                style: "solid",
+                                color: [255, 255, 255, 1], // Solid White
+                                outline: { 
+                                    color: "#333333", 
+                                    width: 0.75 
+                                }
+                            }
+                        };
+
+                        const footprintLayer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_STRUCTURES_POLY_SP_v1/FeatureServer/0",
+                            title: "E-911 Building Footprints",
+                            visible: false, // Default Off
+                            definitionExpression: "E911TOWN = 'LINCOLN'",
+                            renderer: footprintRenderer,
+                            minScale: 25000 // Performance: Only show when zoomed in
+                        });
+
+                        // 4. E911 Address Points
                         e911Layer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Emergency_ESITE_point_SP_v1/FeatureServer/0",
                             title: "E-911 Site Locations",
@@ -332,9 +354,11 @@
                             outFields: ["PRIMARYADDRESS"]
                         });
 
+                        // 5. Initialize Map with Layer Ordering
+                        // Bottom: Parcels -> Middle: Footprints -> Top: Addresses
                         const map = new Map({ 
                             basemap: satelliteBasemap, 
-                            layers: [parcelLayer, e911Layer]
+                            layers: [parcelLayer, footprintLayer, e911Layer]
                         });
 
                         mapView = new MapView({
@@ -355,6 +379,7 @@
                         });
                         await mapView.when();
 
+                        // 6. Address Point Styling
                         const rendererParams = {
                             layer: e911Layer,
                             view: mapView,
@@ -380,24 +405,39 @@
                         };
                         e911Layer.labelingInfo = [e911LabelClass];
 
+                        // 7. Widgets
                         const compass = new Compass({ view: mapView });
                         mapView.ui.add(compass, "top-left");
 
+                        // Updated Layer Toggle Widget
                         const toggleContainer = document.createElement("div");
                         toggleContainer.innerHTML = `
-                            <label for="e911-toggle" class="flex items-center cursor-pointer p-1">
-                                <input type="checkbox" id="e911-toggle" class="h-4 w-4 rounded border-gray-300 text-[#003300] focus:ring-[#003300]">
-                                <span class="ml-2 text-sm font-medium text-gray-700">Show E911 Address Points</span>
-                            </label>
+                            <div class="p-2 space-y-2">
+                                <label for="e911-toggle" class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="e911-toggle" class="h-4 w-4 rounded border-gray-300 text-[#003300] focus:ring-[#003300]">
+                                    <span class="ml-2 text-sm font-medium text-gray-700">Show E911 Address Points</span>
+                                </label>
+                                <label for="footprint-toggle" class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="footprint-toggle" class="h-4 w-4 rounded border-gray-300 text-[#003300] focus:ring-[#003300]">
+                                    <span class="ml-2 text-sm font-medium text-gray-700">Show Building Footprints</span>
+                                </label>
+                            </div>
                         `;
-                        toggleContainer.className = "esri-widget bg-white shadow-md"; 
+                        toggleContainer.className = "esri-widget bg-white shadow-md rounded-md"; 
                         mapView.ui.add(toggleContainer, "top-right");
 
+                        // Toggle Event Listeners
                         const e911Toggle = toggleContainer.querySelector('#e911-toggle');
                         e911Toggle.addEventListener('change', (event) => {
                             if (e911Layer) e911Layer.visible = event.target.checked;
                         });
 
+                        const footprintToggle = toggleContainer.querySelector('#footprint-toggle');
+                        footprintToggle.addEventListener('change', (event) => {
+                            if (footprintLayer) footprintLayer.visible = event.target.checked;
+                        });
+
+                        // 8. Click Interactions
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 const parcelResult = response.results.find(r => r.graphic && r.graphic.layer === parcelLayer);
