@@ -1,14 +1,14 @@
 # Vermont CAMA Data Overview
 
-## Status
+## Status per 32 V.S.A. § 5404
 
 *Last Updated: January 26, 2026*
 
 | **Percent   of Towns** | **Towns Per Tax** | **Tool**                      | **Vendor**                    | **Sample Received** | **Date Received** | **Notes**                                                                                                                    | **Mock Up** |
 |:----------------------:|:-----------------:|-------------------------------|-------------------------------|:-------------------:|:-----------------:|------------------------------------------------------------------------------------------------------------------------------|-------------|
 |           12%          |         32        | ASSESSPRO                     | Tyler Tech                    |          No         |                   |                                                                                                                              |             |
-|           77%          |        200        | MicroSolve CAMA               | NEMRC                         |         Yes         |     12/4/2025     | Multiple tables/complete   extract. Dummy data only, no multi-fam or condo conditions within.             | Created     |
-|           7%           |         19        | PROVAL                        | Aumentum                      |         Yes         |     7/23/2025     | Barre Town extract. Multiple   tables/complete extract. Useful if representative. Data   dictionary needed. | Created     |
+|           77%          |        200        | MicroSolve CAMA               | NEMRC                         |         Yes         |     12/4/2025     | Multiple tables/complete extract. Lincoln. Dummy data only, no multi-fam or condo conditions within.             | Created     |
+|           7%           |         19        | PROVAL                        | Aumentum                      |         Yes         |     7/23/2025     | Multiple   tables/complete extract. Barre Town. Useful if representative. Data   dictionary needed. | Created     |
 |           3%           |         7         | Vision Governmental Solutions | Vision Governmental Solutions |          No         |                   |                                                                                                                              |             |
 |           1%           |         2         | No CAMA Program               | No CAMA Program               |          -          |                   |                                                                                                                              |             |
 |        **100%**        |      **260**      |                               |                               |                     |                   |                                                                                                                              |             |
