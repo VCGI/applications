@@ -1,0 +1,113 @@
+# This script takes a "Banker and Tradesman" formatted text file from AssessPro and converts to structured json format with guidance from a csv schema doc.
+
+import csv
+import json
+
+def parse_layout_csv(csv_path):
+    """
+    Parses the B&T Layout CSV to extract field definitions.
+    Includes fixes for known typos in the provided CSV layout.
+    """
+    schema = []
+    
+    # Specific fixes for typos found in 'BandTLayout-AssessPro.csv'
+    # Format: "Description": (Correct Start, Correct End)
+    known_fixes = {
+        "Story Height": (454, 457),       # CSV had '454-157'
+        "Rental Living Units": (458, 461), # CSV had '158-461'
+        "Bathroom Rating": (482, 485)      # CSV had '480-485' (Overlap/Length mismatch)
+    }
+
+    with open(csv_path, 'r', encoding='utf-8-sig') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            name = row['Description']
+            pos_str = row['Position']
+            length = int(row['Length'])
+            
+            # Apply fix if this field is known to be broken
+            if name in known_fixes:
+                start, end = known_fixes[name]
+            else:
+                try:
+                    start, end = map(int, pos_str.split('-'))
+                except ValueError:
+                    print(f"Skipping invalid row: {name}, Position: {pos_str}")
+                    continue 
+
+            schema.append({
+                "name": name,
+                "start": start,
+                "end": end,
+                "length": length
+            })
+            
+    return schema
+
+def parse_fixed_width_file(file_path, schema):
+    """
+    Parses the fixed-width text content using the schema derived from CSV.
+    """
+    parsed_records = []
+    
+    # Use 'replace' for errors to handle any potential legacy encoding issues
+    with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+        lines = f.readlines()
+        
+    for line in lines:
+        if not line.strip(): 
+            continue # Skip empty lines
+        
+        record = {}
+        for field in schema:
+            # Convert 1-based layout positions to Python's 0-based indexing
+            start_idx = field['start'] - 1
+            end_idx = field['end']
+            
+            # Extract data if the line is long enough
+            if start_idx < len(line):
+                # Ensure we don't read past the end of the line
+                actual_end = min(end_idx, len(line))
+                value = line[start_idx:actual_end].strip()
+            else:
+                value = ""
+                
+            record[field['name']] = value
+            
+        parsed_records.append(record)
+        
+    return parsed_records
+
+# --- Execution ---
+
+# 1. Define File Names
+layout_csv_file = 'BandTLayout-AssessPro.csv'
+data_txt_file = 'view_BankerTrades1.txt'
+output_json_file = 'output.json'
+
+try:
+    # 2. Parse the Layout
+    print(f"Reading layout from {layout_csv_file}...")
+    schema = parse_layout_csv(layout_csv_file)
+    print(f"Layout loaded with {len(schema)} fields.")
+
+    # 3. Parse the Data
+    print(f"Reading data from {data_txt_file}...")
+    json_data = parse_fixed_width_file(data_txt_file, schema)
+
+    # 4. Save to JSON
+    with open(output_json_file, 'w') as json_file:
+        json.dump(json_data, json_file, indent=4)
+        
+    print(f"Success! Processed {len(json_data)} records.")
+    print(f"Data saved to {output_json_file}")
+    
+    # Optional: Print the first record to verify
+    if json_data:
+        print("\nFirst Record Sample:")
+        print(json.dumps(json_data[0], indent=2))
+
+except FileNotFoundError as e:
+    print(f"Error: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
