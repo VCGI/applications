@@ -1,0 +1,82 @@
+﻿Description,Position,Length
+Account Number,1-10,10
+Parcel ID Number,11-30,20
+User Account Number,31-40,10
+Location Street Number,41-50,10
+Location Alternate Street Number,51-60,10
+Location Street Name,61-85,25
+Condo Unit Number,86-95,10
+Condo Complex Name,96-105,10
+Owner Name #1,106-135,30
+Owner Name #2,136-165,30
+Owner Name #3,166-195,30
+Mailing Address Line 1,196-225,30
+Mailing Address Line 2,226-255,30
+Mailing City,256-280,25
+Mailing State,281-290,10
+Mailing Zip Code,291-300,10
+Owner Occupied,301-301,1
+Zoning Code 1,302-311,10
+Flood Hazard Code,312-321,10
+Census Code,322-331,10
+Utility Code 1,332-341,10
+Utility Code 2,342-351,10
+Utility Code 3,352-361,10
+Traffic Code,362-371,10
+Primary Land Use Code (LUC),372-375,4
+Year Built,376-379,4
+Effective Year Built,380-383,4
+Total Acres,384-393,10
+Gross Building Area,394-403,10
+Building Type 1,404-415,12
+Building Type 2,416-427,12
+Building Type 3,428-439,12
+Finished Building Area,440-449,10
+Number of Buildings,450-453,4
+Story Height,454-457,4
+Rental Living Units,458-461,4
+Number of Rooms,462-465,4
+Number of Bedrooms,466-469,4
+Number of Full Baths,470-473,4
+Number of Half Baths,474-477,4
+Number of Other Fixtures,478-481,4
+Bathroom Rating,482-485,4
+Number of Kitchens,486-489,4
+Kitchen Rating,490-493,4
+Number of Fireplaces,494-497,4
+Number of Wood Stove Flues,498-501,4
+Solar Hot Water,502-507,6
+Central Vacuum,508-513,6
+Heating Type,514-525,12
+Heating Fuel,526-537,12
+Percent Air Conditioned,538-540,3
+Basement Area,541-550,10
+Finished Basement Area,551-560,10
+Roof Type,561-572,12
+Roof Cover,573-584,12
+Exterior Wall Type,585-596,12
+Interior Wall Type,597-608,12
+Attached Garage (Area),609-612,4
+Detached Garage (Size),613-632,20
+Basement Garage (#),633-634,2
+Pool,635-640,6
+Building Frame Type,641-652,12
+Floor Type,653-664,12
+Base Depreciation Year,665-668,4
+Building Grade,669-672,4
+Building Condition,673-684,12
+Legal Reference Number,685-704,20
+Legal Reference Sale Date,705-714,10
+Sale Price,715-726,12
+NAL Description,727-738,12
+Grantor,739-768,30
+Previous Legal Reference Number,769-788,20
+Previous Legal Reference Sale Date,789-798,10
+Previous Sale Price,799-810,12
+Previous NAL Description,811-822,12
+Previous Grantor,823-852,30
+Total Land Value,853-864,12
+Total Yard Item Value,865-876,12
+Total Building Value,877-888,12
+Total Assessed Value,889-900,12
+Legal Description,901-1000,100
