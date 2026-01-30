@@ -38,19 +38,6 @@ MicroSolve CAMA
 
 ---
 
-### Tyler Technologies
-
-#### Software
-
-Assesspro (Assessment Pro)
-
-#### Contacts
-
-- Gio Giordano <Gio.Giordano@tylertech.com>
-- John Vickery <John.Vickery@tylertech.com>
-
----
-
 ### Aumentum Technologies (formerly ProVal)
 
 #### Software
@@ -103,3 +90,16 @@ Catalis CAMA - AssessPro (Formerly PATRIOT Properties)
 
 - William Krajeski <bill@nemcvt.com>
 - Matt Krajeski <mattkraj09@gmail.com>
+
+---
+
+### Tyler Technologies - Not currently contracted for CAMA in VT
+
+#### Software
+
+Assessment Pro
+
+#### Contacts
+
+- Gio Giordano <Gio.Giordano@tylertech.com>
+- John Vickery <John.Vickery@tylertech.com>
