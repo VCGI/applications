@@ -19,55 +19,59 @@
 
 ## Property Details Contents
 
-| Location       | Info                           | Types                                                                                                                  | Display     | Derivation |
-|----------------|--------------------------------|------------------------------------------------------------------------------------------------------------------------|-------------|------------|
-| Header         | Full Property  Address         |                                                                                                                        |             | Source     |
-| Header         | Total Assessed Value           |                                                                                                                        |             | Source     |
-| Header         | Total Assessed Value Year      |                                                                                                                        |             | Source     |
-| Summary Badges | Count of Total Structures      |                                                                                                                        |             | Calculated |
-| Summary Badges | Count of Residential Buildings |                                                                                                                        |             | Calculated |
-| Summary Badges | Count of Dwelling Units        |                                                                                                                        | Conditional | Calculated |
-| Summary Badges | Count of Total Improvements    |                                                                                                                        |             | Calculated |
-| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Apartment, Duplex, Three Unit,   Four Unit, Co-op Apt, Mixed-use              | Conditional | Source     |
-| Summary Badges | Type of Use                    | Residential, Commercial, Industrial, Farm/Ag, Timberland, Government,   Open Land/Misc, Other (specified), Unspecified | Conditional | Lookup     |
-| Summary Badges | Homestead Status               |                                                                                                                        | Conditional | Source     |
-| Summary Badges | Utilities Service              | Water, Sewer, Electric, None                                                                                           | Conditional | Source     |
-| Property       | Owner Name                     |                                                                                                                        |             | Source     |
-| Property       | Parcel ID                      |                                                                                                                        |             | Source     |
-| Property       | SPAN                           |                                                                                                                        |             | Source     |
-| Property       | LRSN / CAMA ID                 |                                                                                                                        |             | Source     |
-| Property       | Parcel Status                  |                                                                                                                        |             | Source     |
-| Site           | Type                           |                                                                                                                        |             | Lookup     |
-| Site           | Description                    |                                                                                                                        |             | Source     |
-| Site           | Acres                          |                                                                                                                        |             | Source     |
-| Site           | Land Types                     |                                                                                                                        | Conditional | Lookup     |
-| Site           | Frontage                       |                                                                                                                        | Conditional | Source     |
-| Site           | Township                       |                                                                                                                        |             | Source     |
-| Site           | Neighborhood                   |                                                                                                                        |             | Source     |
-| Site           | Zoning                         |                                                                                                                        |             | Source     |
-| Site           | Homestead Status               |                                                                                                                        |             | Source     |
-| Buildings      | Building Number                |                                                                                                                        |             | Source     |
-| Buildings      | Style                          |                                                                                                                        |             | Source     |
-| Buildings      | Type                           |                                                                                                                        |             | Source     |
-| Buildings      | Year Built                     |                                                                                                                        |             | Source     |
-| Buildings      | Effective Year Built           |                                                                                                                        |             | Source     |
-| Buildings      | Living/Finished Area           |                                                                                                                        |             | Source     |
-| Buildings      | Total Area                     |                                                                                                                        |             | Source     |
-| Buildings      | Bedrooms                       |                                                                                                                        |             | Source     |
-| Buildings      | Bathrooms                      |                                                                                                                        |             | Source     |
-| Buildings      | Kitchens                       |                                                                                                                        |             | Source     |
-| Buildings      | Total Rooms                    |                                                                                                                        |             | Source     |
-| Buildings      | Dwelling Units                 |                                                                                                                        | Conditional | Calculated |
-| Valuation      | Assessment Year                |                                                                                                                        |             | Source     |
-| Valuation      | Land                           |                                                                                                                        |             | Source     |
-| Valuation      | Dwellings                      |                                                                                                                        |             | Source     |
-| Valuation      | Outbuildings                   |                                                                                                                        |             | Source     |
-| Valuation      | Site Improvements              |                                                                                                                        |             | Source     |
-| Valuation      | Total                          |                                                                                                                        |             | Source     |
-| Record         | Tax Map #                      |                                                                                                                        |             | Source     |
-| Record         | Book                           |                                                                                                                        |             | Source     |
-| Record         | Page                           |                                                                                                                        |             | Source     |
-| Record         | Last Update                    |                                                                                                                        |             | Source     |
+| Location       | Info                           | Types                                                                                                                  | Display       | Derivation |
+|----------------|--------------------------------|------------------------------------------------------------------------------------------------------------------------|---------------|------------|
+| Header         | Full Property  Address         |                                                                                                                        |               | Source     |
+| Header         | Total Assessed Value           |                                                                                                                        |               | Source     |
+| Header         | Total Assessed Value Year      |                                                                                                                        |               | Source     |
+| Summary Badges | Count of Total Structures      |                                                                                                                        |               | Calculated |
+| Summary Badges | Count of Residential Buildings |                                                                                                                        |               | Calculated |
+| Summary Badges | Count of Dwelling Units        |                                                                                                                        | Conditional   | Calculated |
+| Summary Badges | Count of Commercial Buildings  |                                                                                                                        | Conditional   | Calculated |
+| Summary Badges | Count of Total Improvements    |                                                                                                                        |               | Calculated |
+| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Duplex, Three Unit, Four Unit,   5-8 Units, >8 Units, Co-Op, Mixed-use        | Conditional   | Lookup     |
+| Summary Badges | Type of Use                    | Residential, Commercial, Industrial, Farm/Ag, Timberland, Government,   Open Land/Misc, Other (specified), Unspecified | Conditional   | Lookup     |
+| Summary Badges | Homestead Status               |                                                                                                                        | Conditional   | Source     |
+| Summary Badges | Utilities Service              | Water, Sewer, Septic, Electric, None                                                                                   | Conditional   | Source     |
+| Property       | Owner Name                     |                                                                                                                        |               | Source     |
+| Property       | Parcel ID                      |                                                                                                                        |               | Source     |
+| Property       | SPAN                           |                                                                                                                        |               | Source     |
+| Property       | LRSN / CAMA ID                 |                                                                                                                        |               | Source     |
+| Property       | Parcel Status                  |                                                                                                                        |               | Source     |
+| Site           | Type                           |                                                                                                                        |               | Lookup     |
+| Site           | Description                    |                                                                                                                        |               | Source     |
+| Site           | Acres                          |                                                                                                                        |               | Source     |
+| Site           | Land Types                     |                                                                                                                        | Conditional   | Lookup     |
+| Site           | Frontage                       |                                                                                                                        | Conditional   | Source     |
+| Site           | Town                           |                                                                                                                        |               | Source     |
+| Site           | TOWNGEOID                      |                                                                                                                        | Not Displayed | Lookup     |
+| Site           | TVGEOID                        |                                                                                                                        | Not Displayed | Lookup     |
+| Site           | VILLGEOID                      |                                                                                                                        | Not Displayed | Lookup     |
+| Site           | Neighborhood                   |                                                                                                                        |               | Source     |
+| Site           | Zoning                         |                                                                                                                        |               | Source     |
+| Site           | Homestead Status               |                                                                                                                        |               | Source     |
+| Buildings      | Building Number                |                                                                                                                        | Conditional   | Source     |
+| Buildings      | Style                          |                                                                                                                        |               | Source     |
+| Buildings      | Type                           |                                                                                                                        |               | Source     |
+| Buildings      | Year Built                     |                                                                                                                        |               | Source     |
+| Buildings      | Effective Year Built           |                                                                                                                        |               | Source     |
+| Buildings      | Living/Finished Area           |                                                                                                                        |               | Source     |
+| Buildings      | Total Area                     |                                                                                                                        |               | Source     |
+| Buildings      | Bedrooms                       |                                                                                                                        |               | Source     |
+| Buildings      | Bathrooms                      |                                                                                                                        |               | Source     |
+| Buildings      | Kitchens                       |                                                                                                                        |               | Source     |
+| Buildings      | Total Rooms                    |                                                                                                                        |               | Source     |
+| Buildings      | Dwelling Units                 |                                                                                                                        | Conditional   | Calculated |
+| Valuation      | Assessment Year                |                                                                                                                        |               | Source     |
+| Valuation      | Land                           |                                                                                                                        |               | Source     |
+| Valuation      | Dwellings                      |                                                                                                                        |               | Source     |
+| Valuation      | Outbuildings                   |                                                                                                                        |               | Source     |
+| Valuation      | Site Improvements              |                                                                                                                        |               | Source     |
+| Valuation      | Total                          |                                                                                                                        |               | Source     |
+| Record         | Tax Map #                      |                                                                                                                        |               | Source     |
+| Record         | Book                           |                                                                                                                        |               | Source     |
+| Record         | Page                           |                                                                                                                        |               | Source     |
+| Record         | Last Update                    |                                                                                                                        |               | Source     |
 
 ## CAMA Vendors
 
@@ -155,3 +159,9 @@ Assessment Pro
 
 - Gio Giordano <Gio.Giordano@tylertech.com>
 - John Vickery <John.Vickery@tylertech.com>
+
+## Other Statewide Dataset Examples
+
+[Maryland](https://catalog.data.gov/dataset/cama-detailed-building-characteristics)
+
+[Connecticut](#)
