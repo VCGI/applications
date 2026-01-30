@@ -32,11 +32,11 @@
 | Summary Badges | Type of Non Residential Use         | Commercial, Industrial, Farm/Ag, Timberland, Government, Open Land/Misc,   Other (specified)   | Conditional Display |            |
 | Summary Badges | Homestead Status                    |                                                                                                | Conditional Display |            |
 | Summary Badges | Utilities Service                   | Water, Sewer, Electric, None                                                                   | Conditional Display |            |
-| Ownership      | Owner Name                          |                                                                                                |                     |            |
-| Ownership      | Parcel ID                           |                                                                                                |                     |            |
-| Ownership      | SPAN                                |                                                                                                |                     |            |
-| Ownership      | LRSN / CAMA ID                      |                                                                                                |                     |            |
-| Ownership      | Parcel Status                       |                                                                                                |                     |            |
+| Property      | Owner Name                          |                                                                                                |                     |            |
+| Property      | Parcel ID                           |                                                                                                |                     |            |
+| Property      | SPAN                                |                                                                                                |                     |            |
+| Property      | LRSN / CAMA ID                      |                                                                                                |                     |            |
+| Property      | Parcel Status                       |                                                                                                |                     |            |
 | Site           | Type                                |                                                                                                |                     |            |
 | Site           | Description                         |                                                                                                |                     |            |
 | Site           | Acres                               |                                                                                                |                     |            |
