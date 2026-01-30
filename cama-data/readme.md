@@ -15,7 +15,7 @@
 
 [Stats Source Per Tax District Advisors](https://tax.vermont.gov/municipal-officials/listers-and-assessors/district-advisors)
 
-*Status Docs and Dummy Data: Documents - VCGI\VCGI-Administration\Program_Admin\Parcels\General Program Administration\Tax Dept\CAMA Data*
+*Status Doc: Documents - VCGI\VCGI-Administration\Program_Admin\Parcels\General Program Administration\Tax Dept\CAMA Data*
 
 ## Property Details Contents
 
@@ -29,7 +29,7 @@
 | Summary Badges | Count of Dwelling Units        |                                                                                                                        | Conditional   | Calculated |
 | Summary Badges | Count of Commercial Buildings  |                                                                                                                        | Conditional   | Calculated |
 | Summary Badges | Count of Total Improvements    |                                                                                                                        |               | Calculated |
-| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Two Units, Three Units, Four Units, 5-8 Units, >8 Units, Co-Op, Mixed-use        | Conditional   | Lookup     |
+| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Two Units, Three Units, Four Units, 5-8 Units, >8 Units, Co-Op, Mixed-Use        | Conditional   | Lookup     |
 | Summary Badges | Type of Use                    | Residential, Commercial, Industrial, Farm/Ag, Timberland, Government,   Open Land/Misc, Other (specified), Unspecified | Conditional   | Lookup     |
 | Summary Badges | Homestead Status               |                                                                                                                        | Conditional   | Source     |
 | Summary Badges | Utilities Service              | Water, Sewer, Septic, Electric, None                                                                                   | Conditional   | Source     |
