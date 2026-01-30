@@ -29,7 +29,7 @@
 | Summary Badges | Count of Dwelling Units        |                                                                                                                        | Conditional   | Calculated |
 | Summary Badges | Count of Commercial Buildings  |                                                                                                                        | Conditional   | Calculated |
 | Summary Badges | Count of Total Improvements    |                                                                                                                        |               | Calculated |
-| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Duplex, Three Unit, Four Unit,   5-8 Units, >8 Units, Co-Op, Mixed-use        | Conditional   | Lookup     |
+| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Duplex, Three Unit, Four Unit, 5-8 Units, >8 Units, Co-Op, Mixed-use        | Conditional   | Lookup     |
 | Summary Badges | Type of Use                    | Residential, Commercial, Industrial, Farm/Ag, Timberland, Government,   Open Land/Misc, Other (specified), Unspecified | Conditional   | Lookup     |
 | Summary Badges | Homestead Status               |                                                                                                                        | Conditional   | Source     |
 | Summary Badges | Utilities Service              | Water, Sewer, Septic, Electric, None                                                                                   | Conditional   | Source     |
