@@ -22,6 +22,8 @@ Data are a dummy cut from NEMRC Microsolve dated December 2025, with no modifica
 
 ### File Structure
 
+There are 17 related tables in the NEMRC sample dataset, and 2 VCGI-created lookup tables, for a total of 19 objects.
+
 | File Name         | Role    | Description                                                                  |
 |-------------------|---------|------------------------------------------------------------------------------|
 | EXP_MAIN.json     | Master  | Contains the core record for every parcel (Ownership, Valuation, Site info). |
@@ -33,6 +35,21 @@ Data are a dummy cut from NEMRC Microsolve dated December 2025, with no modifica
 | EXP_OYVAL.json    | Related | Historic valuation data.                                                     |
 | EXP_TRANHIST.json | Related | Sales and transfer history.                                                  |
 | EXP_PHOTOS.json   | Related | Metadata linking parcels to images. Placeholder for now.                                          |
+
+### Additional File Usage
+
+| File Name         | Usage Status | Context & Logic                                                                                                                                                                                             |   |   |   |   |   |
+|-------------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|---|---|---|---|
+| EXP_EXTWALL.json  | Used         | Tab: "Building Details" Fetched and displayed as a table within the Building Details tab. The type field is decoded using the SIDING category in EXP_LOOKUP.                                                |   |   |   |   |   |
+| EXP_FEATURES.json | Used         | Tab: "Building Details" Displayed as a table within the Building Details tab. Contains specific filtering logic to exclude records where the name is empty or quantity is 0.                                |   |   |   |   |   |
+| EXP_FLOOR.json    | Used         | Tab: "Building Details" Displayed as a table within the Building Details tab. The type field is decoded using the FLOOR_COVER category in EXP_LOOKUP.                                                       |   |   |   |   |   |
+| EXP_GARAGE.json   | Used         | Tab: "Outbuildings" Displayed as a table within the Outbuildings tab. Contains filtering logic to exclude records where type is '0' or area is '0'. Uses lookups for GARAGE_TYPE, SIDING, and GARAGE_FLOOR. |   |   |   |   |   |
+| EXP_HEAT.json     | Used         | Tab: "Building Details" Displayed as a table within the Building Details tab. Filtered to exclude records where percent is '0'. The type field is decoded using the HEATING category in EXP_LOOKUP.         |   |   |   |   |   |
+| EXP_IMPROVE.json  | Used         | Tab: "Improvements" Displayed as a table within the Improvements tab. Filtered to exclude records where type is empty or total value is '0'.                                                                |   |   |   |   |   |
+| EXP_INSPECT.json  | Not Used     | This file is not referenced in the RELATED_FILES configuration object, so it is never fetched or rendered by the application.                                                                               |   |   |   |   |   |
+| EXP_LAND.json     | Used         | Tab: "Land" Displayed as a table within the Land tab. Fields type and calc_meth are decoded using LAND_TYPE and LAND_CALC lookups.                                                                          |   |   |   |   |   |
+| EXP_PORCH.json    | Used         | Tab: "Outbuildings" Displayed as a table within the Outbuildings tab. Filtered to exclude records where area is '0'. Uses lookups for PORCH_FLOOR, PORCH_WALL, and PORCH_ROOF.                              |   |   |   |   |   |
+| EXP_ROOF.json     | Used         | Tab: "Building Details" Displayed as a table within the Building Details tab. The type field is decoded using the ROOF_COVER category in EXP_LOOKUP.                                                        |   |   |   |   |   |
 
 ## Property Details Card Documentation
 
