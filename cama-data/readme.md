@@ -61,7 +61,6 @@ ProVal or Aumentum Valuation
 
 - Victoria Cole <Victoria.Cole@AumentumTech.com>
 - William Pleake <William.Pleake@AumentumTech.com>
-- Russ Beaudoin <argivt@msn.com>
 
 #### Status
 
@@ -85,11 +84,11 @@ VISION Cama
 
 ---
 
-### Catalis (formerly Patriot)
+### Catalis (AssessPro) (formerly Patriot)
 
 #### Software
 
-Catalis CAMA (Formerly PATRIOT Properties)
+Catalis CAMA - AssessPro (Formerly PATRIOT Properties)
 
 #### Contacts
 
@@ -98,7 +97,7 @@ Catalis CAMA (Formerly PATRIOT Properties)
 
 ---
 
-### New England Municipal Consultants (NEMC)
+### New England Municipal Consultants (NEMC) - VT Vendor of Catalis' AssessPro
 
 #### Contacts
 
