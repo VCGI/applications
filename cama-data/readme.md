@@ -7,8 +7,8 @@
 | **Percent   of Towns** | **Towns Per Tax** | **Tool**                      | **Vendor**                                                              | **Sample Received** | **Date Received** | **Notes**                                                                                                                                     | **Mock Up** |
 |:----------------------:|:-----------------:|-------------------------------|-------------------------------------------------------------------------|:-------------------:|:-----------------:|-----------------------------------------------------------------------------------------------------------------------------------------------|-------------|
 |           12%          |         32        | ASSESSPRO                     | Catalis (New England Municipal Consultants / NEMC acts as local vendor) |         Yes         |     1/28/2026     | Single table/near-complete extract. Data does not include SPAN nor SPAN components, needs one to relate with parcels. Made request to vendor. |             |
-|           77%          |        200        | MicroSolve CAMA               | NEMRC                                                                   |         Yes         |     12/4/2025     | Multiple tables/complete   extract. Dummy Data Only, no multi-fam or condo conditions within. Mock up   created.                              | Created     |
-|           7%           |         19        | PROVAL                        | Aumentum                                                                |         Yes         |     7/23/2025     | Barre Town extract. Multiple   tables/complete extract. Mock up created. Useful if representative. Data   dictionary needed.                  | Created     |
+|           77%          |        200        | MicroSolve CAMA               | NEMRC                                                                   |         Yes         |     12/4/2025     | Multiple tables/complete extract. Dummy Data Only, no multi-fam or condo conditions within. Mock up created. More complex dataset requested.                              | Created     |
+|           7%           |         19        | PROVAL                        | Aumentum                                                                |         Yes         |     7/23/2025     | Barre Town extract. Multiple   tables/complete extract. Mock up created. Useful if representative. Data dictionary needed.                  | Created     |
 |           3%           |         7         | Vision Governmental Solutions | Vision Governmental Solutions                                           |          No         |                   |                                                                                                                                               |             |
 |           1%           |         2         | No CAMA Program               | No CAMA Program                                                         |          -          |                   |                                                                                                                                               |             |
 |        **100%**        |      **260**      |                               |                                                                         |                     |                   |                                                                                                                                               |             |
@@ -85,12 +85,6 @@ MicroSolve CAMA
 
 - Chris Miele <chris@nemrc.com>
 - Ernie Saunders <esaunders@nemrc.com>
-
-#### Status
-
-> [!IMPORTANT]
-> GlobalScape FTP configured for use Friday, September 26, 2025.
-> Emailed Chris for sample data on Monday, September 29, 2025.
 
 ---
 
