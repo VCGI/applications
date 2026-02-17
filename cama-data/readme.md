@@ -125,7 +125,7 @@ VISION Cama
 
 #### Software
 
-Catalis CAMA - AssessPro (Formerly PATRIOT Properties)
+Catalis CAMA - AssessPro / AP5 (Formerly PATRIOT Properties)
 
 #### Contacts
 
@@ -134,12 +134,13 @@ Catalis CAMA - AssessPro (Formerly PATRIOT Properties)
 
 ---
 
-### New England Municipal Consultants (NEMC) - VT Vendor of Catalis' AssessPro
+### New England Municipal Consultants (NEMC) - VT Vendor of Catalis' AssessPro / AP5
 
 #### Contacts
 
 - William Krajeski <bill@nemcvt.com>
 - Matt Krajeski <mattkraj09@gmail.com>
+- Ryan Silvestri <ryan@nemcvt.net>
 
 ---
 
