@@ -226,3 +226,29 @@ Parcel Summary
 ### {expression/expr8}
 Current Use
 {expression/expr8}
+
+### {expression/expr9}
+Link to Current Use Dataset
+{expression/expr9}
+
+### {expression/expr10}
+Parcel Summary with PTTRs and Current Use
+{expression/expr10}
+
+### {expression/expr11}
+Homestead Status & Value
+{expression/expr11}
+
+### {expression/expr12}
+GIS Source Intersector
+{expression/expr12}
+
+### {expression/expr13}
+Parcel ID Null Handler
+{expression/expr13}
+
+### {expression/expr14}
+Map ID Null Handler
+{expression/expr14}
+
+
