@@ -178,7 +178,7 @@ Concatenate([$feature.OWNER1,$feature.OWNER2], ', ') +TextFormatting.NewLine
 +Concatenate([$feature.CITYGL,$feature.STGL,$feature.ZIPGL], ', ')
 ```
 
-### {expression/expr1}
+### {expression/expr1} IN USE
 
 Resident Ownership Code (Keyed)
 {expression/expr1}
@@ -201,17 +201,17 @@ else if($feature.RESCODE == 'C') {
 
 ```
 
-### {expression/expr2}
+### {expression/expr2} IN USE
 
 Property Transfers since 2019
 {expression/expr2}
 
-### {expression/expr3}
+### {expression/expr3} IN USE
 
 Property Transfers since Annual Grand List
 {expression/expr3}
 
-### {expression/expr4}
+### {expression/expr4} IN USE
 
 Survey Information (if available)
 {expression/expr4}
@@ -221,7 +221,7 @@ Survey Information (if available)
 Link to Survey (if available)
 {expression/expr5}
 
-### {expression/expr6}
+### {expression/expr6} IN USE
 
 Total Acreage
 {expression/expr6}
@@ -231,7 +231,7 @@ Total Acreage
 Parcel Summary
 {expression/expr7}
 
-### {expression/expr8}
+### {expression/expr8} IN USE
 
 Current Use
 {expression/expr8}
@@ -246,22 +246,22 @@ Link to Current Use Dataset
 Parcel Summary with PTTRs and Current Use
 {expression/expr10}
 
-### {expression/expr11}
+### {expression/expr11} IN USE
 
 Homestead Status & Value
 {expression/expr11}
 
-### {expression/expr12}
+### {expression/expr12} IN USE
 
 GIS Source Intersector
 {expression/expr12}
 
-### {expression/expr13}
+### {expression/expr13} IN USE
 
 Parcel ID Null Handler
 {expression/expr13}
 
-### {expression/expr14}
+### {expression/expr14} IN USE
 
 Map ID Null Handler
 {expression/expr14}
@@ -276,27 +276,27 @@ Survey Visibility Toggle
 Current Use Visibility Toggle
 {expression/expr16}
 
-### {expression/expr17}
+### {expression/expr17} IN USE
 
 GIS Acres
 {expression/expr17}
 
-### {expression/expr18}
+### {expression/expr18} IN USE
 
 Acreage Percent Difference
 {expression/expr18}
 
-### {expression/expr19}
+### {expression/expr19} IN USE
 
 Category Lookup
 {expression/expr19}
 
-### {expression/expr20}
+### {expression/expr20} IN USE
 
 Unmatched Parcel Warning Toggle
 {expression/expr20}
 
-### {expression/expr21}
+### {expression/expr21} IN USE
 
 Recent Transfer Summary
 {expression/expr21}
@@ -306,7 +306,7 @@ Recent Transfer Summary
 Current Use Summary
 {expression/expr22}
 
-### {expression/expr23}
+### {expression/expr23} IN USE
 
 Recent Transfer Display Toggle
 {expression/expr23}
