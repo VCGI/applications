@@ -979,3 +979,56 @@ if (Count(transferFeatures) > 0) {
 
 return "none"; // Hides the alert box
 ```
+
+## 4.0.2 Popup - Town Parcel Data Status
+
+Parcel Status of {TOWN}
+| Current Map Capacity       | Contract GIS Vendor                                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Current Vendor             | CAI                                                                                                                  |
+| Download Link              | [View](https://maps.vcgi.vermont.gov/gisdata/vcgi/packaged_zips/CadastralParcels_VTPARCELS/VTPARCELS_Montpelier.zip) |
+| GIS Geometry Date          | 12/2/2025                                                                                                            |
+| RPC                        | Central Vermont Regional Planning Commission                                                                         |
+| Submission ID              | Montpelier 2025-09-09T22:13:02.000Z                                                                                  |
+| Submittal Grand List Year  | 2025                                                                                                                 |
+| Submittal Reviewed By Town | No                                                                                                                   |
+| Submitter                  | Don Butson                                                                                                           |
+| Submitting Entity          | CAI                                                                                                                  |
+| Status Updated             | 19-Mar-26                                                                                                            |
+| Note                       |                                                                                                                      |
+
+## HTML Popup - Town Parcel Data Status (v.4.0.3)
+
+## Arcade Attribute Expressions - Town Parcel Data Status (v.4.0.3)
+
+## 4.0.2 Popup - Surveys - Vermont Land Survey Library
+
+{Name of Survey}
+
+| Name of Surveyor      | Mark Day                |
+| --------------------- | ----------------------- |
+| Date of Survey        | 1/8/2024                |
+| Name of Uploader      | up loaded by surveyor   |
+| Uploader Email        | mark@dlsvt.com          |
+| Survey Type           | General Property Survey |
+| Town                  | Milton                  |
+| Notes                 |                         |
+| Recording Information | unknown                 |
+
+## HTML Popup - Surveys - Vermont Land Survey Library (v.4.0.3)
+
+## Arcade Attribute Expressions - Vermont Land Survey Library (v.4.0.3)
+
+## 4.0.2 Popup - Parcels - Inactives
+
+INACTIVE PARCEL
+
+| STATUS     | INACTIVE |
+| ---------- | -------- |
+| PARENTSPAN |          |
+| SPAN       |          |
+| TOWN       | MILTON   |
+
+## HTML Popup - Parcels - Inactives (v.4.0.3)
+
+## Arcade Attribute Expressions - Parcels - Inactives (v.4.0.3)
