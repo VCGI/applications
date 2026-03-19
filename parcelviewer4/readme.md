@@ -1,255 +1,228 @@
 # Vermont Parcel Viewer Popup Configuration
 
-# Expresssion - Ownership
-```javascript
-var parcelFeature = $feature;
-
-var ownerTxt = "";
-if (IsEmpty(GLowner2)) {
-    ownerTxt = GLowner1;
-} else {
-    ownerTxt = GLowner1 + " and " + GLowner2;
-}
-```
-
-
-## Expression - Parcel Summary with PTTRs and Current Use
-This is an all-in-one expression to list everything.
-```javascript
-var parcelFeature = $feature;
-
-//References PTTR point layer within the map
-var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
-
-//References Current Use table within the map - including tax year and agriculture and forest acreage fields
-var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ["SPAN", "TAX_YEAR", "TOT_AG_ACR", "TOT_FOR_AC"], false);
-
-// Fetch the tax year from the dataset regardless of the specific parcel match
-var cuGlobal = First(cuTable);
-var cuDatasetYear = DefaultValue(cuGlobal.TAX_YEAR, "Unknown Year"); //if year is not found
-
-// Safe Variable Definitions (DefaultValue prevents the script from returning null if data is missing)
-var propSt = DefaultValue($feature.E911ADDR, "");
-var propCity = DefaultValue($feature.TOWN, "");
-var GLowner1 = DefaultValue($feature.OWNER1, "");
-var GLowner2 = DefaultValue($feature.OWNER2, "");
-var GLyear = DefaultValue($feature.GLYEAR, "");
-var GISYear = DefaultValue($feature.YEAR, "");
-
-//Annual Grand List date; ***update year with new GLs as available*** (*purposefully set to March, seems to exclude April from below if set to 4/1*)
-var GLDate = Date(2024, 3, 1)
-
-// --- 1. OWNERSHIP & GIS SECTION ---
-var ownerTxt = "";
-if (IsEmpty(GLowner2)) {
-    ownerTxt = GLowner1;
-} else {
-    ownerTxt = GLowner1 + " and " + GLowner2;
-}
-
-var result = "The property at " + propSt + " in " + propCity + " is owned by " + ownerTxt + ". Parcel geometry was last updated in " + GISYear + ".";
-
-// --- 2. PROPERTY TRANSFER SECTION ---
-var transferNote = "";
-
-if (parcelFeature.PROPTYPE == "PARCEL") {
-  //Look for any PTTR points that intersect (lie within) with the parcel
-  var transferFeatures = Intersects(transferLayer, parcelFeature);
-
-  //If more than 0 PTTR points are within the parcel
-  if (Count(transferFeatures) > 0) {
-    //Checks below for multi-SPAN parcels by looking for unique SPANs
-    var uniqueSpan = true;
-    var firstSpan = null;
-    var recordsAfterDate = "";
-    for (var transfer in transferFeatures) {
-      //If the closing date is after the current GL (i.e., has been transferred since annual GL was published)
-      if (transfer.closeDate > GLDate) {
-        if (firstSpan == null) {
-          firstSpan = transfer.SPAN;
-        } else if (firstSpan != transfer.SPAN) {
-          //Flag to indicate there are multiple PTTR SPANs within a single parcel (indicates multi-SPAN)
-          uniqueSpan = false;
-        }
-        
-        recordsAfterDate = "A property transfer has occured for this parcel since the current statewide Grand List (" + GLyear + ") and ownership may have changed. See property transfer details below.";
-      }
-    }
-
-    //If there are multiple PTTR SPANs within a single parcel (i.e., it is multi-SPAN)
-    if (!uniqueSpan) {
-      transferNote = "This is a multi-SPAN parcel. Multiple properties, owners, and transfers may exist within this parcel.";
-    } else if (recordsAfterDate != "") {
-      transferNote = recordsAfterDate;
-    } else {
-      transferNote = "There is no record of a property transfer for this parcel since the current statewide Grand List (" + GLyear + ").";
-    }
-
-  } else {
-    //No transfer of this parcel at all (since 2019)
-    transferNote = "There is no record of a property transfer for this parcel since the current statewide Grand List (" + GLyear + ").";
-  }
-} else {
-  //Parcel is not a PROPTYPE = PARCEL feature
-  transferNote = "This feature is categorized as " + DefaultValue(parcelFeature.PROPTYPE, "Unknown") + ".";
-}
-
-// Add Transfer note with a carriage return
-result += TextFormatting.NewLine + TextFormatting.NewLine + transferNote;
-
-// --- 3. CURRENT USE SECTION ---
-// Using Grand List SPAN from the parcel feature to match against SPAN in the table
-var currentSpan = $feature.GLIST_SPAN;
-
-var cuNote = "";
-// Only attempt filter if currentSpan is not null to avoid errors
-if (!IsEmpty(currentSpan)) {
-    var cuMatch = Filter(cuTable, "SPAN = @currentSpan");
-
-    if (Count(cuMatch) > 0) {
-        var cuRecord = First(cuMatch);
-        var taxYr = cuRecord.TAX_YEAR;
-        var agAcres = cuRecord.TOT_AG_ACR;
-        var forAcres = cuRecord.TOT_FOR_AC;
-        
-        // Determine Land Type logic
-        var landType = "enrolled"; 
-        if (agAcres > 0 && forAcres > 0) {
-            landType = "enrolled for Agriculture and Forest";
-        } else if (agAcres > 0) {
-            landType = "enrolled for Agriculture";
-        } else if (forAcres > 0) {
-            landType = "enrolled for Forest";
-        }
-
-        cuNote = "As of " + taxYr + " this parcel is " + landType + " in the Current Use program. See additional details below.";
-    } else {
-        // Append the sentence for NOT ENROLLED properties using the TAX_YEAR from the Current Use dataset
-        cuNote = "As of " + cuDatasetYear + " this parcel is not enrolled in the Current Use program.";
-    }
-} else {
-    // Handling cases where GLIST_SPAN is missing from the parcel record
-    cuNote = "As of " + cuDatasetYear + " this parcel is not enrolled in the Current Use program.";
-}
-
-// Add Current Use note with a carriage return
-result += TextFormatting.NewLine + TextFormatting.NewLine + cuNote;
-
-return result;
-```
-
-## HTML Text Container
-
-
-## HTML Text Container - Protected Lands Viewer Example
-
+## HTML Popup - Parcels - Active Layer (v.4.0.3)
 ```html
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
-    <div style="align-items:center;display:flex;gap:10px;margin-bottom:10px;">
-        <span style="background-color:#e6ebe6;color:#003300;font-size:12px;"><span style="border-radius:999px;letter-spacing:.4px;padding:6px 10px;text-transform:uppercase;"><strong>{expression/expr0} </strong></span></span><span style="font-size:18px;"><span style="line-height:1.2;"><strong>{NAME}</strong></span></span>
-    </div>
-    <div style="color:#334155;font-size:14px;margin-bottom:14px;">
-        <strong>Designation:</strong> <span>{DESIGNAT}</span>
-    </div>
-    <div style="display:grid;gap:10px;grid-template-columns:repeat(2, minmax(0,1fr));margin-bottom:12px;">
-        <div style="border-radius:14px;border:1px solid #e2e8f0;padding:12px;">
-            <div style="color:#64748b;font-size:11px;letter-spacing:.4px;text-transform:uppercase;">
-                LISTED ACRES
-            </div>
-            <div style="font-size:20px;margin-top:2px;">
-                <span><strong>{LISTED_AC}</strong></span>
-            </div>
-            <div style="color:#94a3b8;font-size:11px;margin-top:2px;">
-                <span>GIS Acres: {expression/expr3}&nbsp;</span>
-            </div>
+    <div style="margin-bottom:16px;">
+        <div style="color:#64748b;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;">
+            <strong>SPAN {GLIST_SPAN}</strong>
         </div>
-        <div style="border-radius:14px;border:1px solid #e2e8f0;padding:12px;">
-            <div style="color:#64748b;font-size:11px;letter-spacing:.4px;text-transform:uppercase;">
-                GAP STATUS
-            </div>
-            <div style="font-size:20px;margin-top:2px;">
-                <span><strong>{expression/expr1}</strong></span>
-            </div>
-            <div style="color:#94a3b8;font-size:11px;margin-top:2px;">
-                <span>{GAPSTATUS}</span>
-            </div>
+        <div style="align-items:center;display:flex;gap:8px;margin:6px 0;">
+            <span style="background-color:#003300;color:#ffffff;font-size:12px;"><span style="border-radius:999px;padding:4px 10px;text-transform:uppercase;"><strong>{TOWN} </strong></span></span><span style="color:#475569;font-size:13px;">| {PROPTYPE}</span>
         </div>
-        <div style="border-radius:14px;border:1px solid #e2e8f0;padding:12px;">
-            <div style="color:#64748b;font-size:11px;letter-spacing:.4px;text-transform:uppercase;">
-                PROTECTING ENTITIES
-            </div>
-            <div style="font-size:18px;margin-top:2px;">
-                <span><strong>{PAGENCY1}</strong></span>
-            </div>
-            <div style="color:#94a3b8;font-size:11px;margin-top:2px;">
-                Other Interests:<br>
-                <span>{PAGENCY2}</span><br>
-                <span>{PAGENCY3}</span><br>
-                <span>{PAGENCY4}</span><br>
-                <span>{PAGENCY5}</span>
-            </div>
-        </div>
-        <div style="border-radius:14px;border:1px solid #e2e8f0;padding:12px;">
-            <div style="color:#64748b;font-size:11px;letter-spacing:.4px;text-transform:uppercase;">
-                PROTECTION
-            </div>
-            <div style="font-size:16px;margin-top:2px;">
-                <span><strong>{PTYPE1}</strong></span>
-            </div>
-            <div style="color:#94a3b8;font-size:11px;margin-top:2px;">
-                Other Protection:<br>
-                <span>{PTYPE2}</span><br>
-                <span>{PTYPE3}</span><br>
-                <span>{PTYPE4}</span><br>
-                <span>{PTYPE5}</span><br>
-                &nbsp;
-            </div>
+        <div style="font-size:20px;line-height:1.2;margin-top:4px;">
+            <strong>{E911ADDR}</strong>
         </div>
     </div>
-    <div style="background-color:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;margin-bottom:12px;padding:12px;">
-        <div style="color:#64748b;font-size:12px;letter-spacing:.4px;margin-bottom:6px;text-transform:uppercase;">
-            GIS STEWARD
+    <div style="align-items:center;background-color:#fef2f2;border-radius:8px;border:1px solid #fca5a5;color:#991b1b;display:{expression/expr20};font-size:13px;gap:8px;margin-bottom:16px;padding:10px 14px;">
+        <span><strong>⚠️</strong></span><strong> Parcel not matched with Grand List</strong>
+    </div>
+    <div style="background-color:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;color:#334155;display:{expression/expr23};font-size:13px;line-height:1.6;margin-bottom:16px;padding:14px;">
+        <strong>{expression/expr21}</strong>
+    </div>
+    <div style="display:grid;gap:12px;grid-template-columns:repeat(2, minmax(0,1fr));margin-bottom:16px;">
+        <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Ownership</strong>
+            </div>
+            <div style="color:#0f172a;font-size:14px;">
+                <strong>{OWNER1}</strong>
+            </div>
+            <div style="color:#0f172a;font-size:14px;margin-bottom:4px;">
+                <strong>{OWNER2}</strong>
+            </div>
+            <div style="color:#64748b;font-size:12px;">
+                Type: {expression/expr1}
+            </div>
         </div>
-        <div style="font-size:15px;margin-bottom:8px;">
-            <span><strong>{GISSTEWARD}</strong></span>
+        <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Valuation</strong>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Full Value: <span style="color:#0f172a;font-size:14px;"><strong>${REAL_FLV}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Land: <span style="color:#0f172a;"><strong>${LAND_LV}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;">
+                Improvements: <span style="color:#0f172a;"><strong>${IMPRV_LV}</strong></span>
+            </div>
         </div>
-        <div style="color:#94a3b8;font-size:11px;margin-top:2px;">
-            Source Layer: <span>{SOURCE_LYR}&nbsp;</span><br>
-            &nbsp;
+        <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Description</strong>
+            </div>
+            <div style="color:#0f172a;font-size:13px;margin-bottom:4px;">
+                {DESCPROP}
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:4px;">
+                Category: <span style="color:#1b3240;"><strong>{expression/expr19}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                GL Acres: <span style="color:#0f172a;"><strong>{expression/expr6}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                GIS Acres: <span style="color:#0f172a;"><strong>{expression/expr17}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;">
+                Difference: <span style="color:#0f172a;"><strong>{expression/expr18}</strong></span>
+            </div>
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-            <a style="background-color:#F5F3FF;border-radius:999px;border:1px solid #e2e8f0;color:#5B21B6;font-size:12px;padding:8px 12px;text-decoration:none;" href="" target="_blank"><strong>🗺️ Open in Google Maps&nbsp;</strong></a>
+        <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Homestead</strong>
+            </div>
+            <div style="color:#0f172a;font-size:13px;">
+                <strong>{expression/expr11}</strong>
+            </div>
+        </div>
+        <div style="background-color:#f8fafc;border-radius:10px;border:1px solid #cbd5e1;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Land Surveys</strong>
+            </div>
+            <div style="color:#475569;font-size:12px;">
+                {expression/expr4}
+            </div>
+            <p>
+                <a style="background-color:#f1f5f9;border-radius:4px;border:1px solid #cbd5e1;color:#334155;display:{expression/expr15};font-size:11px;margin-top:8px;padding:4px 8px;text-decoration:none;" href="{expression/expr5}" target="_blank"><strong>🔗 View Survey&nbsp;</strong></a>
+            </p>
+        </div>
+        <div style="background-color:#f2f6f6;border-radius:10px;border:1px solid #9db5b6;padding:12px;">
+            <div style="color:#457a7c;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Current Use</strong>
+            </div>
+            <div style="color:#233d3e;font-size:12px;">
+                {expression/expr8}
+            </div>
+            <p>
+                <a style="background-color:#e3ecec;border-radius:4px;border:1px solid #9db5b6;color:#457a7c;display:{expression/expr16};font-size:11px;margin-top:8px;padding:4px 8px;text-decoration:none;" href="{expression/expr9}" target="_blank"><strong>📊 View Dataset&nbsp;</strong></a>
+            </p>
         </div>
     </div>
-    <div style="display:grid;gap:10px;grid-template-columns:repeat(2, minmax(0,1fr));">
-        <div style="color:#334155;font-size:12px;line-height:1.6;">
-            <div>
-                <span style="color:#64748b;">Zone Code:</span> <strong>{PROP_ZONE}</strong>
-            </div>
-            <div>
-                <span style="color:#64748b;">Form-Based:</span> <strong>{FORM_BASED}</strong>
-            </div>
-            <div>
-                <span style="color:#64748b;">Act59 Category:</span> <span><strong>{ACT59CAT}</strong></span><strong>&nbsp;</strong>
-            </div>
+    <div style="background-color:#f9fbe0;border-radius:10px;border:1px solid #c3d600;margin-bottom:16px;padding:14px;">
+        <div style="border-bottom:1px solid #d5e34d;color:#4a5700;font-size:11px;letter-spacing:0.4px;margin-bottom:10px;padding-bottom:6px;text-transform:uppercase;">
+            <strong>Property Transfers</strong>
         </div>
-        <div style="color:#334155;font-size:12px;line-height:1.6;">
+        <div style="display:grid;gap:16px;grid-template-columns:repeat(2, minmax(0,1fr));">
             <div>
-                <span style="color:#64748b;">Date Acquired:</span> <span><strong>{expression/expr2}</strong></span>
+                <div style="color:#2d3600;font-size:12px;margin-bottom:4px;">
+                    <strong>Since 2019</strong>
+                </div>
+                <div style="color:#3d4a00;font-size:12px;line-height:1.5;">
+                    {expression/expr2}
+                </div>
             </div>
             <div>
-                <span style="color:#64748b;">Edit Date:</span> <span><strong>{expression/expr4}</strong></span>
-            </div>
-            <div>
-                <span style="color:#64748b;">Geom Stats:</span> <strong>{expression/expr11}</strong>
-            </div>
-            <div>
-                <span style="color:#64748b;">Notes:</span> <span><strong>{PNOTES}</strong></span>
+                <div style="color:#2d3600;font-size:12px;margin-bottom:4px;">
+                    <strong>Since Annual Grand List</strong>
+                </div>
+                <div style="color:#3d4a00;font-size:12px;line-height:1.5;">
+                    {expression/expr3}
+                </div>
             </div>
         </div>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
-        <span style="background-color:#EDE9FE;color:#5B21B6;font-size:11px;"><span style="border-radius:999px;padding:6px 10px;">{OWNERKIND} </span></span><span style="background-color:#FEF3C7;color:#854d0e;font-size:11px;"><span style="border-radius:999px;padding:6px 10px;">{expression/expr12}&nbsp;</span></span>
+    <div style="border-top:1px solid #e2e8f0;display:grid;gap:12px;grid-template-columns:repeat(2, minmax(0,1fr));margin-bottom:16px;padding-top:14px;">
+        <div style="color:#475569;font-size:12px;line-height:1.6;">
+            <div>
+                <span style="color:#94a3b8;">Grand List Year:</span> <strong>{GLYEAR}</strong>
+            </div>
+            <div>
+                <span style="color:#94a3b8;">GIS Year:</span> <strong>{YEAR}</strong>
+            </div>
+            <div>
+                <span style="color:#94a3b8;">GIS Source:</span> <strong>{expression/expr12}</strong>
+            </div>
+        </div>
+        <div style="color:#475569;font-size:12px;line-height:1.6;">
+            <div>
+                <span style="color:#94a3b8;">Last GIS Edit:</span> <strong>{EDITDATE}</strong>
+            </div>
+            <div>
+                <span style="color:#94a3b8;">GIS Editor:</span> <strong>{EDITOR}</strong>
+            </div>
+            <div>
+                <span style="color:#94a3b8;">GIS Notes:</span> <strong>{EDITNOTE}</strong>
+            </div>
+        </div>
+    </div>
+    <div style="background-color:#f1f5f9;border-radius:8px;color:#475569;display:flex;flex-wrap:wrap;font-size:12px;gap:16px;padding:10px 14px;">
+        <div>
+            <span style="color:#64748b;font-size:10px;"><span style="letter-spacing:0.4px;text-transform:uppercase;">Parcel ID</span></span><br>
+            <strong>{expression/expr13}</strong>
+        </div>
+        <div>
+            <span style="color:#64748b;font-size:10px;"><span style="letter-spacing:0.4px;text-transform:uppercase;">Map ID</span></span><br>
+            <strong>{expression/expr14}</strong>
+        </div>
+    </div>
+    <div style="color:#94a3b8;font-size:10px;line-height:1.5;margin-top:20px;text-align:center;">
+        <strong>Disclaimer:</strong> This map is for general reference only. Parcel data are general in nature and do not represent survey-grade boundary information. Substantial inaccuracies in boundary lines or Grand List attributes should be brought to the attention of the appropriate municipal clerk. Vermont municipalities are the ultimate source of information presented here.
     </div>
 </div>
 ```
+
+## Arcade Attribute Expressions - Parcels - Active Layer (v.4.0.3)
+
+### {expression/expr0}
+Ownership (Annual Grand List)
+{expression/expr0}
+
+This script combines several fields to create a single ownership return.
+
+```javascript
+Concatenate([$feature.OWNER1,$feature.OWNER2], ', ') +TextFormatting.NewLine
++$feature.ADDRGL1 +TextFormatting.NewLine 
++Concatenate([$feature.CITYGL,$feature.STGL,$feature.ZIPGL], ', ')
+```
+
+### {expression/expr1}
+Resident Ownership Code (Keyed)
+{expression/expr1}
+
+This script decodes the RESCODE field for display.
+
+```javascript
+If($feature.RESCODE == 'T') { 
+   return 'T (Grand List owner is a Town Resident)'
+} 
+else if($feature.RESCODE == 'S') {
+    return 'S (Grand List owner lives in state, but not in town)'
+} 
+else if($feature.RESCODE == 'NS') {
+    return 'NS (Non-state; Grand List owner resides out of state)'
+} 
+else if($feature.RESCODE == 'C') {
+    return 'C (Grand List owner is a Corporation)'
+}
+
+```
+
+### {expression/expr2}
+Property Transfers since 2019
+{expression/expr2}
+
+### {expression/expr3}
+Property Transfers since Annual Grand List
+{expression/expr3}
+
+### {expression/expr4}
+Survey Information (if available)
+{expression/expr4}
+
+### {expression/expr5}
+Link to Survey (if available)
+{expression/expr5}
+
+### {expression/expr6}
+Total Acreage
+{expression/expr6}
+
+### {expression/expr7}
+Parcel Summary
+{expression/expr7}
+
+### {expression/expr8}
+Current Use
+{expression/expr8}
