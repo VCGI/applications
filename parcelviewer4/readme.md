@@ -166,6 +166,7 @@
 ## Arcade Attribute Expressions - Parcels - Active Layer (v.4.0.3)
 
 ### {expression/expr0}
+
 Ownership (Annual Grand List)
 {expression/expr0}
 
@@ -178,6 +179,7 @@ Concatenate([$feature.OWNER1,$feature.OWNER2], ', ') +TextFormatting.NewLine
 ```
 
 ### {expression/expr1}
+
 Resident Ownership Code (Keyed)
 {expression/expr1}
 
@@ -200,55 +202,111 @@ else if($feature.RESCODE == 'C') {
 ```
 
 ### {expression/expr2}
+
 Property Transfers since 2019
 {expression/expr2}
 
 ### {expression/expr3}
+
 Property Transfers since Annual Grand List
 {expression/expr3}
 
 ### {expression/expr4}
+
 Survey Information (if available)
 {expression/expr4}
 
 ### {expression/expr5}
+
 Link to Survey (if available)
 {expression/expr5}
 
 ### {expression/expr6}
+
 Total Acreage
 {expression/expr6}
 
 ### {expression/expr7}
+
 Parcel Summary
 {expression/expr7}
 
 ### {expression/expr8}
+
 Current Use
 {expression/expr8}
 
 ### {expression/expr9}
+
 Link to Current Use Dataset
 {expression/expr9}
 
 ### {expression/expr10}
+
 Parcel Summary with PTTRs and Current Use
 {expression/expr10}
 
 ### {expression/expr11}
+
 Homestead Status & Value
 {expression/expr11}
 
 ### {expression/expr12}
+
 GIS Source Intersector
 {expression/expr12}
 
 ### {expression/expr13}
+
 Parcel ID Null Handler
 {expression/expr13}
 
 ### {expression/expr14}
+
 Map ID Null Handler
 {expression/expr14}
 
+### {expression/expr15}
 
+Survey Visibility Toggle
+{expression/expr15}
+
+### {expression/expr16}
+
+Current Use Visibility Toggle
+{expression/expr16}
+
+### {expression/expr17}
+
+GIS Acres
+{expression/expr17}
+
+### {expression/expr18}
+
+Acreage Percent Difference
+{expression/expr18}
+
+### {expression/expr19}
+
+Category Lookup
+{expression/expr19}
+
+### {expression/expr20}
+
+Unmatched Parcel Warning Toggle
+{expression/expr20}
+
+### {expression/expr21}
+
+Recent Transfer Summary
+{expression/expr21}
+
+### {expression/expr22}
+
+Current Use Summary
+{expression/expr22}
+
+### {expression/expr23}
+
+Recent Transfer Display Toggle
+{expression/expr23}
