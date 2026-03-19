@@ -415,10 +415,91 @@ return Text($feature.ACRESGL, '#.00');
 //return ('Annual Grand List Acres: '+GLACRESdec+TextFormatting.NewLine+'GIS Acres: '+Round(GISACRES,2)+TextFormatting.NewLine+Round(AC_Diff_PCT,1)+'% Difference');
 ```
 
-### {expression/expr7}
+### {expression/expr7} (Not in Use; Was in 4.0.2 and below)
 
 Parcel Summary
 {expression/expr7}
+
+```javascript
+var parcelFeature = $feature;
+
+//References PTTR point layer within the map
+var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
+
+var propSt = $feature.E911ADDR
+var propCity = $feature.TOWN
+var GLowner1 = $feature.OWNER1
+var GLowner2 = $feature.OWNER2
+var GLyear = $feature.GLYEAR
+var RealListVal = $feature.REAL_FLV
+var GISYear = $feature.YEAR
+
+//Annual Grand List date; ***update year with new GLs as available*** (*purposefully set to March, seems to exclude April from below if set to 4/1*)
+var GLDate = Date(2024, 3, 1)
+
+if (parcelFeature.PROPTYPE == "PARCEL") {
+  //Look for any PTTR points that intersect (lie within) with the parcel
+  var transferFeatures = Intersects(transferLayer, parcelFeature);
+
+  //If more than 0 PTTR points are within the parcel
+  if (Count(transferFeatures) > 0) {
+    //Checks below for multi-SPAN parcels by looking for unique SPANs
+    var uniqueSpan = true;
+    var firstSpan = null;
+    var recordsAfterDate = "";
+    for (var transfer in transferFeatures) {
+      //If the closing date is after the current GL (i.e., has been transferred since annual GL was published)
+      if (transfer.closeDate > GLDate) {
+        if (firstSPAN == null) {
+          firstSpan = transfer.SPAN;
+        } else if (firstSpan != transfer.SPAN) {
+          //Flag to indicate there are multiple PTTR SPANs within a single parcel (indicates multi-SPAN)
+          uniqueSpan = false;
+        }
+        if (IsEmpty(GLowner2)) {
+        recordsAfterDate = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+". A property transfer has occured for this parcel since the current statewide Grand List ("+GLYEAR+") and ownership may have changed. See property transfer details below. Parcel geometry was last updated in "+GISYear+"."
+        } else {
+        recordsAfterDate = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+" and "+GLowner2+". A property transfer has occured for this parcel since the current statewide Grand List ("+GLYEAR+") and ownership may have changed. See property transfer details below. Parcel geometry was last updated in "+GISYear+"."
+        }
+      }
+    }
+
+    //If there are multiple PTTR SPANs within a single parcel (i.e., it is multi-SPAN)
+    if (!uniqueSPAN) {
+      if (IsEmpty(GLowner2)) {
+      var result = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+". This is a multi-SPAN parcel. Multiple properties, owners, and transfers may exist within this parcel. Parcel geometry was last updated in "+GISYear+"."
+      } else {
+      var result = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+" and "+GLowner2+". This is a multi-SPAN parcel. Multiple properties, owners, and transfers may exist within this parcel. Parcel geometry was last updated in "+GISYear+"."
+      }  
+    
+      //var result = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+". This is a multi-SPAN parcel. Multiple properties, owners, and transfers may exist within this parcel. Parcel geometry was last updated in "+GISYear+".";
+      //If there is only one SPAN for the parcel, find all those between the current Grand List and present
+    } else if (recordsAfterDate != "") {
+      var result = recordsAfterDate;
+      //No transfers between current GL and present
+    } else {
+      if (IsEmpty(GLowner2)) {
+      var result = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+". There is no record of a property transfer for this parcel since the current statewide Grand List ("+GLYEAR+"). Parcel geometry was last updated in "+GISYear+"."
+      } else {
+      var result = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+" and "+GLowner2+". There is no record of a property transfer for this parcel since the current statewide Grand List ("+GLYEAR+"). Parcel geometry was last updated in "+GISYear+"."
+      }  
+    }
+
+  } else {
+    //No transfer of this parcel at all (since 2019)
+          if (IsEmpty(GLowner2)) {
+          var result = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+". There is no record of a property transfer for this parcel since the current statewide Grand List ("+GLYEAR+"). Parcel geometry was last updated in "+GISYear+"."
+          } else {
+          var result = "The property at "+propSt+" in "+propCity+" is owned by "+GLowner1+" and "+GLowner2+". There is no record of a property transfer for this parcel since the current statewide Grand List ("+GLYEAR+"). Parcel geometry was last updated in "+GISYear+"."
+        }
+  }
+} else {
+  //Parcel is not a PROPTYPE = PARCEL feature
+  var result = "This feature is categorized as "+parcelFeature.PROPTYPE+". Feature geometry was last updated in "+GISYear+".";
+}
+
+return result
+```
 
 ### {expression/expr8} IN USE
 
@@ -493,10 +574,133 @@ if (!IsEmpty(match)) {
 }
 ```
 
-### {expression/expr10}
+### {expression/expr10} Not in Use (For development)
 
 Parcel Summary with PTTRs and Current Use
 {expression/expr10}
+
+```javascript
+var parcelFeature = $feature;
+
+//References PTTR point layer within the map
+var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
+
+//References Current Use table within the map - including tax year and agriculture and forest acreage fields
+var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ["SPAN", "TAX_YEAR", "TOT_AG_ACR", "TOT_FOR_AC"], false);
+
+// Fetch the tax year from the dataset regardless of the specific parcel match
+var cuGlobal = First(cuTable);
+var cuDatasetYear = DefaultValue(cuGlobal.TAX_YEAR, "Unknown Year"); //if year is not found
+
+// Safe Variable Definitions (DefaultValue prevents the script from returning null if data is missing)
+var propSt = DefaultValue($feature.E911ADDR, "");
+var propCity = DefaultValue($feature.TOWN, "");
+var GLowner1 = DefaultValue($feature.OWNER1, "");
+var GLowner2 = DefaultValue($feature.OWNER2, "");
+var GLyear = DefaultValue($feature.GLYEAR, "");
+var GISYear = DefaultValue($feature.YEAR, "");
+
+//Annual Grand List date; ***update year with new GLs as available*** (*purposefully set to March, seems to exclude April from below if set to 4/1*)
+var GLDate = Date(2024, 3, 1)
+
+// --- 1. OWNERSHIP & GIS SECTION ---
+var ownerTxt = "";
+if (IsEmpty(GLowner2)) {
+    ownerTxt = GLowner1;
+} else {
+    ownerTxt = GLowner1 + " and " + GLowner2;
+}
+
+var result = "The property at " + propSt + " in " + propCity + " is owned by " + ownerTxt + ". Parcel geometry was last updated in " + GISYear + ".";
+
+// --- 2. PROPERTY TRANSFER SECTION ---
+var transferNote = "";
+
+if (parcelFeature.PROPTYPE == "PARCEL") {
+  //Look for any PTTR points that intersect (lie within) with the parcel
+  var transferFeatures = Intersects(transferLayer, parcelFeature);
+
+  //If more than 0 PTTR points are within the parcel
+  if (Count(transferFeatures) > 0) {
+    //Checks below for multi-SPAN parcels by looking for unique SPANs
+    var uniqueSpan = true;
+    var firstSpan = null;
+    var recordsAfterDate = "";
+    for (var transfer in transferFeatures) {
+      //If the closing date is after the current GL (i.e., has been transferred since annual GL was published)
+      if (transfer.closeDate > GLDate) {
+        if (firstSpan == null) {
+          firstSpan = transfer.SPAN;
+        } else if (firstSpan != transfer.SPAN) {
+          //Flag to indicate there are multiple PTTR SPANs within a single parcel (indicates multi-SPAN)
+          uniqueSpan = false;
+        }
+        
+        recordsAfterDate = "A property transfer has occured for this parcel since the current statewide Grand List (" + GLyear + ") and ownership may have changed. See property transfer details below.";
+      }
+    }
+
+    //If there are multiple PTTR SPANs within a single parcel (i.e., it is multi-SPAN)
+    if (!uniqueSpan) {
+      transferNote = "This is a multi-SPAN parcel. Multiple properties, owners, and transfers may exist within this parcel.";
+    } else if (recordsAfterDate != "") {
+      transferNote = recordsAfterDate;
+    } else {
+      transferNote = "There is no record of a property transfer for this parcel since the current statewide Grand List (" + GLyear + ").";
+    }
+
+  } else {
+    //No transfer of this parcel at all (since 2019)
+    transferNote = "There is no record of a property transfer for this parcel since the current statewide Grand List (" + GLyear + ").";
+  }
+} else {
+  //Parcel is not a PROPTYPE = PARCEL feature
+  transferNote = "This feature is categorized as " + DefaultValue(parcelFeature.PROPTYPE, "Unknown") + ".";
+}
+
+// Add Transfer note with a carriage return
+result += TextFormatting.NewLine + TextFormatting.NewLine + transferNote;
+
+// --- 3. CURRENT USE SECTION ---
+// Using Grand List SPAN from the parcel feature to match against SPAN in the table
+var currentSpan = $feature.GLIST_SPAN;
+
+var cuNote = "";
+// Only attempt filter if currentSpan is not null to avoid errors
+if (!IsEmpty(currentSpan)) {
+    var cuMatch = Filter(cuTable, "SPAN = @currentSpan");
+
+    if (Count(cuMatch) > 0) {
+        var cuRecord = First(cuMatch);
+        var taxYr = cuRecord.TAX_YEAR;
+        var agAcres = cuRecord.TOT_AG_ACR;
+        var forAcres = cuRecord.TOT_FOR_AC;
+        
+        // Determine Land Type logic
+        var landType = "enrolled"; 
+        if (agAcres > 0 && forAcres > 0) {
+            landType = "enrolled for Agriculture and Forest";
+        } else if (agAcres > 0) {
+            landType = "enrolled for Agriculture";
+        } else if (forAcres > 0) {
+            landType = "enrolled for Forest";
+        }
+
+        cuNote = "As of " + taxYr + " this parcel is " + landType + " in the Current Use program. See additional details below.";
+    } else {
+        // Append the sentence for NOT ENROLLED properties using the TAX_YEAR from the Current Use dataset
+        cuNote = "As of " + cuDatasetYear + " this parcel is not enrolled in the Current Use program.";
+    }
+} else {
+    // Handling cases where GLIST_SPAN is missing from the parcel record
+    cuNote = "As of " + cuDatasetYear + " this parcel is not enrolled in the Current Use program.";
+}
+
+// Add Current Use note with a carriage return
+result += TextFormatting.NewLine + TextFormatting.NewLine + cuNote;
+
+return result;
+```
 
 ### {expression/expr11} IN USE
 
@@ -568,7 +772,7 @@ if (IsEmpty(mid) || Trim(mid) == "") {
 }
 ```
 
-### {expression/expr15}
+### {expression/expr15} IN USE
 
 Survey Visibility Toggle
 {expression/expr15}
@@ -589,10 +793,22 @@ if (Count(intersectingAtts) > 0) {
 return "none"; // Hides the button
 ```
 
-### {expression/expr16}
+### {expression/expr16} Not in use
 
 Current Use Visibility Toggle
 {expression/expr16}
+
+```javascript
+var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ['SPAN']);
+var parcelSpan = $feature.SPAN;
+var match = First(Filter(cuTable, "SPAN = '" + parcelSpan + "'"));
+
+if (!IsEmpty(match)) {
+    return "inline-block"; // Shows the button
+} else {
+    return "none"; // Hides the button
+}
+```
 
 ### {expression/expr17} IN USE
 
@@ -707,10 +923,35 @@ if (Count(transferFeatures) > 0) {
 return "";
 ```
 
-### {expression/expr22}
+### {expression/expr22} Not in use (for development)
 
 Current Use Summary
 {expression/expr22}
+
+```javascript
+var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ['SPAN', 'TAX_YEAR', 'TOT_AG_ACR', 'TOT_FOR_AC']);
+var parcelSpan = $feature.SPAN;
+var match = First(Filter(cuTable, "SPAN = '" + parcelSpan + "'"));
+
+if (!IsEmpty(match)) {
+    var agAcres = match.TOT_AG_ACR;
+    var forAcres = match.TOT_FOR_AC;
+    var taxYr = match.TAX_YEAR;
+    
+    var landType = "enrolled"; 
+    if (agAcres > 0 && forAcres > 0) {
+        landType = "Agriculture and Forest";
+    } else if (agAcres > 0) {
+        landType = "Agriculture";
+    } else if (forAcres > 0) {
+        landType = "Forest";
+    }
+
+    return "🌳 Enrolled in the Current Use program (" + taxYr + ") for " + landType + ".";
+} else {
+    return "This parcel is not currently enrolled in the Current Use program.";
+}
+```
 
 ### {expression/expr23} IN USE
 
