@@ -401,6 +401,20 @@ return "";
 Total Acreage
 {expression/expr6}
 
+```javascript
+// Just formats the existing GL Acres
+return Text($feature.ACRESGL, '#.00');
+
+//prior to version 4.03 below
+//var GLACRES = $feature.ACRESGL;
+//var GLACRESdec = Text($feature.ACRESGL, '#.00');
+//var GISACRES = AreaGeodetic($feature,'acres');
+//var AC_Diff_PCT = ((Abs(GLACRES-GISACRES))/((GLACRES+GISACRES)/2))*100;
+//Round(AC_Diff_PCT,2)
+//
+//return ('Annual Grand List Acres: '+GLACRESdec+TextFormatting.NewLine+'GIS Acres: '+Round(GISACRES,2)+TextFormatting.NewLine+Round(AC_Diff_PCT,1)+'% Difference');
+```
+
 ### {expression/expr7}
 
 Parcel Summary
@@ -411,10 +425,73 @@ Parcel Summary
 Current Use
 {expression/expr8}
 
-### {expression/expr9}
+```javascript
+// 1. Added 'TAX_YEAR', 'TOT_AG_ACR', and 'TOT_FOR_AC' to the request
+var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ['SPAN', 'ENROLL_YR', 'TOT_ENR_AC', 'TOT_ACRES', 'TAX_YEAR', 'TOT_AG_ACR', 'TOT_FOR_AC']);
+
+// 2. Filter the table to find a matching SPAN
+var parcelSpan = $feature.SPAN;
+var filterExpr = "SPAN = '" + parcelSpan + "'";
+var match = First(Filter(cuTable, filterExpr));
+
+// 3. Logic if a match is found
+if (!IsEmpty(match)) {
+    var enrolledAcres = match.TOT_ENR_AC;
+    var totalAcres = match.TOT_ACRES;
+    var agAcres = match.TOT_AG_ACR;
+    var forAcres = match.TOT_FOR_AC;
+    
+    // Check if Enrollment Year is null
+    var enrollYrDisplay = match.ENROLL_YR;
+    if (IsEmpty(enrollYrDisplay)) {
+        enrollYrDisplay = "Not available";
+    }
+    
+    // Determine Land Type (Ag, Forest, or Both)
+    var landType = "None Listed";
+    if (agAcres > 0 && forAcres > 0) {
+        landType = "Agriculture and Forest";
+    } else if (agAcres > 0) {
+        landType = "Agriculture";
+    } else if (forAcres > 0) {
+        landType = "Forest";
+    }
+
+    // Calculate percentage safety check
+    var percentText = "Calculation unavailable";
+    if (totalAcres > 0 && !IsEmpty(totalAcres)) {
+        var pct = (enrolledAcres / totalAcres) * 100;
+        percentText = Round(pct, 2) + "%";
+    }
+
+    // 4. Construct return string with land type and hyperlink
+    return "Status: Enrolled (" + match.TAX_YEAR + ")" + TextFormatting.NewLine +
+           "Land Type: " + landType + TextFormatting.NewLine +
+           "Enrollment Year: " + enrollYrDisplay + TextFormatting.NewLine + 
+           "Enrolled Acres: " + enrolledAcres + TextFormatting.NewLine +
+           "Total Property Acres: " + totalAcres + TextFormatting.NewLine +
+           "Percent Enrolled: " + percentText + TextFormatting.NewLine ;
+} else {
+    return "Status: Not Enrolled";
+}
+```
+
+### {expression/expr9} IN USE
 
 Link to Current Use Dataset
 {expression/expr9}
+
+```javascript
+var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ['SPAN']);
+var parcelSpan = $feature.SPAN;
+var match = First(Filter(cuTable, "SPAN = '" + parcelSpan + "'"));
+
+if (!IsEmpty(match)) {
+    return "https://geodata.vermont.gov/datasets/bc419e4f43504a398e13ec3586c0a7de_0/explore";
+} else {
+    return "";
+}
+```
 
 ### {expression/expr10}
 
@@ -426,25 +503,91 @@ Parcel Summary with PTTRs and Current Use
 Homestead Status & Value
 {expression/expr11}
 
+```javascript
+// Checks HSDECL. If Y, adds the value with formatting.
+var isDecl = DefaultValue($feature.HSDECL, "N");
+var val = DefaultValue($feature.HSTED_FLV, 0);
+
+if (isDecl == 'Y' || isDecl == 'Yes') {
+    // Format the number to currency
+    var formattedVal = Text(val, '$#,###');
+    return "Declared: Yes" + TextFormatting.NewLine + "Value: " + formattedVal;
+} else {
+    return "Declared: No";
+}
+```
+
 ### {expression/expr12} IN USE
 
 GIS Source Intersector
 {expression/expr12}
+
+```javascript
+var parcel = $feature;
+// Reference the Town Parcel Data Status layer (fetching only necessary fields)
+var statusLayer = FeatureSetByName($map, "Town Parcel Data Status", ["CurrentMapCapacity", "SubmittingEntity"], false);
+
+var intersectStatus = Intersects(statusLayer, parcel);
+var firstStatus = First(intersectStatus);
+
+// If there's an intersecting polygon, concatenate the capacity and entity
+if (!IsEmpty(firstStatus)) {
+    var cap = DefaultValue(firstStatus.CurrentMapCapacity, "Unknown Capacity");
+    var entity = DefaultValue(firstStatus.SubmittingEntity, "Unknown Entity");
+    return cap + " (" + entity + ")";
+} else {
+    return "No Status Data Found";
+}
+```
 
 ### {expression/expr13} IN USE
 
 Parcel ID Null Handler
 {expression/expr13}
 
+```javascript
+var pid = $feature.PARCID;
+if (IsEmpty(pid) || Trim(pid) == "") { 
+    return "Not Specified"; 
+} else { 
+    return pid; 
+}
+```
+
 ### {expression/expr14} IN USE
 
 Map ID Null Handler
 {expression/expr14}
 
+```javascript
+var mid = $feature.MAPID;
+if (IsEmpty(mid) || Trim(mid) == "") { 
+    return "Not Specified"; 
+} else { 
+    return mid; 
+}
+```
+
 ### {expression/expr15}
 
 Survey Visibility Toggle
 {expression/expr15}
+
+```javascript
+var parcelFeature = $feature;
+var attachmentLayer = FeatureSetByName($map, "Surveys - Vermont Land Survey Library");
+var intersectingAtts = Intersects(attachmentLayer, parcelFeature);
+
+if (Count(intersectingAtts) > 0) {
+  for (var survey in intersectingAtts) {
+    var surveyCentroid = Centroid(Geometry(survey));
+    if (Contains(parcelFeature, surveyCentroid)) {
+        return "inline-block"; // Shows the button
+     }
+  }
+}
+return "none"; // Hides the button
+```
 
 ### {expression/expr16}
 
@@ -456,25 +599,113 @@ Current Use Visibility Toggle
 GIS Acres
 {expression/expr17}
 
+```javascript
+// Calculates and returns just the GIS acres
+var GISACRES = AreaGeodetic($feature, 'acres');
+return Round(GISACRES, 2);
+```
+
 ### {expression/expr18} IN USE
 
 Acreage Percent Difference
 {expression/expr18}
+
+```javascript
+// Calculates and returns just the percent difference
+var GLACRES = $feature.ACRESGL;
+var GISACRES = AreaGeodetic($feature, 'acres');
+
+if (GLACRES == 0 && GISACRES == 0) { return "0%"; } // Safety check
+
+var AC_Diff_PCT = ((Abs(GLACRES - GISACRES)) / ((GLACRES + GISACRES) / 2)) * 100;
+return Round(AC_Diff_PCT, 1) + '%';
+```
 
 ### {expression/expr19} IN USE
 
 Category Lookup
 {expression/expr19}
 
+```javascript
+var cat = Trim(Text($feature.CAT));
+
+if (IsEmpty(cat) || cat == "") {
+    return "Not specified";
+}
+
+// Convert to uppercase to ensure an exact match with the dictionary
+cat = Upper(cat);
+
+var catDict = {
+    "R1": "Residential <6 Acres (R1)",
+    "R2": "Residential >6 Acres (R2)",
+    "MHU": "Mobile Home Unlanded (MHU)",
+    "MHL": "Mobile Home Landed (MHL)",
+    "S1": "Seasonal <6 Acres (S1)",
+    "S2": "Seasonal >6 Acres (S2)",
+    "COMM": "Commercial (COMM)",
+    "CMA": "Commercial Apartment (CMA)",
+    "IND": "Industrial (IND)",
+    "UE": "Utilities Electric (UE)",
+    "UO": "Utilities Other (UO)",
+    "FRM": "Farm (FRM)",
+    "OTH": "Other (OTH)",
+    "WOOD": "Woodland (WOOD)",
+    "MISC": "Miscellaneous (MISC)"
+};
+
+// Return the matched description, or the original code if it's an unexpected value
+if (HasKey(catDict, cat)) {
+    return catDict[cat];
+} else {
+    return cat; 
+}
+```
+
 ### {expression/expr20} IN USE
 
 Unmatched Parcel Warning Toggle
 {expression/expr20}
 
+```javascript
+var pType = $feature.PROPTYPE;
+var mStat = $feature.MATCHSTAT;
+
+// Check if both conditions are met
+if (pType == "PARCEL" && mStat == "UNMATCHED") {
+    return "flex"; // Shows the banner
+} else {
+    return "none"; // Hides the banner
+}
+```
+
 ### {expression/expr21} IN USE
 
 Recent Transfer Summary
 {expression/expr21}
+
+```javascript
+var parcelFeature = $feature;
+var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
+var GLDate = Date(2024, 3, 1);
+var GLYear = DefaultValue($feature.GLYEAR, "");
+
+if (parcelFeature.PROPTYPE != "PARCEL") {
+    return "";
+}
+
+var transferFeatures = Intersects(transferLayer, parcelFeature);
+
+if (Count(transferFeatures) > 0) {
+    for (var transfer in transferFeatures) {
+        if (transfer.closeDate > GLDate) {
+            return "A property transfer has occurred since the " + GLYear + " Grand List. Ownership and valuation data below may be outdated.";
+        }
+    }
+}
+
+return "";
+```
 
 ### {expression/expr22}
 
@@ -485,3 +716,25 @@ Current Use Summary
 
 Recent Transfer Display Toggle
 {expression/expr23}
+
+```javascript
+var parcelFeature = $feature;
+var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
+var GLDate = Date(2024, 3, 1);
+
+if (parcelFeature.PROPTYPE != "PARCEL") {
+    return "none";
+}
+
+var transferFeatures = Intersects(transferLayer, parcelFeature);
+
+if (Count(transferFeatures) > 0) {
+    for (var transfer in transferFeatures) {
+        if (transfer.closeDate > GLDate) {
+            return "block"; // Shows the alert box
+        }
+    }
+}
+
+return "none"; // Hides the alert box
+```
