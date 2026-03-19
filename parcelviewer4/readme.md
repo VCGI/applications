@@ -206,20 +206,195 @@ else if($feature.RESCODE == 'C') {
 Property Transfers since 2019
 {expression/expr2}
 
+```javascript
+// Get the clicked parcel feature
+var parcelFeature = $feature;
+
+//Reference PTTR layer
+var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
+
+
+var pttrStart = Date(2018, 12, 31);
+
+//Check for parcel PROPTYPE only (no ROWs, water, etc.)
+if (parcelFeature.PROPTYPE == "PARCEL") {
+  //Look for PTTR points that intersect parcel features
+  var transferFeatures = Intersects(transferLayer, parcelFeature); 
+
+  //If a PTTR point intersects a parcel
+  if (Count(transferFeatures) > 0) {
+    //Checks below for multi=SPAN parcel by looking for unqiue SPANs
+    var uniqueSpan = true;
+    var firstSpan = null;
+    var allRecords = "";
+    for (var transfer in transferFeatures) {
+
+      if (transfer.postedDate>pttrStart){
+        if (firstSpan == null) {
+          firstSpan = transfer.SPAN;
+        } else if (firstSpan != transfer.SPAN) {
+
+          uniqueSPAN = false;
+        }
+        
+        allRecords += "Closing Date: " + Text(transfer.closeDate, 'YYYY-MM-DD') + "\n";
+        allRecords += "Seller: " + transfer.sellEntNam +" "+transfer.sellFstNam+" "+transfer.sellLstNam+ "\n";
+        allRecords += "Buyer: " + transfer.buyEntNam +" "+transfer.buyFstNam+" "+transfer.buyLstNam+ "\n\n";
+      }
+    }
+    if (!uniqueSpan) {
+      return "NOTE: This is a multi-SPAN parcel. Multiple properties, owners, and transfers may exist within this parcel.\n\n "+allRecords;
+    } else if (allRecords != ""){
+      return allRecords;
+    }
+  } else {
+  //No record of transfer between 2019-present
+    return "There is no record of a property transfer for this parcel between 2019 and present."; 
+  }
+} else {
+//Note for non-parcel features
+return "This feature is categorized as "+parcelFeature.PROPTYPE+". Transfer data not applicable."; 
+}
+```
+
 ### {expression/expr3} IN USE
 
 Property Transfers since Annual Grand List
 {expression/expr3}
+
+```javascript
+// Get the clicked parcel feature
+var parcelFeature = $feature;
+
+//References PTTR point layer within the map
+var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
+
+// Adjust the date as needed per latest Grand List (*purposefully set to March, seems to exclude April from below if set to 4/1*)
+var GLDate = Date(2024, 3, 1);
+
+var GLYear = $feature.GLYEAR
+
+//Isolate only PARCEL features from parcel layer (no ROWs, water, etc.)
+if (parcelFeature.PROPTYPE == "PARCEL") {
+  //Look for any PTTR points that intersect (lie within) with the parcel
+  var transferFeatures = Intersects(transferLayer, parcelFeature);
+
+  //If more than 0 PTTR points are within the parcel
+  if (Count(transferFeatures) > 0) {
+    //Checks below for multi-SPAN parcels by looking for unique SPANs
+    var uniqueSpan = true;
+    var firstSpan = null;
+    var recordsAfterDate = "";
+    for (var transfer in transferFeatures) {
+      //If the closing date is after the current GL (i.e., has been transferred since annual GL was published)
+      if (transfer.closeDate > GLDate) {
+        if (firstSPAN == null) {
+          firstSpan = transfer.SPAN;
+        } else if (firstSpan != transfer.SPAN) {
+          //Flag to indicate there are multiple PTTR SPANs within a single parcel (indicates multi-SPAN)
+          uniqueSpan = false;
+        }
+        //Report on survey info for popup
+        recordsAfterDate += "Closing Date: " + Text(transfer.closeDate, 'YYYY-MM-DD') + "\n"; 
+        recordsAfterDate += "Seller: " + transfer.sellEntNam +" "+transfer.sellFstNam+" "+transfer.sellLstNam+ "\n";
+        recordsAfterDate += "Buyer: " + transfer.buyEntNam +" "+transfer.buyFstNam+" "+transfer.buyLstNam+ "\n\n";
+      }
+    }
+
+    //If there are multiple PTTR SPANs within a single parcel (i.e., it is multi-SPAN)
+    if (!uniqueSPAN) {
+      return "NOTE: This is a multi-SPAN parcel. Multiple properties, owners, and transfers may exist within this parcel.\n\n" + recordsAfterDate;
+      //If there is only one SPAN for the parcel, find all those between the current Grand List and present
+    } else if (recordsAfterDate != "") {
+      return recordsAfterDate;
+      //No transfers between current GL and present
+    } else {
+      //UPDATE YEAR following annual GL join
+      return "There is no record of a property transfer for this parcel since the current statewide Grand List ("+GLYear+").";
+    }
+  } else {
+    //No transfer of this parcel at all (since 2019)
+    return "There is no record of a property transfer for this parcel since the current statewide Grand List ("+GLYear+").";
+  }
+} else {
+  //Parcel is not a PROPTYPE = PARCEL feature
+  return "This feature is categorized as "+parcelFeature.PROPTYPE+". Transfer data not applicable.";
+}
+```
 
 ### {expression/expr4} IN USE
 
 Survey Information (if available)
 {expression/expr4}
 
-### {expression/expr5}
+```javascript
+// Get the clicked parcel feature
+var parcelFeature = $feature;
+
+//Reference survey layer
+var surveysLayer = FeatureSetByName($map, "Surveys - Vermont Land Survey Library"); 
+
+// Intersect the parcel with the polygons of the surveys layer
+var surveysIntersect = Intersects(parcelFeature, surveysLayer);
+
+//Count number of attachments for a survey record
+var cnt = 0 
+for (var att in surveysIntersect) {
+  cnt += Count(Attachments(att)) 
+}
+
+if (Count(surveysIntersect) > 0) {
+  var surveyInfo = "";
+  for (var survey in surveysIntersect) {
+    // Check if the centroid of the survey polygon falls within the clicked parcel
+    var surveyCentroid = Centroid(Geometry(survey));
+    if (Contains(parcelFeature, surveyCentroid)) { //Report on survey info
+      surveyInfo += "Survey Type: " + survey.survey_type + "\n";
+      surveyInfo += "Survey Date: " + Text(survey.survey_date, 'YYYY-MM-DD') + "\n";
+      surveyInfo += "Surveyor: " + Text(survey.surveyor_name) + "\n\n";
+    }
+  }
+  if (surveyInfo != "") {
+      //If there is more than one attachment for a survey:
+      if (cnt >1){
+      var surveysInfo2 = surveyInfo + "See link below. Toggle on the Surveys layer to access links to additional survey(s)."
+      return surveysInfo2
+    }
+    else {
+      return surveyInfo + "See link below. Toggle on the Surveys layer to verify whether additional surveys are available.";
+    }
+  } else {
+    return "Unable to find survey(s) associated with this parcel. Toggle on the Surveys layer to verify whether any surveys are available.";
+  }
+} else {
+  return "Unable to find survey(s) associated with this parcel. Toggle on the Surveys layer to verify whether any surveys are available.";
+}
+```
+
+### {expression/expr5} IN USE
 
 Link to Survey (if available)
 {expression/expr5}
+
+```javascript
+var parcelFeature = $feature;
+var attachmentLayer = FeatureSetByName($map, "Surveys - Vermont Land Survey Library");
+var intersectingAtts = Intersects(attachmentLayer, parcelFeature);
+
+if (Count(intersectingAtts) > 0) {
+  for (var survey in intersectingAtts) {
+    var surveyCentroid = Centroid(Geometry(survey));
+    if (Contains(parcelFeature, surveyCentroid)) {
+        var ObjectID = survey.OBJECTID; 
+        var AttachID = First(Attachments(survey)).ID; 
+        var Part1 = "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_Land_Survey_Library_reviewed_v2_1/FeatureServer/0/";
+        var Part2 = "/attachments/";
+        return Part1 + ObjectID + Part2 + AttachID;
+     }
+  }
+}
+return "";
+```
 
 ### {expression/expr6} IN USE
 
