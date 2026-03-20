@@ -1,6 +1,6 @@
 # Vermont Parcel Viewer Popup Configuration
 
-## HTML Popup - Parcels - Active Layer (v.4.0.3)
+## HTML Popup - Parcels - Active Layer (v.4.1)
 ```html
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
     <div style="margin-bottom:16px;">
@@ -163,7 +163,7 @@
 </div>
 ```
 
-## Arcade Attribute Expressions - Parcels - Active Layer (v.4.0.3)
+## Arcade Attribute Expressions - Parcels - Active Layer (v.4.1)
 
 ### {expression/expr0}
 
@@ -997,9 +997,9 @@ Parcel Status of {TOWN}
 | Status Updated             | 19-Mar-26                                                                                                            |
 | Note                       |                                                                                                                      |
 
-## HTML Popup - Town Parcel Data Status (v.4.0.3)
+## HTML Popup - Town Parcel Data Status (v.4.1)
 
-## Arcade Attribute Expressions - Town Parcel Data Status (v.4.0.3)
+## Arcade Attribute Expressions - Town Parcel Data Status (v.4.1)
 
 ## 4.0.2 Popup - Surveys - Vermont Land Survey Library
 
@@ -1015,9 +1015,9 @@ Parcel Status of {TOWN}
 | Notes                 |                         |
 | Recording Information | unknown                 |
 
-## HTML Popup - Surveys - Vermont Land Survey Library (v.4.0.3)
+## HTML Popup - Surveys - Vermont Land Survey Library (v.4.1)
 
-## Arcade Attribute Expressions - Vermont Land Survey Library (v.4.0.3)
+## Arcade Attribute Expressions - Vermont Land Survey Library (v.4.1)
 
 ## 4.0.2 Popup - Parcels - Inactives
 
@@ -1029,6 +1029,6 @@ INACTIVE PARCEL
 | SPAN       |          |
 | TOWN       | MILTON   |
 
-## HTML Popup - Parcels - Inactives (v.4.0.3)
+## HTML Popup - Parcels - Inactives (v.4.1)
 
-## Arcade Attribute Expressions - Parcels - Inactives (v.4.0.3)
+## Arcade Attribute Expressions - Parcels - Inactives (v.4.1)
