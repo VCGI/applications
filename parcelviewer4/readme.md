@@ -1030,7 +1030,6 @@ INACTIVE PARCEL
 
 ## HTML Popup - Parcels - Current Use (v.4.1)
 
-Version Before Switching to 3 CU Tax Categories
 ```html
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
     <div style="margin-bottom:16px;">
@@ -1053,7 +1052,7 @@ Version Before Switching to 3 CU Tax Categories
                 <strong>Ag Enrollment</strong>
             </div>
             <div style="color:#475569;font-size:12px;margin-bottom:2px;">
-                Total Ag Acres: <span style="color:#0f172a;"><strong>{expression/expr8}</strong></span>
+                Total Ag Acres: <span style="color:#0f172a;"><span><strong>{TOT_AG_ACR}</strong></span></span>
             </div>
             <div style="color:#475569;font-size:12px;margin-bottom:2px;">
                 Active Acres: <span style="color:#0f172a;"><strong>{ACT_AG_ACR}</strong></span>
@@ -1070,10 +1069,10 @@ Version Before Switching to 3 CU Tax Categories
                 Total Forest Acres: <span style="color:#0f172a;"><strong>{TOT_FOR_AC}</strong></span>
             </div>
             <div style="color:#475569;font-size:12px;margin-bottom:2px;">
-                Productive: <span style="color:#0f172a;"><strong>{expression/expr3}</strong></span>
+                Acres Less than 1 Mile: <span style="color:#0f172a;"><strong>{FORCON_LTM}</strong></span>
             </div>
             <div style="color:#475569;font-size:12px;">
-                Non-Productive: <span style="color:#0f172a;"><strong>{expression/expr4}</strong></span>
+                Acres Greater than 1 Mile: <span style="color:#0f172a;"><strong>{FORCON_GTM}</strong></span>
             </div>
         </div>
         <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
@@ -1088,20 +1087,6 @@ Version Before Switching to 3 CU Tax Categories
             </div>
             <div style="color:#475569;font-size:12px;">
                 Enrolled Barns: <span style="color:#0f172a;"><strong>{ENR_BARNS}</strong></span>
-            </div>
-        </div>
-        <div style="background-color:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
-            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
-                <strong>Forest Conservation</strong>
-            </div>
-            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
-                Total Conservation: <span style="color:#0f172a;"><strong>{expression/expr2}</strong></span>
-            </div>
-            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
-                Less than 1 mile: <span style="color:#0f172a;"><strong>{CONSAC_LTM}</strong></span>
-            </div>
-            <div style="color:#475569;font-size:12px;">
-                Greater than 1 mile: <span style="color:#0f172a;"><strong>{CONSAC_GTM}</strong></span>
             </div>
         </div>
     </div>
@@ -1179,6 +1164,9 @@ Version Before Switching to 3 CU Tax Categories
             <div>
                 <span style="color:#64748b;">Total Use Value:</span> <span style="color:#0f172a;font-size:13px;"><strong>{expression/expr6}</strong></span>
             </div>
+            <div>
+                <span style="color:#64748b;">CLA Used:</span> <span style="color:#0f172a;font-size:13px;"><strong>{CLA}</strong></span>
+            </div>
         </div>
         <div style="color:#475569;display:flex;flex-direction:column;font-size:12px;justify-content:center;line-height:1.6;">
             <div style="background-color:#fcfbec;border-radius:8px;border:1px solid #9f912a;padding:10px;text-align:center;">
@@ -1201,7 +1189,7 @@ Version Before Switching to 3 CU Tax Categories
                     <span style="color:#64748b;">Parcel Total Acres (GL):</span> <strong>{TOT_ACRES}</strong>
                 </div>
                 <div>
-                    <span style="color:#64748b;">Excluded Acres:</span> <strong>{expression/expr9}</strong>
+                    <span style="color:#64748b;">Excluded Acres:</span> <span><strong>{TOT_EXC_AC}</strong></span>
                 </div>
             </div>
             <div style="color:#475569;font-size:12px;line-height:1.6;">
