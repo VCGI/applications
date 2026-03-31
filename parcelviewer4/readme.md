@@ -1032,3 +1032,457 @@ INACTIVE PARCEL
 ## HTML Popup - Parcels - Inactives (v.4.1)
 
 ## Arcade Attribute Expressions - Parcels - Inactives (v.4.1)
+
+## HTML Popup - Parcels - Current Use (v.4.1)
+
+Version Before Switching to 3 CU Tax Categories
+```html
+<div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
+    <div style="margin-bottom:16px;">
+        <div style="color:#64748b;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;">
+            <strong>SPAN: {SPAN} &nbsp;|&nbsp; CU Ref #: {CU_REF_NUM}</strong>
+        </div>
+        <div style="align-items:center;display:flex;gap:8px;margin:6px 0;">
+            <span style="background-color:#475569;color:#ffffff;font-size:12px;"><span style="border-radius:999px;padding:4px 10px;text-transform:uppercase;"><strong>{TOWN_NAME}</strong></span></span> <span style="color:#475569;font-size:13px;">| {TAX_YEAR} Current Use Enrollment</span>
+        </div>
+        <div style="color:#0f172a;font-size:18px;line-height:1.2;margin-top:8px;">
+            <strong>{expression/expr0}</strong>
+        </div>
+        <div style="color:#475569;font-size:13px;margin-top:4px;">
+            Year Enrolled: <strong>{expression/expr10}</strong> &nbsp;|&nbsp; Enrolled Acres: <strong>{TOT_ENR_AC}</strong>
+        </div>
+    </div>
+    <div style="display:grid;gap:12px;grid-template-columns:repeat(2, minmax(0,1fr));margin-bottom:16px;">
+        <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Ag Enrollment</strong>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Total Ag Acres: <span style="color:#0f172a;"><strong>{expression/expr8}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Active Acres: <span style="color:#0f172a;"><strong>{ACT_AG_ACR}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;">
+                Open/Idle Acres: <span style="color:#0f172a;"><strong>{OPN_IDL_AG}</strong></span>
+            </div>
+        </div>
+        <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Forest Enrollment</strong>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Total Forest Acres: <span style="color:#0f172a;"><strong>{TOT_FOR_AC}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Productive: <span style="color:#0f172a;"><strong>{expression/expr3}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;">
+                Non-Productive: <span style="color:#0f172a;"><strong>{expression/expr4}</strong></span>
+            </div>
+        </div>
+        <div style="border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Buildings Overview</strong>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Total Enrolled Bldgs: <span style="color:#0f172a;"><strong>{ENR_BLDGS}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Enrolled Farm Housing: <span style="color:#0f172a;"><strong>{ENR_FM_HSE}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;">
+                Enrolled Barns: <span style="color:#0f172a;"><strong>{ENR_BARNS}</strong></span>
+            </div>
+        </div>
+        <div style="background-color:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;padding:12px;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Forest Conservation</strong>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Total Conservation: <span style="color:#0f172a;"><strong>{expression/expr2}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;margin-bottom:2px;">
+                Less than 1 mile: <span style="color:#0f172a;"><strong>{CONSAC_LTM}</strong></span>
+            </div>
+            <div style="color:#475569;font-size:12px;">
+                Greater than 1 mile: <span style="color:#0f172a;"><strong>{CONSAC_GTM}</strong></span>
+            </div>
+        </div>
+    </div>
+    <div style="background-color:#f8fafc;border-radius:10px;border:1px solid #cbd5e1;display:{expression/expr11};margin-bottom:16px;padding:14px;">
+        <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:8px;text-transform:uppercase;">
+            <strong>Ecological &amp; Wildlife Enrollments</strong>
+        </div>
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(2, minmax(0,1fr));">
+            <div style="color:#475569;display:{expression/expr12};font-size:12px;line-height:1.6;">
+                <div style="color:#0f172a;margin-bottom:2px;">
+                    <strong>Significant Wildlife</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">Total Acres:</span> <strong>{expression/expr13}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&lt; 1 Mile:</span> <strong>{SGWL_ACLTM}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&gt; 1 Mile:</span> <strong>{SGWL_ACGTM}</strong>
+                </div>
+            </div>
+            <div style="color:#475569;display:{expression/expr14};font-size:12px;line-height:1.6;">
+                <div style="color:#0f172a;margin-bottom:2px;">
+                    <strong>Special Places</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">Total Acres:</span> <strong>{expression/expr15}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&lt; 1 Mile:</span> <strong>{SPC_PL_LTM}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&gt; 1 Mile:</span> <strong>{SPC_PL_GTM}</strong>
+                </div>
+            </div>
+            <div style="color:#475569;display:{expression/expr16};font-size:12px;line-height:1.6;">
+                <div style="color:#0f172a;margin-bottom:2px;">
+                    <strong>Ecological Treatment (ESTA)</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">Total Acres:</span> <strong>{expression/expr17}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&lt; 1 Mile:</span> <strong>{ESTAAC_LTM}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&gt; 1 Mile:</span> <strong>{ESTAAC_GTM}</strong>
+                </div>
+            </div>
+            <div style="color:#475569;display:{expression/expr18};font-size:12px;line-height:1.6;">
+                <div style="color:#0f172a;margin-bottom:2px;">
+                    <strong>Reserve Forest</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">Total Acres:</span> <strong>{expression/expr19}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&lt; 1 Mile:</span> <strong>{RESFOR_LTM}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">&gt; 1 Mile:</span> <strong>{RESFOR_GTM}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="border-bottom:1px solid #e2e8f0;border-top:1px solid #e2e8f0;display:grid;gap:12px;grid-template-columns:repeat(2, minmax(0,1fr));margin-bottom:16px;padding:14px 0;">
+        <div style="color:#475569;font-size:12px;line-height:1.6;">
+            <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:4px;text-transform:uppercase;">
+                <strong>Valuation Data</strong>
+            </div>
+            <div>
+                <span style="color:#64748b;">Total Listed Value:</span> <span style="color:#0f172a;font-size:13px;"><strong>{expression/expr5}</strong></span>
+            </div>
+            <div>
+                <span style="color:#64748b;">Total Use Value:</span> <span style="color:#0f172a;font-size:13px;"><strong>{expression/expr6}</strong></span>
+            </div>
+        </div>
+        <div style="color:#475569;display:flex;flex-direction:column;font-size:12px;justify-content:center;line-height:1.6;">
+            <div style="background-color:#fcfbec;border-radius:8px;border:1px solid #9f912a;padding:10px;text-align:center;">
+                <div style="color:#615815;font-size:11px;letter-spacing:0.4px;margin-bottom:2px;text-transform:uppercase;">
+                    <strong>Total CU Reduction</strong>
+                </div>
+                <div style="color:#3d370b;font-size:15px;">
+                    <strong>{expression/expr7}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="background-color:#f8fafc;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:16px;padding:14px;">
+        <div style="color:#64748b;font-size:11px;letter-spacing:0.4px;margin-bottom:8px;text-transform:uppercase;">
+            <strong>Acreage Summary</strong>
+        </div>
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(2, minmax(0,1fr));">
+            <div style="color:#475569;font-size:12px;line-height:1.6;">
+                <div>
+                    <span style="color:#64748b;">Parcel Total Acres (GL):</span> <strong>{TOT_ACRES}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">Excluded Acres:</span> <strong>{expression/expr9}</strong>
+                </div>
+            </div>
+            <div style="color:#475569;font-size:12px;line-height:1.6;">
+                <div>
+                    <span style="color:#64748b;">Enrolled Acres:</span> <strong>{TOT_ENR_AC}</strong>
+                </div>
+                <div>
+                    <span style="color:#64748b;">Percent Enrolled:</span> <span style="color:#615815;"><strong>{expression/expr1}</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="color:#94a3b8;font-size:10px;line-height:1.5;margin-top:20px;text-align:center;">
+        <strong>Disclaimer:</strong> This map is for general reference only. Parcel data are general in nature and do not represent survey-grade boundary information. Substantial inaccuracies in boundary lines or Grand List attributes should be brought to the attention of the appropriate municipal clerk. Vermont municipalities are the ultimate source of information presented here.
+    </div>
+</div>
+```
+
+## Arcade Attribute Expressions - Parcels - Current Use (v.4.1)
+
+### {expression/expr0}
+
+Bins and Displays Land Type Title based on Total Ag and Total Forest Enrolled Acre Values
+
+```javascript
+// {expression/expr0} Land Type Title
+var ag = DefaultValue($feature.ACT_AG_ACR, 0) + DefaultValue($feature.OPN_IDL_AG, 0);
+var fr = DefaultValue($feature.TOT_FOR_AC, 0);
+
+if (ag > 0 && fr > 0) { return "Agriculture & Forest Enrollment"; }
+else if (ag > 0) { return "Agriculture Enrollment"; }
+else if (fr > 0) { return "Forest Enrollment"; }
+else { return "Current Use Enrollment"; }
+```
+
+### {expression/expr1}
+
+Displays Percent Enrolled; Calculated in ETL
+
+```javascript
+// {expression/expr1} Percent Enrolled
+var pct = $feature.PERC_AC_ENROLL_CU;
+if (!IsEmpty(pct)) {
+    return Round(pct, 1) + "%";
+}
+// Fallback if the field is empty
+var enr = DefaultValue($feature.TOT_ENR_AC, 0);
+var tot = DefaultValue($feature.TOT_ACRES, 0);
+if (tot > 0) { return Round((enr / tot) * 100, 1) + "%"; }
+return "N/A";
+```
+
+### {expression/expr2}
+
+Sums Total Conservation Acres
+
+```javascript
+// {expression/expr2} Total Conservation Acres
+var ltm = DefaultValue($feature.CONSAC_LTM, 0);
+var gtm = DefaultValue($feature.CONSAC_GTM, 0);
+return Round(ltm + gtm, 2);
+```
+
+### {expression/expr3}
+
+Sums Total Productive Forest
+
+```javascript
+// {expression/expr3} Total Productive Forest
+var ltm = DefaultValue($feature.PRODAC_LTM, 0);
+var gtm = DefaultValue($feature.PRODAC_GTM, 0);
+return Round(ltm + gtm, 2);
+```
+
+### {expression/expr4}
+
+Sums Total Non-Productive Forest
+
+```javascript
+// {expression/expr4} Total Non-Productive Forest
+var ltm = DefaultValue($feature.NPROD_LTM, 0);
+var gtm = DefaultValue($feature.NPROD_GTM, 0);
+var np20_ltm = DefaultValue($feature.NP20_ACLTM, 0);
+var np20_gtm = DefaultValue($feature.NP20_ACGTM, 0);
+return Round(ltm + gtm + np20_ltm + np20_gtm, 2);
+```
+
+### {expression/expr5}
+
+Formats total listed value for display
+
+```javascript
+// {expression/expr5} Formatted Total Listed Value
+var val = DefaultValue($feature.TOT_LST_VL, 0);
+return Text(val, '$#,###');
+```
+
+### {expression/expr6}
+
+Formats total use value for display
+
+```javascript
+//{expression/expr6} Formatted Total Use Value
+var val = DefaultValue($feature.TOT_USE_V, 0);
+return Text(val, '$#,###');
+```
+
+### {expression/expr7}
+
+Formats Total CU reduction for display
+
+```javascript
+// {expression/expr7} Formatted Total CU Reduction
+var val = DefaultValue($feature.CU_RED_TOT, 0);
+return Text(val, '$#,###');
+```
+
+### {expression/expr8}
+
+```javascript
+// {expression/expr8} Total Agriculture Acres
+// can likely also just use TOT_AG_ACR (type: esriFieldTypeSingle, alias: Total Agriculture Acreage (Active & Open)
+var act = DefaultValue($feature.ACT_AG_ACR, 0);
+var opn = DefaultValue($feature.OPN_IDL_AG, 0);
+return Round(act + opn, 2);
+```
+
+### {expression/expr9}
+
+Calculates and displays total excluded acres
+
+```javascript
+// {expression/expr9} Total Excluded Acres
+// could also likely just use TOT_EXC_AC (type: esriFieldTypeSingle, alias: Total Excluded Acreage State
+var tot = DefaultValue($feature.TOT_ACRES, 0);
+var enr = DefaultValue($feature.TOT_ENR_AC, 0);
+var exc = tot - enr;
+if (exc < 0) { return 0; }
+return Round(exc, 2);
+```
+
+### {expression/expr10}
+
+Contingent display of enrollment year
+
+```javascript
+// {expression/expr10} Enrollment Year Null Handler
+var eYear = $feature.ENROLL_YR;
+if (IsEmpty(eYear)) {
+    return "Not Specified";
+}
+return eYear;
+```
+
+### {expression/expr11}
+
+Contingent display of "ecological" fields if not 0
+
+```javascript
+// {expression/expr11} Master Ecological Box Toggle
+var w_ltm = DefaultValue($feature.SGWL_ACLTM, 0);
+var w_gtm = DefaultValue($feature.SGWL_ACGTM, 0);
+var p_ltm = DefaultValue($feature.SPC_PL_LTM, 0);
+var p_gtm = DefaultValue($feature.SPC_PL_GTM, 0);
+var e_ltm = DefaultValue($feature.ESTAAC_LTM, 0);
+var e_gtm = DefaultValue($feature.ESTAAC_GTM, 0);
+var r_ltm = DefaultValue($feature.RESFOR_LTM, 0);
+var r_gtm = DefaultValue($feature.RESFOR_GTM, 0);
+
+var total = w_ltm + w_gtm + p_ltm + p_gtm + e_ltm + e_gtm + r_ltm + r_gtm;
+
+if (total > 0) { return "block"; }
+return "none";
+```
+
+### {expression/expr12}
+
+Contingent display of significant wildlife if not 0
+
+```javascript
+// {expression/expr12} Significant Wildlife Toggle
+var ltm = DefaultValue($feature.SGWL_ACLTM, 0);
+var gtm = DefaultValue($feature.SGWL_ACGTM, 0);
+if ((ltm + gtm) > 0) { return "block"; } return "none";
+```
+
+### {expression/expr13}
+
+Sums and rounds significant wildlife for display
+
+```javascript
+// {expression/expr13} Significant Wildlife Total
+var ltm = DefaultValue($feature.SGWL_ACLTM, 0);
+var gtm = DefaultValue($feature.SGWL_ACGTM, 0);
+return Round(ltm + gtm, 2);
+```
+
+### {expression/expr14}
+
+Contingent display of special places / sensitive habitat if not 0
+
+```javascript
+// {expression/expr14} Special Places / Sensitive Habitat Toggle
+var ltm = DefaultValue($feature.SPC_PL_LTM, 0);
+var gtm = DefaultValue($feature.SPC_PL_GTM, 0);
+if ((ltm + gtm) > 0) { return "block"; } return "none";
+```
+
+### {expression/expr15}
+
+Sums and rounds special places / sensitive habitat total for display
+
+```javascript
+// {expression/expr15} Special Places / Sensitive Habitat Total
+var ltm = DefaultValue($feature.SPC_PL_LTM, 0);
+var gtm = DefaultValue($feature.SPC_PL_GTM, 0);
+return Round(ltm + gtm, 2);
+```
+
+### {expression/expr16}
+
+Contingent display of ecologically significant treatment if not 0
+
+```javascript
+// {expression/expr16} ETSA (Ecologically Significant Treatment) Toggle
+var ltm = DefaultValue($feature.ESTAAC_LTM, 0);
+var gtm = DefaultValue($feature.ESTAAC_GTM, 0);
+if ((ltm + gtm) > 0) { return "block"; } return "none";
+```
+
+### {expression/expr17}
+
+Sums and rounds ecological significant treatment for display
+
+```javascript
+// {expression/expr17} ETSA (Ecologically Significant Treatment) Total
+var ltm = DefaultValue($feature.ESTAAC_LTM, 0);
+var gtm = DefaultValue($feature.ESTAAC_GTM, 0);
+return Round(ltm + gtm, 2);
+```
+
+### {expression/expr18}
+
+Contingent display of reserve forest if not 0
+
+```javascript
+// {expression/expr18} Reserve Forest Toggle
+var ltm = DefaultValue($feature.RESFOR_LTM, 0);
+var gtm = DefaultValue($feature.RESFOR_GTM, 0);
+if ((ltm + gtm) > 0) { return "block"; } return "none";
+```
+
+### {expression/expr19}
+
+Sums and rounds reserve forest for display
+
+```javascript
+// {expression/expr19} Reserve Forest Total
+var ltm = DefaultValue($feature.RESFOR_LTM, 0);
+var gtm = DefaultValue($feature.RESFOR_GTM, 0);
+return Round(ltm + gtm, 2);
+```
+
+### {expression/expr5}
+### {expression/expr6}
+### {expression/expr7}
+### {expression/expr8}
+### {expression/expr9}
+### {expression/expr10}
+### {expression/expr11}
+### {expression/expr12}
+### {expression/expr13}
+### {expression/expr14}
+### {expression/expr15}
+### {expression/expr16}
+### {expression/expr17}
+### {expression/expr18}
+### {expression/expr19}
+### {expression/expr20}
