@@ -5,7 +5,7 @@
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
     <div style="margin-bottom:16px;">
         <div style="color:#64748b;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;">
-            <strong>SPAN {GLIST_SPAN}</strong>
+            <strong>SPAN: {GLIST_SPAN}</strong>
         </div>
         <div style="align-items:center;display:flex;gap:8px;margin:6px 0;">
             <span style="background-color:#003300;color:#ffffff;font-size:12px;"><span style="border-radius:999px;padding:4px 10px;text-transform:uppercase;"><strong>{TOWN} </strong></span></span><span style="color:#475569;font-size:13px;">| {PROPTYPE}</span>
@@ -165,27 +165,23 @@
 
 ## Arcade Attribute Expressions - Parcels - Active Layer (v.4.1)
 
-### {expression/expr0}
-
-Ownership (Annual Grand List)
-{expression/expr0}
+### {expression/expr0} - Ownership (Annual Grand List)
 
 This script combines several fields to create a single ownership return.
 
 ```javascript
+// {expression/expr0} Ownership (Annual Grand List)
 Concatenate([$feature.OWNER1,$feature.OWNER2], ', ') +TextFormatting.NewLine
 +$feature.ADDRGL1 +TextFormatting.NewLine 
 +Concatenate([$feature.CITYGL,$feature.STGL,$feature.ZIPGL], ', ')
 ```
 
-### {expression/expr1} IN USE
-
-Resident Ownership Code (Keyed)
-{expression/expr1}
+### {expression/expr1} - Resident Ownership Code IN USE
 
 This script decodes the RESCODE field for display.
 
 ```javascript
+// {expression/expr1} Resident Ownership Code (Keyed)
 If($feature.RESCODE == 'T') { 
    return 'T (Grand List owner is a Town Resident)'
 } 
@@ -198,7 +194,6 @@ else if($feature.RESCODE == 'NS') {
 else if($feature.RESCODE == 'C') {
     return 'C (Grand List owner is a Corporation)'
 }
-
 ```
 
 ### {expression/expr2} IN USE
