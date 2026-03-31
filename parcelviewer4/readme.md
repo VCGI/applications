@@ -196,12 +196,12 @@ else if($feature.RESCODE == 'C') {
 }
 ```
 
-### {expression/expr2} IN USE
+### {expression/expr2} Property Transfers since 2019 IN USE
 
-Property Transfers since 2019
-{expression/expr2}
+Returns property transfers since 2019 for selected parcel
 
 ```javascript
+// {expression/expr2} Property Transfers since 2019
 // Get the clicked parcel feature
 var parcelFeature = $feature;
 
