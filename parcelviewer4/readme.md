@@ -252,12 +252,12 @@ return "This feature is categorized as "+parcelFeature.PROPTYPE+". Transfer data
 }
 ```
 
-### {expression/expr3} IN USE
+### {expression/expr3} Property Transfers since Annual Grand List IN USE
 
-Property Transfers since Annual Grand List
-{expression/expr3}
+Displays property transfers since annual grand list.
 
 ```javascript
+// {expression/expr3} Property Transfers since Annual Grand List
 // Get the clicked parcel feature
 var parcelFeature = $feature;
 
@@ -265,7 +265,7 @@ var parcelFeature = $feature;
 var transferLayer = FeatureSetByName($map, "Vermont Property Transfers");
 
 // Adjust the date as needed per latest Grand List (*purposefully set to March, seems to exclude April from below if set to 4/1*)
-var GLDate = Date(2024, 3, 1);
+var GLDate = Date(2025, 3, 1);
 
 var GLYear = $feature.GLYEAR
 
@@ -317,12 +317,12 @@ if (parcelFeature.PROPTYPE == "PARCEL") {
 }
 ```
 
-### {expression/expr4} IN USE
+### {expression/expr4} Survey Information IN USE
 
-Survey Information (if available)
-{expression/expr4}
+Gets survey information if available.
 
 ```javascript
+// {expression/expr4} Survey Information (if available)
 // Get the clicked parcel feature
 var parcelFeature = $feature;
 
@@ -366,12 +366,12 @@ if (Count(surveysIntersect) > 0) {
 }
 ```
 
-### {expression/expr5} IN USE
+### {expression/expr5} Link to Survey IN USE
 
-Link to Survey (if available)
-{expression/expr5}
+Links to survey if available.
 
 ```javascript
+// {expression/expr5} Link to Survey (if available)
 var parcelFeature = $feature;
 var attachmentLayer = FeatureSetByName($map, "Surveys - Vermont Land Survey Library");
 var intersectingAtts = Intersects(attachmentLayer, parcelFeature);
@@ -391,23 +391,12 @@ if (Count(intersectingAtts) > 0) {
 return "";
 ```
 
-### {expression/expr6} IN USE
-
-Total Acreage
-{expression/expr6}
+### {expression/expr6} Total Acreage Formatting IN USE
 
 ```javascript
+// {expresssion/expr6} Total Acreage
 // Just formats the existing GL Acres
 return Text($feature.ACRESGL, '#.00');
-
-//prior to version 4.03 below
-//var GLACRES = $feature.ACRESGL;
-//var GLACRESdec = Text($feature.ACRESGL, '#.00');
-//var GISACRES = AreaGeodetic($feature,'acres');
-//var AC_Diff_PCT = ((Abs(GLACRES-GISACRES))/((GLACRES+GISACRES)/2))*100;
-//Round(AC_Diff_PCT,2)
-//
-//return ('Annual Grand List Acres: '+GLACRESdec+TextFormatting.NewLine+'GIS Acres: '+Round(GISACRES,2)+TextFormatting.NewLine+Round(AC_Diff_PCT,1)+'% Difference');
 ```
 
 ### {expression/expr7} (Not in Use; Was in 4.0.2 and below)
@@ -496,12 +485,10 @@ if (parcelFeature.PROPTYPE == "PARCEL") {
 return result
 ```
 
-### {expression/expr8} IN USE
-
-Current Use
-{expression/expr8}
+### {expression/expr8} Current Use IN USE
 
 ```javascript
+// {expression/expr8} Current Use
 // 1. Added 'TAX_YEAR', 'TOT_AG_ACR', and 'TOT_FOR_AC' to the request
 var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ['SPAN', 'ENROLL_YR', 'TOT_ENR_AC', 'TOT_ACRES', 'TAX_YEAR', 'TOT_AG_ACR', 'TOT_FOR_AC']);
 
@@ -552,12 +539,10 @@ if (!IsEmpty(match)) {
 }
 ```
 
-### {expression/expr9} IN USE
-
-Link to Current Use Dataset
-{expression/expr9}
+### {expression/expr9} Link to Current Use Dataset IN USE
 
 ```javascript
+// {expression/expr9} Link to Current Use Dataset
 var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ['SPAN']);
 var parcelSpan = $feature.SPAN;
 var match = First(Filter(cuTable, "SPAN = '" + parcelSpan + "'"));
@@ -788,12 +773,10 @@ if (Count(intersectingAtts) > 0) {
 return "none"; // Hides the button
 ```
 
-### {expression/expr16} Not in use
-
-Current Use Visibility Toggle
-{expression/expr16}
+### {expression/expr16} Current Use Visibility Toggle
 
 ```javascript
+// {expression/expr16} Current Use Visibility Toggle
 var cuTable = FeatureSetByName($map, "VT Data - Current Use Program Properties", ['SPAN']);
 var parcelSpan = $feature.SPAN;
 var match = First(Filter(cuTable, "SPAN = '" + parcelSpan + "'"));
