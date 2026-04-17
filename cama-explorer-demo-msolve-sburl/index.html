@@ -84,320 +84,351 @@
         </div>
     </div>
 
-    <script src="https://js.arcgis.com/4.29/"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        // --- 1. CONFIGURATION & DATA DICTIONARIES ---
-        const S3_BASE = 'https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample-microsolve-sburl';
-        let masterIndex = []; 
-        let mapView, parcelLayer, highlightHandle;
+<script src="https://js.arcgis.com/4.29/"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const S3_BASE = 'https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample-microsolve-sburl';
+    let masterIndex = []; 
+    let dataCache = {}; // Cache to prevent re-downloading large files
+    let mapView, parcelLayer, highlightHandle;
 
-        // Silo configurations for UI and dynamic routing
-        const SILOS = {
-            res: { name: 'Residential', color: 'bg-blue-100 text-blue-900 border-blue-200', icon: 'fa-house' },
-            comm: { name: 'Commercial', color: 'bg-orange-100 text-orange-900 border-orange-200', icon: 'fa-city' },
-            condo: { name: 'Condominium', color: 'bg-purple-100 text-purple-900 border-purple-200', icon: 'fa-building' }
+    const SILOS = {
+        res: { name: 'Residential', color: 'bg-blue-100 text-blue-900 border-blue-200', icon: 'fa-house' },
+        comm: { name: 'Commercial', color: 'bg-orange-100 text-orange-900 border-orange-200', icon: 'fa-city' },
+        condo: { name: 'Condominium', color: 'bg-purple-100 text-purple-900 border-purple-200', icon: 'fa-building' }
+    };
+
+    async function init() {
+        showLoader("Downloading Master Index...");
+        await loadMasterIndex();
+        await initMap();
+        
+        document.getElementById('search-input').addEventListener('input', handleSearch);
+        document.getElementById('back-btn').addEventListener('click', () => {
+            document.getElementById('detail-view').classList.add('hidden');
+            document.getElementById('main-view').classList.remove('hidden');
+        });
+        
+        showMessage("Ready. Search or click a map parcel.");
+    }
+
+    async function loadMasterIndex() {
+        const [resData, commData, condoData] = await Promise.all([
+            fetchJson(`${S3_BASE}/res/EXP_MAIN_RES.json`),
+            fetchJson(`${S3_BASE}/comm/EXP_MAIN_COMM.json`),
+            fetchJson(`${S3_BASE}/condo/EXP_MAIN_CONDO.json`)
+        ]);
+
+        const normalize = (data, silo) => {
+            if(!data) return [];
+            return data.map(row => ({
+                silo: silo,
+                parcel_id: row.parcel_id || '',
+                span: row.parc_span || '',
+                address: silo === 'comm' ? (row.prop_addr || '') : (row.prop_locat || ''),
+                city: silo === 'comm' ? (row.prop_city || '') : (row.city || ''),
+                zip: silo === 'comm' ? (row.prop_zip || '') : (row.zip_code || ''),
+                owner: row.owner_name || '',
+                raw: row 
+            }));
         };
 
-        // --- 2. INITIALIZATION ---
-        async function init() {
-            showLoader("Downloading Master Index...");
-            await loadMasterIndex();
-            await initMap();
-            
-            document.getElementById('search-input').addEventListener('input', handleSearch);
-            document.getElementById('back-btn').addEventListener('click', () => {
-                document.getElementById('detail-view').classList.add('hidden');
-                document.getElementById('main-view').classList.remove('hidden');
-            });
-            
-            showMessage("Ready. Search or click a map parcel.");
-        }
+        masterIndex = [
+            ...normalize(resData, 'res'),
+            ...normalize(commData, 'comm'),
+            ...normalize(condoData, 'condo')
+        ];
+    }
 
-        // --- 3. DATA PIPELINE (NORMALIZATION) ---
-        async function loadMasterIndex() {
-            // Load all three hubs concurrently
-            const [resData, commData, condoData] = await Promise.all([
-                fetchJson(`${S3_BASE}/res/EXP_MAIN_RES.json`),
-                fetchJson(`${S3_BASE}/comm/EXP_MAIN_COMM.json`),
-                fetchJson(`${S3_BASE}/condo/EXP_MAIN_CONDO.json`)
-            ]);
-
-            // Normalize and tag schema variations into a standard Master object
-            const normalize = (data, silo) => {
-                if(!data) return [];
-                return data.map(row => ({
-                    silo: silo,
-                    parcel_id: row.parcel_id || '',
-                    span: row.parc_span || '',
-                    address: silo === 'comm' ? (row.prop_addr || '') : (row.prop_locat || ''),
-                    city: silo === 'comm' ? (row.prop_city || '') : (row.city || ''),
-                    zip: silo === 'comm' ? (row.prop_zip || '') : (row.zip_code || ''),
-                    owner: row.owner_name || '',
-                    // Keep original raw data for detail view
-                    raw: row 
-                }));
-            };
-
-            masterIndex = [
-                ...normalize(resData, 'res'),
-                ...normalize(commData, 'comm'),
-                ...normalize(condoData, 'condo')
-            ];
-            console.log(`Loaded ${masterIndex.length} Master Index records.`);
-        }
-
-        async function fetchJson(url) {
-            try {
-                const res = await fetch(url);
-                return res.ok ? await res.json() : null;
-            } catch (e) {
-                console.error("Fetch error:", e); return null;
+    async function fetchJson(url) {
+        if (dataCache[url]) return dataCache[url]; // Return from cache if available
+        try {
+            const res = await fetch(url);
+            if (res.ok) {
+                const data = await res.json();
+                dataCache[url] = data; // Save to cache
+                return data;
             }
+            return null;
+        } catch (e) {
+            console.error("Fetch error:", e); return null;
         }
+    }
 
-        // --- 4. MAP INTEGRATION ---
-        async function initMap() {
-            require([
-                "esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"
-            ], (Map, MapView, FeatureLayer) => {
-                
-                parcelLayer = new FeatureLayer({
-                    url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
-                    definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
-                    outFields: ["SPAN"],
-                    popupEnabled: false,
-                    renderer: {
-                        type: "simple",
-                        symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [150, 150, 150, 0.8], width: "1px" }}
+    async function initMap() {
+        require([
+            "esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"
+        ], (Map, MapView, FeatureLayer) => {
+            
+            parcelLayer = new FeatureLayer({
+                url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
+                definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
+                outFields: ["SPAN"],
+                popupEnabled: false,
+                renderer: {
+                    type: "simple",
+                    symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [150, 150, 150, 0.8], width: "1px" }}
+                }
+            });
+
+            mapView = new MapView({
+                container: "map-view",
+                map: new Map({ basemap: "hybrid", layers: [parcelLayer] }),
+                center: [-73.17, 44.46],
+                zoom: 13
+            });
+
+            mapView.on("click", (event) => {
+                mapView.hitTest(event).then((response) => {
+                    const graphic = response.results.find(r => r.graphic.layer === parcelLayer)?.graphic;
+                    if (graphic) {
+                        highlightFeature(graphic);
+                        handleMapClick(graphic.attributes.SPAN);
+                    } else {
+                        if(highlightHandle) highlightHandle.remove();
                     }
                 });
-
-                mapView = new MapView({
-                    container: "map-view",
-                    map: new Map({ basemap: "hybrid", layers: [parcelLayer] }),
-                    center: [-73.17, 44.46], // South Burlington
-                    zoom: 13
-                });
-
-                mapView.on("click", (event) => {
-                    mapView.hitTest(event).then((response) => {
-                        const graphic = response.results.find(r => r.graphic.layer === parcelLayer)?.graphic;
-                        if (graphic) {
-                            highlightFeature(graphic);
-                            const span = graphic.attributes.SPAN;
-                            handleMapClick(span);
-                        } else {
-                            if(highlightHandle) highlightHandle.remove();
-                        }
-                    });
-                });
             });
-        }
+        });
+    }
 
-        function highlightFeature(graphic) {
-            if(highlightHandle) highlightHandle.remove();
-            mapView.whenLayerView(graphic.layer).then(layerView => {
-                highlightHandle = layerView.highlight(graphic);
-            });
-        }
+    function highlightFeature(graphic) {
+        if(highlightHandle) highlightHandle.remove();
+        mapView.whenLayerView(graphic.layer).then(layerView => {
+            highlightHandle = layerView.highlight(graphic);
+        });
+    }
 
-        // --- 5. SEARCH & ROUTING LOGIC ---
-        function handleSearch(e) {
-            const term = e.target.value.toLowerCase();
-            if (term.length < 2) {
-                document.getElementById('table-wrapper').classList.add('hidden');
-                showMessage("Ready. Search or click a map parcel.");
-                return;
-            }
-            
-            const results = masterIndex.filter(r => 
-                r.address.toLowerCase().includes(term) || 
-                r.span.toLowerCase().includes(term) || 
-                r.parcel_id.toLowerCase().includes(term)
-            );
-            
+    function handleSearch(e) {
+        const term = e.target.value.toLowerCase();
+        if (term.length < 2) {
+            document.getElementById('table-wrapper').classList.add('hidden');
+            showMessage("Ready. Search or click a map parcel.");
+            return;
+        }
+        const results = masterIndex.filter(r => 
+            r.address.toLowerCase().includes(term) || 
+            r.span.toLowerCase().includes(term) || 
+            r.parcel_id.toLowerCase().includes(term)
+        );
+        renderTable(results);
+    }
+
+    function handleMapClick(span) {
+        if(!span) return;
+        const cleanSpan = String(span).trim();
+        const results = masterIndex.filter(r => String(r.span).trim() === cleanSpan);
+        document.getElementById('search-input').value = cleanSpan;
+        
+        if (results.length === 1) {
+            renderTable(results); 
+            openDetailView(results[0].parcel_id, results[0].silo);
+        } else if (results.length > 1) {
             renderTable(results);
+            showMessage(`Found ${results.length} records for this parcel. Please select one below.`);
+        } else {
+            renderTable([]);
+            showMessage("No CAMA records found for this footprint.");
         }
+    }
 
-        function handleMapClick(span) {
-            if(!span) return;
-            const cleanSpan = String(span).trim();
-            const results = masterIndex.filter(r => String(r.span).trim() === cleanSpan);
+    function renderTable(results) {
+        document.getElementById('status-message').classList.add('hidden');
+        document.getElementById('table-wrapper').classList.remove('hidden');
+        document.getElementById('result-count').textContent = results.length;
+        
+        const tbody = document.getElementById('results-body');
+        tbody.innerHTML = '';
+
+        results.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.className = 'row-hover transition';
+            const s = SILOS[row.silo];
+
+            tr.innerHTML = `
+                <td class="px-4 py-3 whitespace-nowrap"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${s.color}"><i class="fa-solid ${s.icon} mr-1.5"></i> ${s.name}</span></td>
+                <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.span || 'N/A'}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${row.parcel_id}</td>
+                <td class="px-4 py-3 text-sm text-gray-800">${row.address}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${row.city}</td>
+            `;
+            tr.onclick = () => openDetailView(row.parcel_id, row.silo);
+            tbody.appendChild(tr);
+        });
+    }
+
+    function openDetailView(parcelId, siloType) {
+        const recordInfo = masterIndex.find(r => r.parcel_id === parcelId && r.silo === siloType);
+        const siblings = masterIndex.filter(r => r.span === recordInfo.span);
+        
+        document.getElementById('main-view').classList.add('hidden');
+        document.getElementById('detail-view').classList.remove('hidden');
+
+        const s = SILOS[siloType];
+        const banner = document.getElementById('contextual-banner');
+        banner.className = `p-6 rounded-lg shadow-sm border mb-6 relative overflow-hidden ${s.color.replace('text-', 'text-').replace('bg-', 'bg-').replace('100', '50')}`;
+        banner.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded border ${s.color} text-xs font-bold uppercase tracking-wider mb-3">
+                        <i class="fa-solid ${s.icon} mr-2"></i> ${s.name} Record
+                    </span>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-1">${recordInfo.address}</h2>
+                    <p class="text-sm font-medium text-gray-700">Owner: ${recordInfo.owner}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-600 mb-1">CAMA ID: <span class="font-bold text-gray-900">${parcelId}</span></p>
+                    <p class="text-sm text-gray-600 mb-2">SPAN: <span class="font-bold text-gray-900">${recordInfo.span}</span></p>
+                    ${siblings.length > 1 ? `<span class="inline-flex bg-white px-2 py-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length} for SPAN</span>` : ''}
+                </div>
+            </div>
+        `;
+
+        buildDynamicTabs(siloType, siblings.length > 1, siblings, parcelId, recordInfo);
+    }
+
+    function buildDynamicTabs(siloType, hasSiblings, siblings, currentParcelId, recordInfo) {
+        const tabsHeader = document.getElementById('tabs-header');
+        const tabsContent = document.getElementById('tabs-content');
+        tabsHeader.innerHTML = ''; tabsContent.innerHTML = '';
+
+        const tabConfig = [
+            { id: 'overview', name: 'Overview', universal: true },
+            { id: 'bldg', name: 'Building Details', res: true, condo: true, comm: true },
+            { id: 'land', name: 'Land & Site', universal: true },
+            { id: 'occupancy', name: 'Occupancy & Income', comm: true },
+            { id: 'amenities', name: 'Amenities', condo: true },
+            { id: 'history', name: 'Sales History', universal: true },
+            { id: 'associated', name: 'Associated Records', conditional: hasSiblings }
+        ];
+
+        const activeTabs = tabConfig.filter(t => t.universal || t[siloType] || t.conditional);
+
+        activeTabs.forEach((tab, index) => {
+            const li = document.createElement('li');
+            li.className = 'mr-2';
+            const a = document.createElement('a');
+            a.className = `inline-block p-4 rounded-t-lg border-b-2 hover:text-gray-600 hover:border-gray-300 cursor-pointer transition ${index === 0 ? 'text-[#005a3c] border-[#005a3c] bg-white active-tab' : 'border-transparent text-gray-500'}`;
+            a.innerText = tab.name;
+            a.onclick = (e) => switchTab(e, tab.id);
+            li.appendChild(a);
+            tabsHeader.appendChild(li);
+
+            const div = document.createElement('div');
+            div.id = `tab-${tab.id}`;
+            div.className = `p-6 bg-white rounded-b-lg shadow-sm border border-t-0 border-gray-200 tab-pane ${index === 0 ? '' : 'hidden'}`;
             
-            document.getElementById('search-input').value = cleanSpan;
-            
-            if (results.length === 1) {
-                // Scenario A: 1-to-1 match. Go straight to detail view.
-                renderTable(results); // keep table updated in background
-                openDetailView(results[0].parcel_id, results[0].silo);
-            } else if (results.length > 1) {
-                // Scenario B: 1-to-Many match. Force user to use the selector table.
-                renderTable(results);
-                showMessage(`Found ${results.length} records for this parcel. Please select one below.`);
+            // Render specific content based on tab ID
+            if (tab.id === 'associated') {
+                div.innerHTML = renderAssociatedRecordsTab(siblings, currentParcelId);
+            } else if (tab.id === 'overview') {
+                div.innerHTML = createSimpleTable([recordInfo.raw]); // Use the loaded master record
             } else {
-                renderTable([]);
-                showMessage("No CAMA records found for this footprint.");
+                div.innerHTML = `<div class="flex flex-col items-center justify-center py-10"><div class="loader w-8 h-8 border-4 mb-2"></div><p class="text-gray-500">Fetching records...</p></div>`;
+                fetchAndRenderTabContent(siloType, currentParcelId, tab.id, div);
             }
+            
+            tabsContent.appendChild(div);
+        });
+    }
+
+    // NEW: Async fetcher for specific tab JSON files
+    async function fetchAndRenderTabContent(siloType, parcelId, tabId, containerDiv) {
+        let fileName = "";
+        
+        // Map Tab IDs to NEMRC File Names
+        if (tabId === 'bldg') fileName = `EXP_SECTION_${siloType.toUpperCase()}`;
+        if (tabId === 'land') fileName = `EXP_LAND_${siloType.toUpperCase()}`;
+        if (tabId === 'occupancy') fileName = `EXP_OCCUPNCY_${siloType.toUpperCase()}`;
+        if (tabId === 'amenities') fileName = `EXP_AMENITY_${siloType.toUpperCase()}`;
+        if (tabId === 'history') fileName = `EXP_TRANHIST_${siloType.toUpperCase()}`;
+        
+        if (!fileName) {
+            containerDiv.innerHTML = "<p class='text-gray-500'>No mapping configured for this tab.</p>";
+            return;
         }
 
-        // --- 6. UI RENDERING ---
-        function renderTable(results) {
-            document.getElementById('status-message').classList.add('hidden');
-            document.getElementById('table-wrapper').classList.remove('hidden');
-            document.getElementById('result-count').textContent = results.length;
-            
-            const tbody = document.getElementById('results-body');
-            tbody.innerHTML = '';
+        const url = `${S3_BASE}/${siloType}/${fileName}.json`;
+        const data = await fetchJson(url);
 
-            results.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = 'row-hover transition';
-                const s = SILOS[row.silo];
+        if (!data || data.length === 0) {
+            // Some silos don't have certain files (e.g. Commercial missing TRANHIST)
+            containerDiv.innerHTML = "<p class='text-gray-500 italic bg-gray-50 p-4 rounded'>No records available for this property section.</p>";
+            return;
+        }
 
-                tr.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${s.color}">
-                            <i class="fa-solid ${s.icon} mr-1.5"></i> ${s.name}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.span || 'N/A'}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600">${row.parcel_id}</td>
-                    <td class="px-4 py-3 text-sm text-gray-800">${row.address}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600">${row.city}</td>
-                `;
-                tr.onclick = () => openDetailView(row.parcel_id, row.silo);
-                tbody.appendChild(tr);
+        // Filter the full JSON file down to just this specific parcel_id
+        const propertyRecords = data.filter(row => String(row.parcel_id).trim() === String(parcelId).trim());
+
+        if (propertyRecords.length === 0) {
+            containerDiv.innerHTML = "<p class='text-gray-500 italic bg-gray-50 p-4 rounded'>No associated records found.</p>";
+        } else {
+            containerDiv.innerHTML = createSimpleTable(propertyRecords);
+        }
+    }
+
+    // NEW: Helper to draw HTML tables from raw JSON arrays
+    function createSimpleTable(records) {
+        if (!records || records.length === 0) return '';
+        const headers = Object.keys(records[0]);
+        let table = '<div class="overflow-x-auto table-container"><table class="min-w-full divide-y divide-gray-200 border border-gray-200"><thead class="bg-gray-50"><tr>';
+        
+        headers.forEach(h => {
+            // Clean up header names
+            let displayHeader = h.replace(/_/g, ' ').toUpperCase();
+            table += `<th class="px-4 py-2 text-left text-xs font-bold text-gray-500 tracking-wider whitespace-nowrap">${displayHeader}</th>`;
+        });
+        table += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+        
+        records.forEach(r => {
+            table += '<tr class="hover:bg-gray-50">';
+            headers.forEach(h => {
+                let val = r[h] !== null && r[h] !== undefined ? String(r[h]).trim() : '';
+                if (val.startsWith('"') && val.endsWith('"')) val = val.substring(1, val.length - 1);
+                table += `<td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600">${val}</td>`;
             });
-        }
+            table += '</tr>';
+        });
+        
+        return table + '</tbody></table></div>';
+    }
 
-        function openDetailView(parcelId, siloType) {
-            const recordInfo = masterIndex.find(r => r.parcel_id === parcelId && r.silo === siloType);
-            const siblings = masterIndex.filter(r => r.span === recordInfo.span);
-            
-            document.getElementById('main-view').classList.add('hidden');
-            document.getElementById('detail-view').classList.remove('hidden');
-
-            // 1. Build Contextual Banner
-            const s = SILOS[siloType];
-            const banner = document.getElementById('contextual-banner');
-            banner.className = `p-6 rounded-lg shadow-sm border mb-6 relative overflow-hidden ${s.color.replace('text-', 'text-').replace('bg-', 'bg-').replace('100', '50')}`; // Lighten background
-            banner.innerHTML = `
-                <div class="flex justify-between items-start">
+    function renderAssociatedRecordsTab(siblings, currentParcelId) {
+        let html = '<h3 class="text-lg font-bold mb-4">Other Records sharing this Polygon footprint:</h3><div class="space-y-3">';
+        siblings.forEach(sib => {
+            const isCurrent = sib.parcel_id === currentParcelId;
+            const s = SILOS[sib.silo];
+            html += `
+                <div class="p-4 border rounded flex justify-between items-center ${isCurrent ? 'bg-gray-50 border-gray-300' : 'bg-white hover:border-gray-400 shadow-sm cursor-pointer'}" 
+                     ${!isCurrent ? `onclick="document.getElementById('search-input').value='${sib.parcel_id}'; document.getElementById('search-input').dispatchEvent(new Event('input'));"` : ''}>
                     <div>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded border ${s.color} text-xs font-bold uppercase tracking-wider mb-3">
-                            <i class="fa-solid ${s.icon} mr-2"></i> ${s.name} Record
-                        </span>
-                        <h2 class="text-3xl font-bold text-gray-900 mb-1">${recordInfo.address}</h2>
-                        <p class="text-sm font-medium text-gray-700">Owner: ${recordInfo.owner}</p>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border mb-1 ${s.color}">${s.name}</span>
+                        <p class="font-medium text-gray-900">${sib.address} (ID: ${sib.parcel_id})</p>
                     </div>
-                    <div class="text-right">
-                        <p class="text-sm text-gray-600 mb-1">CAMA ID: <span class="font-bold text-gray-900">${parcelId}</span></p>
-                        <p class="text-sm text-gray-600 mb-2">SPAN: <span class="font-bold text-gray-900">${recordInfo.span}</span></p>
-                        ${siblings.length > 1 ? `<span class="inline-flex bg-white px-2 py-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length} for SPAN</span>` : ''}
+                    <div>
+                        ${isCurrent ? '<span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Currently Viewing</span>' : '<button class="text-sm font-medium text-blue-600 hover:text-blue-800"><i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> Switch Record</button>'}
                     </div>
                 </div>
             `;
+        });
+        return html + '</div>';
+    }
 
-            // 2. Dynamic Tabs Framework
-            buildDynamicTabs(siloType, siblings.length > 1, siblings, parcelId);
-        }
+    function switchTab(event, tabId) {
+        const links = document.getElementById('tabs-header').querySelectorAll('a');
+        links.forEach(l => {
+            l.className = 'inline-block p-4 rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 cursor-pointer transition';
+        });
+        event.target.className = 'inline-block p-4 rounded-t-lg border-b-2 text-[#005a3c] border-[#005a3c] bg-white cursor-pointer transition';
 
-        function buildDynamicTabs(siloType, hasSiblings, siblings, currentParcelId) {
-            const tabsHeader = document.getElementById('tabs-header');
-            const tabsContent = document.getElementById('tabs-content');
-            tabsHeader.innerHTML = ''; tabsContent.innerHTML = '';
+        const panes = document.querySelectorAll('.tab-pane');
+        panes.forEach(p => p.classList.add('hidden'));
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+    }
 
-            // Define which tabs belong to which silo based on the data dictionary
-            const tabConfig = [
-                { id: 'overview', name: 'Overview', universal: true },
-                { id: 'bldg', name: 'Building Details', res: true, condo: true, comm: true },
-                { id: 'land', name: 'Land & Site', universal: true },
-                { id: 'occupancy', name: 'Occupancy & Income', comm: true }, // Comm specific
-                { id: 'amenities', name: 'Amenities', condo: true }, // Condo specific
-                { id: 'history', name: 'Sales History', universal: true },
-                { id: 'associated', name: 'Associated Records', conditional: hasSiblings }
-            ];
-
-            // Filter tabs based on current silo
-            const activeTabs = tabConfig.filter(t => t.universal || t[siloType] || t.conditional);
-
-            activeTabs.forEach((tab, index) => {
-                // Header List Item
-                const li = document.createElement('li');
-                li.className = 'mr-2';
-                const a = document.createElement('a');
-                a.className = `inline-block p-4 rounded-t-lg border-b-2 hover:text-gray-600 hover:border-gray-300 cursor-pointer transition ${index === 0 ? 'text-[#005a3c] border-[#005a3c] bg-white' : 'border-transparent text-gray-500'}`;
-                a.innerText = tab.name;
-                a.onclick = (e) => switchTab(e, tab.id);
-                li.appendChild(a);
-                tabsHeader.appendChild(li);
-
-                // Content Pane
-                const div = document.createElement('div');
-                div.id = `tab-${tab.id}`;
-                div.className = `p-6 bg-white rounded-b-lg shadow-sm border border-t-0 border-gray-200 ${index === 0 ? '' : 'hidden'}`;
-                
-                if (tab.id === 'associated') {
-                    div.innerHTML = renderAssociatedRecordsTab(siblings, currentParcelId);
-                } else {
-                    div.innerHTML = `<p class="text-gray-500 italic">Data fetcher for ${siloType} -> ${tab.name} goes here.</p>
-                                     <p class="text-xs text-gray-400 mt-2">Will pull dynamically from /${siloType}/ S3 directory based on parcel_id.</p>`;
-                }
-                
-                tabsContent.appendChild(div);
-            });
-        }
-
-        function renderAssociatedRecordsTab(siblings, currentParcelId) {
-            let html = '<h3 class="text-lg font-bold mb-4">Other Records sharing this Polygon footprint:</h3><div class="space-y-3">';
-            siblings.forEach(sib => {
-                const isCurrent = sib.parcel_id === currentParcelId;
-                const s = SILOS[sib.silo];
-                html += `
-                    <div class="p-4 border rounded flex justify-between items-center ${isCurrent ? 'bg-gray-50 border-gray-300' : 'bg-white hover:border-gray-400 cursor-pointer'}" 
-                         ${!isCurrent ? `onclick="document.getElementById('search-input').value='${sib.parcel_id}'; document.getElementById('search-input').dispatchEvent(new Event('input'));"` : ''}>
-                        <div>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border mb-1 ${s.color}">${s.name}</span>
-                            <p class="font-medium text-gray-900">${sib.address} (ID: ${sib.parcel_id})</p>
-                        </div>
-                        <div>
-                            ${isCurrent ? '<span class="text-xs font-bold text-gray-400 uppercase">Currently Viewing</span>' : '<button class="text-sm font-medium text-blue-600 hover:text-blue-800">View Record &rarr;</button>'}
-                        </div>
-                    </div>
-                `;
-            });
-            return html + '</div>';
-        }
-
-        function switchTab(event, tabId) {
-            const links = document.getElementById('tabs-header').querySelectorAll('a');
-            links.forEach(l => {
-                l.className = 'inline-block p-4 rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 cursor-pointer transition';
-            });
-            event.target.className = 'inline-block p-4 rounded-t-lg border-b-2 text-[#005a3c] border-[#005a3c] bg-white cursor-pointer transition';
-
-            const panes = document.getElementById('tabs-content').children;
-            Array.from(panes).forEach(p => p.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-        }
-
-        // --- UTILS ---
-        function showLoader(msg) {
-            document.getElementById('status-message').classList.remove('hidden');
-            document.getElementById('table-wrapper').classList.add('hidden');
-            document.getElementById('status-message').innerHTML = `<div class="loader w-10 h-10 border-4 mb-4"></div><p class="text-gray-500 font-medium">${msg}</p>`;
-        }
-        function showMessage(msg) {
-            document.getElementById('status-message').classList.remove('hidden');
-            document.getElementById('table-wrapper').classList.add('hidden');
-            document.getElementById('status-message').innerHTML = `<p class="text-gray-500 font-medium">${msg}</p>`;
-        }
-
-        // Boot
-        init();
-    });
-    </script>
+    init();
+});
+</script>
 </body>
 </html>
