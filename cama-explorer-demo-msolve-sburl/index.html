@@ -173,9 +173,14 @@
         // --- 4. MAP INTEGRATION ---
         async function initMap() {
             return new Promise((resolve, reject) => {
+                if (typeof require === 'undefined') {
+                    reject(new Error("ArcGIS API failed to load."));
+                    return;
+                }
+                
                 require([
                     "esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"
-                ], async (Map, MapView, FeatureLayer) => {
+                ], (Map, MapView, FeatureLayer) => {
                     try {
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
@@ -195,9 +200,7 @@
                             zoom: 13
                         });
 
-                        // Ensure map fully resolves before continuing
-                        await mapView.when();
-
+                        // Bind the click event immediately
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 const graphic = response.results.find(r => r.graphic.layer === parcelLayer)?.graphic;
@@ -210,6 +213,8 @@
                             });
                         });
                         
+                        // Resolve the promise immediately. This prevents the UI from locking up
+                        // while the map fetches basemap tiles in the background.
                         resolve();
                     } catch (error) {
                         reject(error);
