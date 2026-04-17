@@ -151,7 +151,7 @@
                 return data.map(row => ({
                     silo: silo,
                     parcel_id: cleanValue(row.parcel_id),
-                    span: cleanValue(row.parc_span),
+                    span: cleanValue(row.parc_span), // parc_span matches GLIST_SPAN in standardized spatial
                     address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat),
                     city: cleanValue(silo === 'comm' ? row.prop_city : row.city),
                     zip: cleanValue(silo === 'comm' ? row.prop_zip : row.zip_code),
@@ -196,18 +196,28 @@
                 ], (Map, MapView, FeatureLayer) => {
                     try {
                         
-                        // Parcel Label Class (Matches Lincoln Demo)
+                        // Updated Parcel Label Class (Conditional GIS SPAN & GLIST SPAN)
                         const parcelLabelClass = {
                             symbol: {
                                 type: "text",
                                 color: "#fff",
                                 haloColor: "#333333",
                                 haloSize: "1pt",
-                                font: { family: "Arial", size: "8pt", weight: "bold" }
+                                font: { family: "Arial", size: "7pt", weight: "bold" }
                             },
                             labelPlacement: "always-horizontal",
                             labelExpressionInfo: {
-                                expression: `if (IsEmpty($feature.SPAN)) { return "No SPAN"; } else { return $feature.SPAN; }`
+                                expression: `
+                                    var glSpan = $feature.GLIST_SPAN;
+                                    var gisSpan = $feature.SPAN;
+                                    var labelText = "GL SPAN: " + IIf(IsEmpty(glSpan), "None", glSpan);
+                                    
+                                    // Only show GIS SPAN if it is non-null and not just whitespace
+                                    if (!IsEmpty(gisSpan) && Trim(gisSpan) != "") {
+                                        labelText += TextFormatting.NewLine + "GIS SPAN: " + gisSpan;
+                                    }
+                                    return labelText;
+                                `
                             },
                             minScale: 5000
                         };
@@ -215,7 +225,7 @@
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
                             definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
-                            outFields: ["SPAN"],
+                            outFields: ["SPAN", "GLIST_SPAN"], // Ensure both fields are loaded
                             popupEnabled: false,
                             labelingInfo: [parcelLabelClass],
                             renderer: {
@@ -279,7 +289,9 @@
                                 const graphic = response.results.find(r => r.graphic.layer === parcelLayer)?.graphic;
                                 if (graphic) {
                                     highlightFeature(graphic);
-                                    handleMapClick(graphic.attributes.SPAN);
+                                    // Now using GLIST_SPAN as the primary hook (fallback to SPAN if completely null just in case)
+                                    const hookSpan = graphic.attributes.GLIST_SPAN || graphic.attributes.SPAN;
+                                    handleMapClick(hookSpan);
                                 } else {
                                     clearMapHighlight();
                                 }
@@ -310,7 +322,8 @@
         async function zoomToParcelBySpan(spanId) {
             if (!parcelLayer || !spanId) return;
             const query = parcelLayer.createQuery();
-            query.where = `SPAN = '${spanId}'`;
+            // Assuming GLIST_SPAN is what links to the tabular records, we query map by GLIST_SPAN
+            query.where = `GLIST_SPAN = '${spanId}' OR SPAN = '${spanId}'`;
             query.returnGeometry = true;
             try {
                 const { features } = await parcelLayer.queryFeatures(query);
@@ -342,7 +355,7 @@
                 String(r.parcel_id).toLowerCase().includes(term)
             );
             
-            document.getElementById('multi-record-banner').classList.add('hidden'); // Clear map-click banner during text search
+            document.getElementById('multi-record-banner').classList.add('hidden'); 
             renderTable(results);
         }
 
@@ -361,20 +374,18 @@
                 openDetailView(results[0].parcel_id, results[0].silo);
             } else if (results.length > 1) {
                 renderTable(results);
-                // INJECT THE MESSAGE HERE ABOVE THE TABLE, DO NOT HIDE THE TABLE
                 const banner = document.getElementById('multi-record-banner');
                 banner.classList.remove('hidden');
-                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> records sharing this parcel geometry. Please select one from the table below.`;
+                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> records matching Grand List SPAN. Please select one from the table below.`;
             } else {
                 document.getElementById('multi-record-banner').classList.add('hidden');
                 renderTable([]);
-                showMessage("No CAMA records found for this footprint.");
+                showMessage("No CAMA records found for this footprint (GL SPAN).");
             }
         }
 
         // --- 6. UI RENDERING ---
         function renderTable(results) {
-            // Guarantee the status message is hidden and table is visible
             document.getElementById('status-message').classList.add('hidden');
             document.getElementById('table-wrapper').classList.remove('hidden');
             document.getElementById('result-count').textContent = results.length;
@@ -434,7 +445,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-sm text-gray-600 mb-1">CAMA ID: <span class="font-bold text-gray-900">${parcelId}</span></p>
-                        <p class="text-sm text-gray-600 mb-2">SPAN: <span class="font-bold text-gray-900">${recordInfo.span}</span></p>
+                        <p class="text-sm text-gray-600 mb-2">GL SPAN: <span class="font-bold text-gray-900">${recordInfo.span}</span></p>
                         ${siblings.length > 1 ? `<span class="inline-flex bg-white px-2 py-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length} for SPAN</span>` : ''}
                     </div>
                 </div>
