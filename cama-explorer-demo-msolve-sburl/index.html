@@ -39,6 +39,10 @@
                         <p class="text-gray-500 text-center" id="status-text">Loading initial data schemas...</p>
                     </div>
 
+                    <div id="multi-record-banner" class="hidden mb-4 bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-sm">
+                        <p class="text-sm text-blue-700" id="multi-record-text"></p>
+                    </div>
+
                     <div id="table-wrapper" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                         <div class="px-4 py-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                             <h2 class="font-semibold text-gray-800">Search Results</h2>
@@ -324,11 +328,11 @@
             const term = e.target.value.toLowerCase();
             if (term.length < 2) {
                 document.getElementById('table-wrapper').classList.add('hidden');
+                document.getElementById('multi-record-banner').classList.add('hidden');
                 showMessage("Ready. Search or click a map parcel.");
                 return;
             }
             
-            // Explicitly force detail view to hide when a search is initiated
             document.getElementById('detail-view').classList.add('hidden');
             document.getElementById('main-view').classList.remove('hidden');
 
@@ -338,6 +342,7 @@
                 String(r.parcel_id).toLowerCase().includes(term)
             );
             
+            document.getElementById('multi-record-banner').classList.add('hidden'); // Clear map-click banner during text search
             renderTable(results);
         }
 
@@ -347,19 +352,21 @@
             const results = masterIndex.filter(r => r.span === cleanSpan);
             
             document.getElementById('search-input').value = cleanSpan;
-            
-            // FIX: Explicitly close the Detail View when a new parcel is clicked.
-            // This ensures the user is presented with the updated Master Table if there are multiple records.
             document.getElementById('detail-view').classList.add('hidden');
             document.getElementById('main-view').classList.remove('hidden');
             
             if (results.length === 1) {
+                document.getElementById('multi-record-banner').classList.add('hidden');
                 renderTable(results); 
                 openDetailView(results[0].parcel_id, results[0].silo);
             } else if (results.length > 1) {
                 renderTable(results);
-                showMessage(`Found ${results.length} records for this parcel. Please select one below.`);
+                // INJECT THE MESSAGE HERE ABOVE THE TABLE, DO NOT HIDE THE TABLE
+                const banner = document.getElementById('multi-record-banner');
+                banner.classList.remove('hidden');
+                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> records sharing this parcel geometry. Please select one from the table below.`;
             } else {
+                document.getElementById('multi-record-banner').classList.add('hidden');
                 renderTable([]);
                 showMessage("No CAMA records found for this footprint.");
             }
@@ -367,12 +374,18 @@
 
         // --- 6. UI RENDERING ---
         function renderTable(results) {
+            // Guarantee the status message is hidden and table is visible
             document.getElementById('status-message').classList.add('hidden');
             document.getElementById('table-wrapper').classList.remove('hidden');
             document.getElementById('result-count').textContent = results.length;
             
             const tbody = document.getElementById('results-body');
             tbody.innerHTML = '';
+
+            if (results.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No records found.</td></tr>`;
+                return;
+            }
 
             results.forEach(row => {
                 const tr = document.createElement('tr');
@@ -401,10 +414,10 @@
             const recordInfo = masterIndex.find(r => r.parcel_id === parcelId && r.silo === siloType);
             const siblings = masterIndex.filter(r => r.span === recordInfo.span);
             
+            document.getElementById('multi-record-banner').classList.add('hidden');
             document.getElementById('main-view').classList.add('hidden');
             document.getElementById('detail-view').classList.remove('hidden');
 
-            // Force map zoom to match the record being opened
             zoomToParcelBySpan(recordInfo.span);
 
             const s = SILOS[siloType];
