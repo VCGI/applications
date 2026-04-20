@@ -185,7 +185,7 @@
 
         // --- 4. MAP INTEGRATION & CROSS-REFERENCING ---
         async function getPropertyCounts(recordSpan) {
-            if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan] };
+            if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan };
 
             try {
                 const query1 = parcelLayer.createQuery();
@@ -213,11 +213,11 @@
                 const camaRecords = masterIndex.filter(r => relatedGlSpans.includes(r.span) || r.span === gisSpan);
                 const camaCount = camaRecords.length;
 
-                return { glCount: glCount || 1, camaCount, relatedGlSpans };
+                return { glCount: glCount || 1, camaCount, relatedGlSpans, gisSpan };
 
             } catch (e) {
                 console.error("Error fetching property counts:", e);
-                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan] }; 
+                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan }; 
             }
         }
 
@@ -520,7 +520,8 @@
                     </div>
                     <div class="text-right">
                         <p class="text-sm text-gray-600 mb-1">CAMA ID: <span class="font-bold text-gray-900">${parcelId}</span></p>
-                        <p class="text-sm text-gray-600 mb-2">GL SPAN: <span class="font-bold text-gray-900">${recordInfo.span}</span></p>
+                        <p class="text-sm text-gray-600 mb-1">GL SPAN: <span class="font-bold text-gray-900">${recordInfo.span}</span></p>
+                        <p class="text-sm text-gray-600 mb-2">GIS SPAN: <span id="banner-gis-span" class="font-bold text-gray-900"><i class="fa-solid fa-spinner fa-spin text-gray-400"></i></span></p>
                         <div id="record-count-indicator"></div>
                     </div>
                 </div>
@@ -528,6 +529,9 @@
 
             const countsInfo = await getPropertyCounts(recordInfo.span);
             const siblings = masterIndex.filter(r => countsInfo.relatedGlSpans.includes(r.span));
+
+            // Populate GIS SPAN result dynamically
+            document.getElementById('banner-gis-span').innerText = countsInfo.gisSpan || 'N/A';
 
             const countsDiv = document.getElementById('property-counts');
             let countsHtml = '';
