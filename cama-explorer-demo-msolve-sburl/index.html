@@ -183,7 +183,51 @@
             }
         }
 
-        // --- 4. MAP INTEGRATION ---
+        // --- 4. MAP INTEGRATION & CROSS-REFERENCING ---
+        
+        // NEW FEATURE: Analyzes the physical map footprint to count associated tabular records
+        async function getPropertyCounts(recordSpan) {
+            if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan] };
+
+            try {
+                // Step 1: Query the map to find the master physical geometry (GIS SPAN) for this record
+                const query1 = parcelLayer.createQuery();
+                query1.where = `GLIST_SPAN = '${recordSpan}' OR SPAN = '${recordSpan}'`;
+                query1.outFields = ["SPAN", "GLIST_SPAN"];
+                const res1 = await parcelLayer.queryFeatures(query1);
+
+                let gisSpan = recordSpan; 
+                if (res1.features.length > 0) {
+                    gisSpan = res1.features[0].attributes.SPAN;
+                }
+
+                // Step 2: Query the map again to find ALL Grand List features stacked on that GIS SPAN
+                const query2 = parcelLayer.createQuery();
+                query2.where = `SPAN = '${gisSpan}'`;
+                query2.outFields = ["SPAN", "GLIST_SPAN"];
+                const res2 = await parcelLayer.queryFeatures(query2);
+
+                const glCount = res2.features.length;
+                
+                // Step 3: Extract all unique GLIST_SPANs sharing this physical footprint
+                const relatedGlSpans = [...new Set(res2.features.map(f => f.attributes.GLIST_SPAN).filter(Boolean))];
+
+                if (relatedGlSpans.length === 0 && gisSpan) {
+                    relatedGlSpans.push(gisSpan); // Fallback
+                }
+
+                // Step 4: Count the CAMA records associated with those GLIST_SPANs
+                const camaRecords = masterIndex.filter(r => relatedGlSpans.includes(r.span) || r.span === gisSpan);
+                const camaCount = camaRecords.length;
+
+                return { glCount: glCount || 1, camaCount, relatedGlSpans };
+
+            } catch (e) {
+                console.error("Error fetching property counts:", e);
+                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan] }; // Fallback on failure
+            }
+        }
+
         async function initMap() {
             return new Promise((resolve, reject) => {
                 if (typeof require === 'undefined') {
@@ -359,14 +403,23 @@
             renderTable(results);
         }
 
-        function handleMapClick(span) {
+        async function handleMapClick(span) {
             if(!span) return;
             const cleanSpan = cleanValue(span);
-            const results = masterIndex.filter(r => r.span === cleanSpan);
             
             document.getElementById('search-input').value = cleanSpan;
             document.getElementById('detail-view').classList.add('hidden');
             document.getElementById('main-view').classList.remove('hidden');
+
+            // Temporarily hide results and show loader while evaluating the physical footprint
+            showLoader("Cross-referencing map geometry with CAMA data...");
+            
+            // Get physical footprint evaluation
+            const countsInfo = await getPropertyCounts(cleanSpan);
+            const relatedSpans = countsInfo.relatedGlSpans;
+            
+            // Return ALL CAMA records associated with that physical footprint, not just the single clicked GLIST_SPAN
+            const results = masterIndex.filter(r => relatedSpans.includes(r.span));
             
             if (results.length === 1) {
                 document.getElementById('multi-record-banner').classList.add('hidden');
@@ -376,7 +429,7 @@
                 renderTable(results);
                 const banner = document.getElementById('multi-record-banner');
                 banner.classList.remove('hidden');
-                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> records matching Grand List SPAN. Please select one from the table below.`;
+                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> CAMA records across <b>${countsInfo.glCount}</b> Grand List entries for this physical geometry. Please select one from the table below.`;
             } else {
                 document.getElementById('multi-record-banner').classList.add('hidden');
                 renderTable([]);
@@ -421,9 +474,8 @@
             });
         }
 
-        function openDetailView(parcelId, siloType) {
+        async function openDetailView(parcelId, siloType) {
             const recordInfo = masterIndex.find(r => r.parcel_id === parcelId && r.silo === siloType);
-            const siblings = masterIndex.filter(r => r.span === recordInfo.span);
             
             document.getElementById('multi-record-banner').classList.add('hidden');
             document.getElementById('main-view').classList.add('hidden');
@@ -433,6 +485,8 @@
 
             const s = SILOS[siloType];
             const banner = document.getElementById('contextual-banner');
+            
+            // Build the initial banner with loading pulse for the footprint counts
             banner.className = `p-6 rounded-lg shadow-sm border mb-6 relative overflow-hidden ${s.color.replace('text-', 'text-').replace('bg-', 'bg-').replace('100', '50')}`; 
             banner.innerHTML = `
                 <div class="flex justify-between items-start">
@@ -442,14 +496,48 @@
                         </span>
                         <h2 class="text-3xl font-bold text-gray-900 mb-1">${recordInfo.address}</h2>
                         <p class="text-sm font-medium text-gray-700">Owner: ${recordInfo.owner}</p>
+                        <div id="property-counts" class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-xs text-gray-500 animate-pulse"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Calculating footprint data...</span>
+                        </div>
                     </div>
                     <div class="text-right">
                         <p class="text-sm text-gray-600 mb-1">CAMA ID: <span class="font-bold text-gray-900">${parcelId}</span></p>
                         <p class="text-sm text-gray-600 mb-2">GL SPAN: <span class="font-bold text-gray-900">${recordInfo.span}</span></p>
-                        ${siblings.length > 1 ? `<span class="inline-flex bg-white px-2 py-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length} for SPAN</span>` : ''}
+                        <div id="record-count-indicator"></div>
                     </div>
                 </div>
             `;
+
+            // Fetch the physical footprint counts
+            const countsInfo = await getPropertyCounts(recordInfo.span);
+            const siblings = masterIndex.filter(r => countsInfo.relatedGlSpans.includes(r.span));
+
+            // Populate the conditional footprint badges
+            const countsDiv = document.getElementById('property-counts');
+            let countsHtml = '';
+            
+            if (countsInfo.glCount > 1 || countsInfo.camaCount > 1) {
+                countsHtml += `
+                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-white border border-gray-300 shadow-sm text-gray-800" title="Grand List Records sharing this physical footprint">
+                        <i class="fa-solid fa-layer-group text-[#005a3c] mr-1.5"></i> ${countsInfo.glCount} GL Records on Parcel
+                    </span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-white border border-gray-300 shadow-sm text-gray-800" title="CAMA Records sharing this physical footprint">
+                        <i class="fa-solid fa-database text-blue-600 mr-1.5"></i> ${countsInfo.camaCount} CAMA Records Found
+                    </span>
+                `;
+            } else {
+                countsHtml += `
+                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-gray-50 border border-gray-200 text-gray-500">
+                        Single Use Parcel (1 GL / 1 CAMA Record)
+                    </span>
+                `;
+            }
+            countsDiv.innerHTML = countsHtml;
+
+            // Populate the "Viewing 1 of X" indicator top right
+            if (siblings.length > 1) {
+                document.getElementById('record-count-indicator').innerHTML = `<span class="inline-flex bg-white px-2 py-1 mt-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length} for Footprint</span>`;
+            }
 
             buildDynamicTabs(siloType, siblings.length > 1, siblings, parcelId, recordInfo);
         }
@@ -553,7 +641,7 @@
         }
 
         function renderAssociatedRecordsTab(siblings, currentParcelId) {
-            let html = '<h3 class="text-lg font-bold mb-4 text-gray-800">Other Records sharing this footprint:</h3><div class="space-y-3">';
+            let html = '<h3 class="text-lg font-bold mb-4 text-gray-800">Other Records sharing this physical footprint:</h3><div class="space-y-3">';
             siblings.forEach(sib => {
                 const isCurrent = sib.parcel_id === currentParcelId;
                 const s = SILOS[sib.silo];
