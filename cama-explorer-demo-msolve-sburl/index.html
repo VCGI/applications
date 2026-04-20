@@ -184,13 +184,10 @@
         }
 
         // --- 4. MAP INTEGRATION & CROSS-REFERENCING ---
-        
-        // NEW FEATURE: Analyzes the physical map footprint to count associated tabular records
         async function getPropertyCounts(recordSpan) {
             if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan] };
 
             try {
-                // Step 1: Query the map to find the master physical geometry (GIS SPAN) for this record
                 const query1 = parcelLayer.createQuery();
                 query1.where = `GLIST_SPAN = '${recordSpan}' OR SPAN = '${recordSpan}'`;
                 query1.outFields = ["SPAN", "GLIST_SPAN"];
@@ -201,22 +198,18 @@
                     gisSpan = res1.features[0].attributes.SPAN;
                 }
 
-                // Step 2: Query the map again to find ALL Grand List features stacked on that GIS SPAN
                 const query2 = parcelLayer.createQuery();
                 query2.where = `SPAN = '${gisSpan}'`;
                 query2.outFields = ["SPAN", "GLIST_SPAN"];
                 const res2 = await parcelLayer.queryFeatures(query2);
 
                 const glCount = res2.features.length;
-                
-                // Step 3: Extract all unique GLIST_SPANs sharing this physical footprint
                 const relatedGlSpans = [...new Set(res2.features.map(f => f.attributes.GLIST_SPAN).filter(Boolean))];
 
                 if (relatedGlSpans.length === 0 && gisSpan) {
-                    relatedGlSpans.push(gisSpan); // Fallback
+                    relatedGlSpans.push(gisSpan);
                 }
 
-                // Step 4: Count the CAMA records associated with those GLIST_SPANs
                 const camaRecords = masterIndex.filter(r => relatedGlSpans.includes(r.span) || r.span === gisSpan);
                 const camaCount = camaRecords.length;
 
@@ -224,7 +217,7 @@
 
             } catch (e) {
                 console.error("Error fetching property counts:", e);
-                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan] }; // Fallback on failure
+                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan] }; 
             }
         }
 
@@ -240,14 +233,14 @@
                 ], (Map, MapView, FeatureLayer) => {
                     try {
                         
-                        // Updated Parcel Label Class (Conditional GIS SPAN & GLIST SPAN)
+                        // Updated Label Class with 8pt font
                         const parcelLabelClass = {
                             symbol: {
                                 type: "text",
                                 color: "#fff",
                                 haloColor: "#333333",
                                 haloSize: "1pt",
-                                font: { family: "Arial", size: "7pt", weight: "bold" }
+                                font: { family: "Arial", size: "8pt", weight: "bold" }
                             },
                             labelPlacement: "always-horizontal",
                             labelExpressionInfo: {
@@ -256,7 +249,6 @@
                                     var gisSpan = $feature.SPAN;
                                     var labelText = "GL SPAN: " + IIf(IsEmpty(glSpan), "None", glSpan);
                                     
-                                    // Only show GIS SPAN if it is non-null and not just whitespace
                                     if (!IsEmpty(gisSpan) && Trim(gisSpan) != "") {
                                         labelText += TextFormatting.NewLine + "GIS SPAN: " + gisSpan;
                                     }
@@ -266,19 +258,44 @@
                             minScale: 5000
                         };
 
+                        // Renderers for Multi-Record Toggle
+                        const defaultRenderer = {
+                            type: "simple",
+                            symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [211, 211, 211, 0.9], width: "1px" }}
+                        };
+
+                        // Exploit VT mapping standard: Stacked child polygons will have SPAN != GLIST_SPAN
+                        const multiRecordRenderer = {
+                            type: "unique-value",
+                            valueExpression: `
+                                var gis = Trim($feature.SPAN);
+                                var gl = Trim($feature.GLIST_SPAN);
+                                if (!IsEmpty(gis) && !IsEmpty(gl) && gis != gl) {
+                                    return "multi";
+                                }
+                                return "single";
+                            `,
+                            uniqueValueInfos: [
+                                {
+                                    value: "multi",
+                                    symbol: { type: "simple-fill", color: [147, 51, 234, 0.4], outline: { color: [147, 51, 234, 0.8], width: "1.5px" }} // Highlight stacked properties in purple
+                                },
+                                {
+                                    value: "single",
+                                    symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [211, 211, 211, 0.9], width: "1px" }}
+                                }
+                            ]
+                        };
+
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
                             definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
-                            outFields: ["SPAN", "GLIST_SPAN"], // Ensure both fields are loaded
+                            outFields: ["SPAN", "GLIST_SPAN"], 
                             popupEnabled: false,
                             labelingInfo: [parcelLabelClass],
-                            renderer: {
-                                type: "simple",
-                                symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [211, 211, 211, 0.9], width: "1px" }}
-                            }
+                            renderer: defaultRenderer
                         });
 
-                        // E911 Address Points Layer
                         const e911LabelClass = {
                             labelExpressionInfo: { expression: "$feature.PRIMARYADDRESS" },
                             symbol: {
@@ -291,7 +308,7 @@
                         e911Layer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Emergency_ESITE_point_SP_v1/FeatureServer/0",
                             title: "E-911 Site Locations",
-                            visible: false, // Default Off
+                            visible: false, 
                             minScale: 4514,
                             outFields: ["PRIMARYADDRESS"],
                             labelingInfo: [e911LabelClass],
@@ -312,13 +329,17 @@
                             }
                         });
 
-                        // UI Widget for E911 Toggle
+                        // UI Widget for Toggles
                         const toggleContainer = document.createElement("div");
-                        toggleContainer.className = "esri-widget bg-white shadow-md rounded-md p-3 m-2";
+                        toggleContainer.className = "esri-widget bg-white shadow-md rounded-md p-4 m-2 flex flex-col gap-3";
                         toggleContainer.innerHTML = `
-                            <label for="e911-toggle" class="flex items-center cursor-pointer">
+                            <label for="e911-toggle" class="flex items-center cursor-pointer border-b border-gray-100 pb-2">
                                 <input type="checkbox" id="e911-toggle" class="h-4 w-4 rounded border-gray-300 text-[#005a3c] focus:ring-[#005a3c]">
                                 <span class="ml-2 text-sm font-medium text-gray-700">Show E911 Address Points</span>
+                            </label>
+                            <label for="multi-record-toggle" class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="multi-record-toggle" class="h-4 w-4 rounded border-gray-300 text-[#005a3c] focus:ring-[#005a3c]">
+                                <span class="ml-2 text-sm font-medium text-gray-700">Highlight Multi-Record Parcels</span>
                             </label>
                         `;
                         mapView.ui.add(toggleContainer, "top-right");
@@ -327,13 +348,15 @@
                             e911Layer.visible = event.target.checked;
                         });
 
-                        // Map Click Event
+                        toggleContainer.querySelector('#multi-record-toggle').addEventListener('change', (event) => {
+                            parcelLayer.renderer = event.target.checked ? multiRecordRenderer : defaultRenderer;
+                        });
+
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 const graphic = response.results.find(r => r.graphic.layer === parcelLayer)?.graphic;
                                 if (graphic) {
                                     highlightFeature(graphic);
-                                    // Now using GLIST_SPAN as the primary hook (fallback to SPAN if completely null just in case)
                                     const hookSpan = graphic.attributes.GLIST_SPAN || graphic.attributes.SPAN;
                                     handleMapClick(hookSpan);
                                 } else {
@@ -366,7 +389,6 @@
         async function zoomToParcelBySpan(spanId) {
             if (!parcelLayer || !spanId) return;
             const query = parcelLayer.createQuery();
-            // Assuming GLIST_SPAN is what links to the tabular records, we query map by GLIST_SPAN
             query.where = `GLIST_SPAN = '${spanId}' OR SPAN = '${spanId}'`;
             query.returnGeometry = true;
             try {
@@ -411,14 +433,11 @@
             document.getElementById('detail-view').classList.add('hidden');
             document.getElementById('main-view').classList.remove('hidden');
 
-            // Temporarily hide results and show loader while evaluating the physical footprint
             showLoader("Cross-referencing map geometry with CAMA data...");
             
-            // Get physical footprint evaluation
             const countsInfo = await getPropertyCounts(cleanSpan);
             const relatedSpans = countsInfo.relatedGlSpans;
             
-            // Return ALL CAMA records associated with that physical footprint, not just the single clicked GLIST_SPAN
             const results = masterIndex.filter(r => relatedSpans.includes(r.span));
             
             if (results.length === 1) {
@@ -486,7 +505,6 @@
             const s = SILOS[siloType];
             const banner = document.getElementById('contextual-banner');
             
-            // Build the initial banner with loading pulse for the footprint counts
             banner.className = `p-6 rounded-lg shadow-sm border mb-6 relative overflow-hidden ${s.color.replace('text-', 'text-').replace('bg-', 'bg-').replace('100', '50')}`; 
             banner.innerHTML = `
                 <div class="flex justify-between items-start">
@@ -508,11 +526,9 @@
                 </div>
             `;
 
-            // Fetch the physical footprint counts
             const countsInfo = await getPropertyCounts(recordInfo.span);
             const siblings = masterIndex.filter(r => countsInfo.relatedGlSpans.includes(r.span));
 
-            // Populate the conditional footprint badges
             const countsDiv = document.getElementById('property-counts');
             let countsHtml = '';
             
@@ -534,7 +550,6 @@
             }
             countsDiv.innerHTML = countsHtml;
 
-            // Populate the "Viewing 1 of X" indicator top right
             if (siblings.length > 1) {
                 document.getElementById('record-count-indicator').innerHTML = `<span class="inline-flex bg-white px-2 py-1 mt-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length} for Footprint</span>`;
             }
