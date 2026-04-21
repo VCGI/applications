@@ -55,6 +55,7 @@
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Type</th>
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">SPAN</th>
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">CAMA ID</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Owner</th>
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">CAMA Description</th>
                                     </tr>
                                 </thead>
@@ -150,7 +151,7 @@
                 return data.map(row => ({
                     silo: silo,
                     parcel_id: cleanValue(row.parcel_id),
-                    span: cleanValue(row.parc_span), 
+                    span: cleanValue(row.parc_span), // parc_span matches GLIST_SPAN in standardized spatial
                     address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat), // Kept for searching/detail view
                     cama_desc: cleanValue(silo === 'comm' ? '' : row.factorh), // Extracting factorh for res/condo
                     owner: cleanValue(row.owner_name),
@@ -189,7 +190,7 @@
                 const query1 = parcelLayer.createQuery();
                 query1.where = `GLIST_SPAN = '${recordSpan}' OR SPAN = '${recordSpan}'`;
                 query1.outFields = ["SPAN", "GLIST_SPAN"];
-                query1.returnGeometry = true; // Crucial for intersecting E911 points
+                query1.returnGeometry = true; 
                 const res1 = await parcelLayer.queryFeatures(query1);
 
                 let gisSpan = recordSpan; 
@@ -215,7 +216,6 @@
                 const camaRecords = masterIndex.filter(r => relatedGlSpans.includes(r.span) || r.span === gisSpan);
                 const camaCount = camaRecords.length;
 
-                // NEW: Spatial intersection to count E911 Address Points inside the parcel polygon
                 let e911Count = 0;
                 if (parcelGeometry && e911Layer) {
                     const e911Query = e911Layer.createQuery();
@@ -455,7 +455,10 @@
                 renderTable(results);
                 const banner = document.getElementById('multi-record-banner');
                 banner.classList.remove('hidden');
-                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> CAMA records across <b>${countsInfo.glCount}</b> Grand List entries for this physical geometry. Please select one from the table below.`;
+                
+                // Construct the updated banner text with E911 count
+                let e911Text = countsInfo.e911Count > 0 ? ` and <b>${countsInfo.e911Count}</b> E911 Address(es)` : '';
+                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> CAMA records across <b>${countsInfo.glCount}</b> Grand List entries${e911Text} for this physical geometry. Please select one from the table below.`;
             } else {
                 document.getElementById('multi-record-banner').classList.add('hidden');
                 renderTable([]);
@@ -473,7 +476,7 @@
             tbody.innerHTML = '';
 
             if (results.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No records found.</td></tr>`;
                 return;
             }
 
@@ -483,6 +486,7 @@
                 const s = SILOS[row.silo];
                 
                 const descHtml = row.cama_desc ? row.cama_desc : '<span class="text-gray-400 italic">N/A</span>';
+                const ownerHtml = row.owner ? row.owner : '<span class="text-gray-400 italic">Unknown</span>';
 
                 tr.innerHTML = `
                     <td class="px-4 py-3 whitespace-nowrap">
@@ -492,6 +496,7 @@
                     </td>
                     <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.span || 'N/A'}</td>
                     <td class="px-4 py-3 text-sm text-gray-600">${row.parcel_id}</td>
+                    <td class="px-4 py-3 text-sm text-gray-800">${ownerHtml}</td>
                     <td class="px-4 py-3 text-sm text-gray-800">${descHtml}</td>
                 `;
                 tr.onclick = () => {
@@ -560,7 +565,6 @@
                 `;
             }
             
-            // Render the E911 spatial intersect count badge
             if (countsInfo.e911Count > 0) {
                 countsHtml += `
                     <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-white border border-red-200 shadow-sm text-gray-800" title="E911 Points inside this physical footprint">
