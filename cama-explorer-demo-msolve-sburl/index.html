@@ -55,8 +55,7 @@
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Type</th>
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">SPAN</th>
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">CAMA ID</th>
-                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Address</th>
-                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">City</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">CAMA Description</th>
                                     </tr>
                                 </thead>
                                 <tbody id="results-body" class="bg-white divide-y divide-gray-100"></tbody>
@@ -151,10 +150,9 @@
                 return data.map(row => ({
                     silo: silo,
                     parcel_id: cleanValue(row.parcel_id),
-                    span: cleanValue(row.parc_span), // parc_span matches GLIST_SPAN in standardized spatial
-                    address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat),
-                    city: cleanValue(silo === 'comm' ? row.prop_city : row.city),
-                    zip: cleanValue(silo === 'comm' ? row.prop_zip : row.zip_code),
+                    span: cleanValue(row.parc_span), 
+                    address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat), // Kept for searching/detail view
+                    cama_desc: cleanValue(silo === 'comm' ? '' : row.factorh), // Extracting factorh for res/condo
                     owner: cleanValue(row.owner_name),
                     raw: row 
                 }));
@@ -185,17 +183,21 @@
 
         // --- 4. MAP INTEGRATION & CROSS-REFERENCING ---
         async function getPropertyCounts(recordSpan) {
-            if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan };
+            if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan, e911Count: 0 };
 
             try {
                 const query1 = parcelLayer.createQuery();
                 query1.where = `GLIST_SPAN = '${recordSpan}' OR SPAN = '${recordSpan}'`;
                 query1.outFields = ["SPAN", "GLIST_SPAN"];
+                query1.returnGeometry = true; // Crucial for intersecting E911 points
                 const res1 = await parcelLayer.queryFeatures(query1);
 
                 let gisSpan = recordSpan; 
+                let parcelGeometry = null;
+
                 if (res1.features.length > 0) {
                     gisSpan = res1.features[0].attributes.SPAN;
+                    parcelGeometry = res1.features[0].geometry;
                 }
 
                 const query2 = parcelLayer.createQuery();
@@ -213,11 +215,20 @@
                 const camaRecords = masterIndex.filter(r => relatedGlSpans.includes(r.span) || r.span === gisSpan);
                 const camaCount = camaRecords.length;
 
-                return { glCount: glCount || 1, camaCount, relatedGlSpans, gisSpan };
+                // NEW: Spatial intersection to count E911 Address Points inside the parcel polygon
+                let e911Count = 0;
+                if (parcelGeometry && e911Layer) {
+                    const e911Query = e911Layer.createQuery();
+                    e911Query.geometry = parcelGeometry;
+                    e911Query.spatialRelationship = "intersects";
+                    e911Count = await e911Layer.queryFeatureCount(e911Query);
+                }
+
+                return { glCount: glCount || 1, camaCount, relatedGlSpans, gisSpan, e911Count };
 
             } catch (e) {
                 console.error("Error fetching property counts:", e);
-                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan }; 
+                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan, e911Count: 0 }; 
             }
         }
 
@@ -233,7 +244,6 @@
                 ], (Map, MapView, FeatureLayer) => {
                     try {
                         
-                        // Updated Label Class with 8pt font
                         const parcelLabelClass = {
                             symbol: {
                                 type: "text",
@@ -258,13 +268,11 @@
                             minScale: 5000
                         };
 
-                        // Renderers for Multi-Record Toggle
                         const defaultRenderer = {
                             type: "simple",
                             symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [211, 211, 211, 0.9], width: "1px" }}
                         };
 
-                        // Exploit VT mapping standard: Stacked child polygons will have SPAN != GLIST_SPAN
                         const multiRecordRenderer = {
                             type: "unique-value",
                             valueExpression: `
@@ -278,7 +286,7 @@
                             uniqueValueInfos: [
                                 {
                                     value: "multi",
-                                    symbol: { type: "simple-fill", color: [147, 51, 234, 0.4], outline: { color: [147, 51, 234, 0.8], width: "1.5px" }} // Highlight stacked properties in purple
+                                    symbol: { type: "simple-fill", color: [147, 51, 234, 0.4], outline: { color: [147, 51, 234, 0.8], width: "1.5px" }} 
                                 },
                                 {
                                     value: "single",
@@ -329,7 +337,6 @@
                             }
                         });
 
-                        // UI Widget for Toggles
                         const toggleContainer = document.createElement("div");
                         toggleContainer.className = "esri-widget bg-white shadow-md rounded-md p-4 m-2 flex flex-col gap-3";
                         toggleContainer.innerHTML = `
@@ -466,7 +473,7 @@
             tbody.innerHTML = '';
 
             if (results.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No records found.</td></tr>`;
                 return;
             }
 
@@ -474,6 +481,8 @@
                 const tr = document.createElement('tr');
                 tr.className = 'row-hover transition';
                 const s = SILOS[row.silo];
+                
+                const descHtml = row.cama_desc ? row.cama_desc : '<span class="text-gray-400 italic">N/A</span>';
 
                 tr.innerHTML = `
                     <td class="px-4 py-3 whitespace-nowrap">
@@ -483,8 +492,7 @@
                     </td>
                     <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.span || 'N/A'}</td>
                     <td class="px-4 py-3 text-sm text-gray-600">${row.parcel_id}</td>
-                    <td class="px-4 py-3 text-sm text-gray-800">${row.address}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600">${row.city}</td>
+                    <td class="px-4 py-3 text-sm text-gray-800">${descHtml}</td>
                 `;
                 tr.onclick = () => {
                     openDetailView(row.parcel_id, row.silo);
@@ -530,7 +538,6 @@
             const countsInfo = await getPropertyCounts(recordInfo.span);
             const siblings = masterIndex.filter(r => countsInfo.relatedGlSpans.includes(r.span));
 
-            // Populate GIS SPAN result dynamically
             document.getElementById('banner-gis-span').innerText = countsInfo.gisSpan || 'N/A';
 
             const countsDiv = document.getElementById('property-counts');
@@ -552,6 +559,16 @@
                     </span>
                 `;
             }
+            
+            // Render the E911 spatial intersect count badge
+            if (countsInfo.e911Count > 0) {
+                countsHtml += `
+                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-white border border-red-200 shadow-sm text-gray-800" title="E911 Points inside this physical footprint">
+                        <i class="fa-solid fa-location-dot text-red-600 mr-1.5"></i> ${countsInfo.e911Count} E911 Address(es)
+                    </span>
+                `;
+            }
+            
             countsDiv.innerHTML = countsHtml;
 
             if (siblings.length > 1) {
@@ -664,12 +681,16 @@
             siblings.forEach(sib => {
                 const isCurrent = sib.parcel_id === currentParcelId;
                 const s = SILOS[sib.silo];
+                
+                const descHtml = sib.cama_desc ? `<p class="text-sm text-gray-600">${sib.cama_desc}</p>` : '';
+                
                 html += `
                     <div class="p-4 border rounded-lg flex justify-between items-center transition ${isCurrent ? 'bg-gray-50 border-gray-300' : 'bg-white hover:border-[#005a3c] shadow-sm cursor-pointer'}" 
                          ${!isCurrent ? `onclick="document.getElementById('search-input').value='${sib.parcel_id}'; document.getElementById('search-input').dispatchEvent(new Event('input'));"` : ''}>
                         <div>
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border mb-1 ${s.color}">${s.name}</span>
-                            <p class="font-medium text-gray-900">${sib.address} <span class="text-gray-500 text-sm ml-1">(ID: ${sib.parcel_id})</span></p>
+                            <p class="font-medium text-gray-900">ID: ${sib.parcel_id}</p>
+                            ${descHtml}
                         </div>
                         <div>
                             ${isCurrent ? '<span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Currently Viewing</span>' : '<button class="text-sm font-medium text-[#005a3c] hover:text-[#003b27]"><i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> View Record</button>'}
