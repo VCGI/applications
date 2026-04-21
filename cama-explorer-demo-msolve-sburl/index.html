@@ -94,19 +94,29 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         
-        // --- 1. CONFIGURATION & DATA DICTIONARIES ---
+        // ============================================================================
+        // 1. CONFIGURATION & DATA DICTIONARIES
+        // S3 Bucket containing the extracted JSON tabular data from NEMRC Microsolve
+        // ============================================================================
         const S3_BASE = 'https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample-microsolve-sburl';
+        
+        // masterIndex acts as the normalized, federated "Hub" containing basic identifying 
+        // information for all records across all property types.
         let masterIndex = []; 
         let dataCache = {}; 
         let mapView, parcelLayer, inactiveParcelLayer, e911Layer, highlightHandle;
 
+        // Styling definitions for the UI based on State of VT CMS palettes
         const SILOS = {
             res: { name: 'Residential', color: 'bg-blue-100 text-blue-900 border-blue-200', icon: 'fa-house' },
             comm: { name: 'Commercial', color: 'bg-orange-100 text-orange-900 border-orange-200', icon: 'fa-city' },
             condo: { name: 'Condominium', color: 'bg-purple-100 text-purple-900 border-purple-200', icon: 'fa-building' }
         };
 
-        // --- 2. INITIALIZATION ---
+        // ============================================================================
+        // 2. INITIALIZATION
+        // Bootstraps the app: Loads tabular master index -> Initializes Map -> Binds UI events
+        // ============================================================================
         async function init() {
             try {
                 showLoader("Downloading Master Index...");
@@ -129,7 +139,13 @@
             }
         }
 
-        // --- 3. DATA PIPELINE (NORMALIZATION) ---
+        // ============================================================================
+        // 3. DATA PIPELINE (NORMALIZATION)
+        // Retrieves the three disconnected EXP_MAIN files from S3 and forces them 
+        // into a single uniform schema (masterIndex) to allow global searching.
+        // ============================================================================
+        
+        // Helper to strip surrounding quotes and trim whitespace from raw CSV/JSON imports
         function cleanValue(val) {
             if (val === null || val === undefined) return '';
             const str = String(val).trim();
@@ -140,22 +156,24 @@
         }
 
         async function loadMasterIndex() {
+            // Concurrent fetch of the top-level hubs
             const [resData, commData, condoData] = await Promise.all([
                 fetchJson(`${S3_BASE}/res/EXP_MAIN_RES.json`),
                 fetchJson(`${S3_BASE}/comm/EXP_MAIN_COMM.json`),
                 fetchJson(`${S3_BASE}/condo/EXP_MAIN_CONDO.json`)
             ]);
 
+            // Maps varying field names (e.g., prop_addr vs prop_locat) to a standard object
             const normalize = (data, silo) => {
                 if(!data) return [];
                 return data.map(row => ({
                     silo: silo,
                     parcel_id: cleanValue(row.parcel_id),
-                    span: cleanValue(row.parc_span), 
+                    span: cleanValue(row.parc_span), // CAMA parc_span corresponds to GLIST_SPAN in geometry
                     address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat), 
-                    cama_desc: cleanValue(silo === 'comm' ? '' : row.factorh), 
+                    cama_desc: cleanValue(silo === 'comm' ? '' : row.factorh), // Description logic
                     owner: cleanValue(row.owner_name),
-                    raw: row 
+                    raw: row // Retain entire original record for the Overview Tab
                 }));
             };
 
@@ -166,6 +184,7 @@
             ];
         }
 
+        // Standardized fetcher with basic in-memory caching to reduce S3 calls
         async function fetchJson(url) {
             if (dataCache[url]) return dataCache[url]; 
             try {
@@ -182,11 +201,19 @@
             }
         }
 
-        // --- 4. MAP INTEGRATION & CROSS-REFERENCING ---
+        // ============================================================================
+        // 4. MAP INTEGRATION & CROSS-REFERENCING
+        // Handles ArcGIS map instantiation and spatial queries (Intersections)
+        // ============================================================================
+        
+        // This function dynamically explores the relationships between the clicked parcel, 
+        // overlapping (stacked) polygons, and independent E911 point data.
         async function getPropertyCounts(recordSpan) {
+            // Default safe return
             if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan, e911Count: 0 };
 
             try {
+                // Step A: Find the parent GIS SPAN for the clicked GLIST_SPAN
                 const query1 = parcelLayer.createQuery();
                 query1.where = `GLIST_SPAN = '${recordSpan}' OR SPAN = '${recordSpan}'`;
                 query1.outFields = ["SPAN", "GLIST_SPAN"];
@@ -198,24 +225,28 @@
 
                 if (res1.features.length > 0) {
                     gisSpan = res1.features[0].attributes.SPAN;
-                    parcelGeometry = res1.features[0].geometry;
+                    parcelGeometry = res1.features[0].geometry; // Needed for E911 spatial intersect
                 }
 
+                // Step B: Query ALL polygons stacked on that physical GIS footprint
                 const query2 = parcelLayer.createQuery();
                 query2.where = `SPAN = '${gisSpan}'`;
                 query2.outFields = ["SPAN", "GLIST_SPAN"];
                 const res2 = await parcelLayer.queryFeatures(query2);
 
-                const glCount = res2.features.length;
+                const glCount = res2.features.length; // Number of Grand List records on footprint
                 const relatedGlSpans = [...new Set(res2.features.map(f => f.attributes.GLIST_SPAN).filter(Boolean))];
 
                 if (relatedGlSpans.length === 0 && gisSpan) {
                     relatedGlSpans.push(gisSpan);
                 }
 
+                // Step C: Count how many tabular CAMA records link to those identified GL SPANs
                 const camaRecords = masterIndex.filter(r => relatedGlSpans.includes(r.span) || r.span === gisSpan);
                 const camaCount = camaRecords.length;
 
+                // Step D: Spatial Intersect - Count E911 points geographically inside the polygon
+                // This highlights the disconnect between address points and tabular tax records.
                 let e911Count = 0;
                 if (parcelGeometry && e911Layer) {
                     const e911Query = e911Layer.createQuery();
@@ -244,6 +275,7 @@
                 ], (Map, MapView, FeatureLayer) => {
                     try {
                         
+                        // Arcade expression to conditionally display GL SPAN and GIS SPAN stacked
                         const parcelLabelClass = {
                             symbol: {
                                 type: "text",
@@ -273,6 +305,7 @@
                             symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [211, 211, 211, 0.9], width: "1px" }}
                         };
 
+                        // Exploit VT mapping standard: Stacked polygons (Condos) have SPAN != GLIST_SPAN
                         const multiRecordRenderer = {
                             type: "unique-value",
                             valueExpression: `
@@ -295,7 +328,7 @@
                             ]
                         };
 
-                        // Active Parcels Layer
+                        // Primary Active Parcels (Source: VT Open Geodata Portal)
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
                             definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
@@ -305,12 +338,12 @@
                             renderer: defaultRenderer
                         });
 
-                        // Inactive Parcels Layer
+                        // Inactive Parcels Layer (forward-diagonal fill)
                         const inactiveRenderer = {
                             type: "simple",
                             symbol: { 
                                 type: "simple-fill", 
-                                style: "diagonal-cross",
+                                style: "forward-diagonal", // 45 degree right diagonal fill
                                 color: [211, 211, 211, 0.5], 
                                 outline: { color: [211, 211, 211, 0.9], width: "1px" }
                             }
@@ -319,7 +352,7 @@
                         inactiveParcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/ArcGIS/rest/services/FS_VCGI_VTPARCELS_WM_NOCACHE_v2/FeatureServer/0",
                             definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
-                            visible: false, // Default Off
+                            visible: false, // Hidden by default
                             popupEnabled: false,
                             renderer: inactiveRenderer
                         });
@@ -348,7 +381,7 @@
 
                         mapView = new MapView({
                             container: "map-view",
-                            // Added inactive parcels underneath the active parcels layer
+                            // Render order: Inactive (Bottom), Active Parcels, E911 (Top)
                             map: new Map({ basemap: "hybrid", layers: [inactiveParcelLayer, parcelLayer, e911Layer] }),
                             center: [-73.17, 44.46],
                             zoom: 13,
@@ -358,6 +391,7 @@
                             }
                         });
 
+                        // UI Widget container for toggling map layers
                         const toggleContainer = document.createElement("div");
                         toggleContainer.className = "esri-widget bg-white shadow-md rounded-md p-4 m-2 flex flex-col gap-3";
                         toggleContainer.innerHTML = `
@@ -376,6 +410,7 @@
                         `;
                         mapView.ui.add(toggleContainer, "top-right");
 
+                        // Bind widget event listeners
                         toggleContainer.querySelector('#inactive-toggle').addEventListener('change', (event) => {
                             inactiveParcelLayer.visible = event.target.checked;
                         });
@@ -388,11 +423,13 @@
                             parcelLayer.renderer = event.target.checked ? multiRecordRenderer : defaultRenderer;
                         });
 
+                        // Link map clicks to the frontend tabular display
                         mapView.on("click", (event) => {
                             mapView.hitTest(event).then((response) => {
                                 const graphic = response.results.find(r => r.graphic.layer === parcelLayer)?.graphic;
                                 if (graphic) {
                                     highlightFeature(graphic);
+                                    // Use GLIST_SPAN if available, fallback to SPAN
                                     const hookSpan = graphic.attributes.GLIST_SPAN || graphic.attributes.SPAN;
                                     handleMapClick(hookSpan);
                                 } else {
@@ -438,7 +475,10 @@
             }
         }
 
-        // --- 5. SEARCH & ROUTING LOGIC ---
+        // ============================================================================
+        // 5. SEARCH & ROUTING LOGIC
+        // Directs user interactions to either the disambiguation table or detail view
+        // ============================================================================
         function handleSearch(e) {
             const term = e.target.value.toLowerCase();
             if (term.length < 2) {
@@ -471,9 +511,11 @@
 
             showLoader("Cross-referencing map geometry with CAMA data...");
             
+            // Get spatial intelligence about the clicked footprint
             const countsInfo = await getPropertyCounts(cleanSpan);
             const relatedSpans = countsInfo.relatedGlSpans;
             
+            // Retrieve all tabular records tied to this physical space
             const results = masterIndex.filter(r => relatedSpans.includes(r.span));
             
             if (results.length === 1) {
@@ -494,7 +536,10 @@
             }
         }
 
-        // --- 6. UI RENDERING ---
+        // ============================================================================
+        // 6. UI RENDERING 
+        // Generates dynamic HTML components, contextual banners, and sub-tables
+        // ============================================================================
         function renderTable(results) {
             document.getElementById('status-message').classList.add('hidden');
             document.getElementById('table-wrapper').classList.remove('hidden');
@@ -534,6 +579,7 @@
             });
         }
 
+        // Constructs the deep-dive detail view for a specific CAMA record
         async function openDetailView(parcelId, siloType) {
             const recordInfo = masterIndex.find(r => r.parcel_id === parcelId && r.silo === siloType);
             
@@ -546,6 +592,7 @@
             const s = SILOS[siloType];
             const banner = document.getElementById('contextual-banner');
             
+            // Build the banner structure with a loading pulse while geometry is queried
             banner.className = `p-6 rounded-lg shadow-sm border mb-6 relative overflow-hidden ${s.color.replace('text-', 'text-').replace('bg-', 'bg-').replace('100', '50')}`; 
             banner.innerHTML = `
                 <div class="flex justify-between items-start">
@@ -568,6 +615,7 @@
                 </div>
             `;
 
+            // Await intersection counts and populate the dynamic badges
             const countsInfo = await getPropertyCounts(recordInfo.span);
             const siblings = masterIndex.filter(r => countsInfo.relatedGlSpans.includes(r.span));
 
@@ -603,6 +651,7 @@
             
             countsDiv.innerHTML = countsHtml;
 
+            // Track location inside the parent geometry stack
             if (siblings.length > 1) {
                 document.getElementById('record-count-indicator').innerHTML = `<span class="inline-flex bg-white px-2 py-1 mt-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length} for Footprint</span>`;
             }
@@ -610,6 +659,7 @@
             buildDynamicTabs(siloType, siblings.length > 1, siblings, parcelId, recordInfo);
         }
 
+        // Dynamically creates navigation tabs based on the property silo's schema
         function buildDynamicTabs(siloType, hasSiblings, siblings, currentParcelId, recordInfo) {
             const tabsHeader = document.getElementById('tabs-header');
             const tabsContent = document.getElementById('tabs-content');
@@ -647,13 +697,14 @@
                     div.innerHTML = createSimpleTable([recordInfo.raw]); 
                 } else {
                     div.innerHTML = `<div class="flex flex-col items-center justify-center py-10"><div class="loader w-8 h-8 border-4 mb-2"></div><p class="text-gray-500">Fetching records...</p></div>`;
-                    fetchAndRenderTabContent(siloType, currentParcelId, tab.id, div);
+                    fetchAndRenderTabContent(siloType, currentParcelId, tab.id, div); // Fetch the sub-table data on demand
                 }
                 
                 tabsContent.appendChild(div);
             });
         }
 
+        // Asynchronously fetches child tables (e.g. EXP_SECTION) based on active tab and silo type
         async function fetchAndRenderTabContent(siloType, parcelId, tabId, containerDiv) {
             let fileName = "";
             
@@ -685,6 +736,7 @@
             }
         }
 
+        // Utility to convert raw JSON arrays into generic HTML tables
         function createSimpleTable(records) {
             if (!records || records.length === 0) return '';
             const headers = Object.keys(records[0]);
@@ -708,6 +760,7 @@
             return table + '</tbody></table></div>';
         }
 
+        // Generates the lateral navigation UI to move between CAMA records sharing one footprint
         function renderAssociatedRecordsTab(siblings, currentParcelId) {
             let html = '<h3 class="text-lg font-bold mb-4 text-gray-800">Other Records sharing this physical footprint:</h3><div class="space-y-3">';
             siblings.forEach(sib => {
@@ -733,6 +786,7 @@
             return html + '</div>';
         }
 
+        // UI Event: Toggle active display tab
         function switchTab(event, tabId) {
             const links = document.getElementById('tabs-header').querySelectorAll('a');
             links.forEach(l => {
