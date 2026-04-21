@@ -98,7 +98,7 @@
         const S3_BASE = 'https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample-microsolve-sburl';
         let masterIndex = []; 
         let dataCache = {}; 
-        let mapView, parcelLayer, e911Layer, highlightHandle;
+        let mapView, parcelLayer, inactiveParcelLayer, e911Layer, highlightHandle;
 
         const SILOS = {
             res: { name: 'Residential', color: 'bg-blue-100 text-blue-900 border-blue-200', icon: 'fa-house' },
@@ -151,9 +151,9 @@
                 return data.map(row => ({
                     silo: silo,
                     parcel_id: cleanValue(row.parcel_id),
-                    span: cleanValue(row.parc_span), // parc_span matches GLIST_SPAN in standardized spatial
-                    address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat), // Kept for searching/detail view
-                    cama_desc: cleanValue(silo === 'comm' ? '' : row.factorh), // Extracting factorh for res/condo
+                    span: cleanValue(row.parc_span), 
+                    address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat), 
+                    cama_desc: cleanValue(silo === 'comm' ? '' : row.factorh), 
                     owner: cleanValue(row.owner_name),
                     raw: row 
                 }));
@@ -295,6 +295,7 @@
                             ]
                         };
 
+                        // Active Parcels Layer
                         parcelLayer = new FeatureLayer({
                             url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
                             definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
@@ -302,6 +303,25 @@
                             popupEnabled: false,
                             labelingInfo: [parcelLabelClass],
                             renderer: defaultRenderer
+                        });
+
+                        // Inactive Parcels Layer
+                        const inactiveRenderer = {
+                            type: "simple",
+                            symbol: { 
+                                type: "simple-fill", 
+                                style: "diagonal-cross",
+                                color: [211, 211, 211, 0.5], 
+                                outline: { color: [211, 211, 211, 0.9], width: "1px" }
+                            }
+                        };
+
+                        inactiveParcelLayer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/ArcGIS/rest/services/FS_VCGI_VTPARCELS_WM_NOCACHE_v2/FeatureServer/0",
+                            definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
+                            visible: false, // Default Off
+                            popupEnabled: false,
+                            renderer: inactiveRenderer
                         });
 
                         const e911LabelClass = {
@@ -328,7 +348,8 @@
 
                         mapView = new MapView({
                             container: "map-view",
-                            map: new Map({ basemap: "hybrid", layers: [parcelLayer, e911Layer] }),
+                            // Added inactive parcels underneath the active parcels layer
+                            map: new Map({ basemap: "hybrid", layers: [inactiveParcelLayer, parcelLayer, e911Layer] }),
                             center: [-73.17, 44.46],
                             zoom: 13,
                             highlightOptions: {
@@ -340,6 +361,10 @@
                         const toggleContainer = document.createElement("div");
                         toggleContainer.className = "esri-widget bg-white shadow-md rounded-md p-4 m-2 flex flex-col gap-3";
                         toggleContainer.innerHTML = `
+                            <label for="inactive-toggle" class="flex items-center cursor-pointer border-b border-gray-100 pb-2">
+                                <input type="checkbox" id="inactive-toggle" class="h-4 w-4 rounded border-gray-300 text-[#005a3c] focus:ring-[#005a3c]">
+                                <span class="ml-2 text-sm font-medium text-gray-700">Show Inactive Parcels</span>
+                            </label>
                             <label for="e911-toggle" class="flex items-center cursor-pointer border-b border-gray-100 pb-2">
                                 <input type="checkbox" id="e911-toggle" class="h-4 w-4 rounded border-gray-300 text-[#005a3c] focus:ring-[#005a3c]">
                                 <span class="ml-2 text-sm font-medium text-gray-700">Show E911 Address Points</span>
@@ -350,6 +375,10 @@
                             </label>
                         `;
                         mapView.ui.add(toggleContainer, "top-right");
+
+                        toggleContainer.querySelector('#inactive-toggle').addEventListener('change', (event) => {
+                            inactiveParcelLayer.visible = event.target.checked;
+                        });
 
                         toggleContainer.querySelector('#e911-toggle').addEventListener('change', (event) => {
                             e911Layer.visible = event.target.checked;
@@ -456,7 +485,6 @@
                 const banner = document.getElementById('multi-record-banner');
                 banner.classList.remove('hidden');
                 
-                // Construct the updated banner text with E911 count
                 let e911Text = countsInfo.e911Count > 0 ? ` and <b>${countsInfo.e911Count}</b> E911 Address(es)` : '';
                 document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> CAMA records across <b>${countsInfo.glCount}</b> Grand List entries${e911Text} for this physical geometry. Please select one from the table below.`;
             } else {
