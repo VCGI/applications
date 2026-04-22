@@ -75,7 +75,7 @@ The table of property details below is informed by the NEMRC Microsolve CAMA sam
 | Record         | Page                           |                                                                                                                        |               | Source     |
 | Record         | Last Update                    |                                                                                                                        |               | Source     |
 
-## Interoperability
+## Interoperability and Relation With Parcel Geometry
 
 VCGI has attempted to create basic interoperability between sample CAMA data extracts from NEMRC's Microsolve CAMA platform, standardized parcel polygons defined by the Vermont parcel data standard, and related GIS data such as E911 address points. This work attempts to inform how to improve the availability of existing public information as associated with its property location. A CAMA extract for South Burlington, VT is used as it contains many complex property types with multiple tabular records per single parcel geometry such as condominiums and apartments.
 
