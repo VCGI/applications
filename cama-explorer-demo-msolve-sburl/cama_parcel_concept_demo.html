@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAMA & Parcel Definition Concept Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; overflow: hidden; }
+        #map-view { height: 100vh; width: 100%; }
+        #map-view:focus, .esri-view-surface--is-focused { outline: none !important; }
+        .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
+        .table-container::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .loader { border-top-color: #005a3c; animation: spin 1s linear infinite; border-right-color: transparent; border-radius: 50%; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .row-hover:hover { background-color: #f0fdf4; cursor: pointer; }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="flex h-screen">
+        <div class="w-3/5 h-screen overflow-y-auto bg-gray-50 relative shadow-xl z-10" id="left-pane">
+            <div class="p-6 lg:p-8">
+                <header class="mb-6">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">CAMA & Parcel Concept Demo</h1>
+                    <p class="text-gray-600 text-sm">Exploring data interoperability and the transition to a legal-unit parcel definition.</p>
+                </header>
+
+                <div id="main-view">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Search by Address, SPAN, or Local ID</label>
+                        <input type="text" id="search-input" placeholder="e.g., 'Main St', '05404', or '123-456'" class="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#005a3c] focus:border-[#005a3c] outline-none transition-all">
+                    </div>
+
+                    <div id="status-message" class="bg-white p-8 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center justify-center min-h-[300px]">
+                        <p class="text-gray-500 text-center" id="status-text">Loading initial data schemas...</p>
+                    </div>
+
+                    <div id="multi-record-banner" class="hidden mb-4 bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-sm">
+                        <p class="text-sm text-blue-700" id="multi-record-text"></p>
+                    </div>
+
+                    <div id="table-wrapper" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <h2 class="font-semibold text-gray-800">Search Results</h2>
+                            <span id="result-count" class="text-xs font-bold px-2 py-1 bg-gray-200 rounded-full text-gray-700">0</span>
+                        </div>
+                        <div class="overflow-x-auto table-container">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-white">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Type</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">State SPAN</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Local ID</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Owner</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">CAMA Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-body" class="bg-white divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="detail-view" class="hidden">
+                    <button id="back-btn" class="mb-4 inline-flex items-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded hover:bg-gray-700 transition">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Back to Results
+                    </button>
+                    
+                    <div id="contextual-banner"></div>
+
+                    <div class="mb-4 border-b border-gray-200">
+                        <ul id="tabs-header" class="flex flex-wrap -mb-px text-sm font-medium text-center"></ul>
+                    </div>
+
+                    <div id="tabs-content" class="min-h-[400px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-2/5 h-screen bg-gray-200 relative">
+            <div id="map-view"></div>
+        </div>
+    </div>
+
+    <script src="https://js.arcgis.com/4.29/"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const S3_BASE = 'https://vtopendata-prd.s3.us-east-2.amazonaws.com/_Other/CAMA/sample-microsolve-sburl';
+        let masterIndex = []; 
+        let dataCache = {}; 
+        let mapView, parcelLayer, inactiveParcelLayer, e911Layer, highlightHandle;
+
+        const SILOS = {
+            res: { name: 'Residential', color: 'bg-blue-100 text-blue-900 border-blue-200', icon: 'fa-house' },
+            comm: { name: 'Commercial', color: 'bg-orange-100 text-orange-900 border-orange-200', icon: 'fa-city' },
+            condo: { name: 'Condominium', color: 'bg-purple-100 text-purple-900 border-purple-200', icon: 'fa-building' }
+        };
+
+        async function init() {
+            try {
+                showLoader("Downloading Master Index...");
+                await loadMasterIndex();
+                showLoader("Initializing Map Engine...");
+                await initMap();
+                
+                document.getElementById('search-input').addEventListener('input', handleSearch);
+                document.getElementById('back-btn').addEventListener('click', () => {
+                    document.getElementById('detail-view').classList.add('hidden');
+                    document.getElementById('main-view').classList.remove('hidden');
+                    clearMapHighlight();
+                });
+                
+                showMessage("Ready. Search or click a map parcel.");
+            } catch (error) {
+                console.error("Initialization failed:", error);
+                showError("Application failed to initialize. Check the browser console for details.");
+            }
+        }
+
+        function cleanValue(val) {
+            if (val === null || val === undefined) return '';
+            const str = String(val).trim();
+            if (str.startsWith('"') && str.endsWith('"')) return str.substring(1, str.length - 1);
+            return str;
+        }
+
+        async function loadMasterIndex() {
+            const [resData, commData, condoData] = await Promise.all([
+                fetchJson(`${S3_BASE}/res/EXP_MAIN_RES.json`),
+                fetchJson(`${S3_BASE}/comm/EXP_MAIN_COMM.json`),
+                fetchJson(`${S3_BASE}/condo/EXP_MAIN_CONDO.json`)
+            ]);
+
+            const normalize = (data, silo) => {
+                if(!data) return [];
+                return data.map(row => ({
+                    silo: silo,
+                    parcel_id: cleanValue(row.parcel_id),
+                    span: cleanValue(row.parc_span), 
+                    address: cleanValue(silo === 'comm' ? row.prop_addr : row.prop_locat), 
+                    cama_desc: cleanValue(silo === 'comm' ? '' : row.factorh), 
+                    owner: cleanValue(row.owner_name),
+                    raw: row 
+                }));
+            };
+
+            masterIndex = [...normalize(resData, 'res'), ...normalize(commData, 'comm'), ...normalize(condoData, 'condo')];
+        }
+
+        async function fetchJson(url) {
+            if (dataCache[url]) return dataCache[url]; 
+            try {
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    dataCache[url] = data; 
+                    return data;
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function getPropertyCounts(recordSpan) {
+            if (!parcelLayer || !recordSpan) return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan, e911Count: 0 };
+            try {
+                const query1 = parcelLayer.createQuery();
+                query1.where = `GLIST_SPAN = '${recordSpan}' OR SPAN = '${recordSpan}'`;
+                query1.outFields = ["SPAN", "GLIST_SPAN"];
+                query1.returnGeometry = true; 
+                const res1 = await parcelLayer.queryFeatures(query1);
+
+                let gisSpan = recordSpan; 
+                let parcelGeometry = null;
+
+                if (res1.features.length > 0) {
+                    gisSpan = res1.features[0].attributes.SPAN;
+                    parcelGeometry = res1.features[0].geometry;
+                }
+
+                const query2 = parcelLayer.createQuery();
+                query2.where = `SPAN = '${gisSpan}'`;
+                query2.outFields = ["SPAN", "GLIST_SPAN"];
+                const res2 = await parcelLayer.queryFeatures(query2);
+
+                const glCount = res2.features.length; 
+                const relatedGlSpans = [...new Set(res2.features.map(f => f.attributes.GLIST_SPAN).filter(Boolean))];
+
+                if (relatedGlSpans.length === 0 && gisSpan) relatedGlSpans.push(gisSpan);
+
+                const camaRecords = masterIndex.filter(r => relatedGlSpans.includes(r.span) || r.span === gisSpan);
+                let e911Count = 0;
+                
+                if (parcelGeometry && e911Layer) {
+                    const e911Query = e911Layer.createQuery();
+                    e911Query.geometry = parcelGeometry;
+                    e911Query.spatialRelationship = "intersects";
+                    e911Count = await e911Layer.queryFeatureCount(e911Query);
+                }
+
+                return { glCount: glCount || 1, camaCount: camaRecords.length, relatedGlSpans, gisSpan, e911Count };
+            } catch (e) {
+                return { glCount: 1, camaCount: 1, relatedGlSpans: [recordSpan], gisSpan: recordSpan, e911Count: 0 }; 
+            }
+        }
+
+        async function initMap() {
+            return new Promise((resolve, reject) => {
+                if (typeof require === 'undefined') { reject(new Error("ArcGIS API failed to load.")); return; }
+                
+                require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], (Map, MapView, FeatureLayer) => {
+                    try {
+                        const parcelLabelClass = {
+                            symbol: { type: "text", color: "#fff", haloColor: "#333333", haloSize: "1pt", font: { family: "Arial", size: "8pt", weight: "bold" } },
+                            labelPlacement: "always-horizontal",
+                            labelExpressionInfo: { expression: `var gl = $feature.GLIST_SPAN; var gis = $feature.SPAN; return "GL SPAN: " + IIf(IsEmpty(gl), "None", gl) + TextFormatting.NewLine + "GIS SPAN: " + gis;` },
+                            minScale: 5000
+                        };
+
+                        const defaultRenderer = { type: "simple", symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [211, 211, 211, 0.9], width: "1px" }} };
+                        const multiRecordRenderer = {
+                            type: "unique-value",
+                            valueExpression: `var gis = Trim($feature.SPAN); var gl = Trim($feature.GLIST_SPAN); return (!IsEmpty(gis) && !IsEmpty(gl) && gis != gl) ? "multi" : "single";`,
+                            uniqueValueInfos: [
+                                { value: "multi", symbol: { type: "simple-fill", color: [147, 51, 234, 0.4], outline: { color: [147, 51, 234, 0.8], width: "1.5px" }} },
+                                { value: "single", symbol: { type: "simple-fill", color: [0, 0, 0, 0], outline: { color: [211, 211, 211, 0.9], width: "1px" }} }
+                            ]
+                        };
+
+                        parcelLayer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1/FeatureServer/0",
+                            definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
+                            outFields: ["SPAN", "GLIST_SPAN"], 
+                            popupEnabled: false,
+                            labelingInfo: [parcelLabelClass],
+                            renderer: defaultRenderer
+                        });
+
+                        const inactiveRenderer = {
+                            type: "simple",
+                            symbol: { type: "simple-fill", style: "forward-diagonal", color: [211, 211, 211, 0.5], outline: { color: [211, 211, 211, 0.9], width: "1px" } }
+                        };
+
+                        inactiveParcelLayer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/ArcGIS/rest/services/FS_VCGI_VTPARCELS_WM_NOCACHE_v2/FeatureServer/0",
+                            definitionExpression: "TOWN = 'SOUTH BURLINGTON'",
+                            visible: false, 
+                            popupEnabled: false,
+                            renderer: inactiveRenderer
+                        });
+
+                        e911Layer = new FeatureLayer({
+                            url: "https://services1.arcgis.com/BkFxaEFNwHqX3tAw/arcgis/rest/services/FS_VCGI_OPENDATA_Emergency_ESITE_point_SP_v1/FeatureServer/0",
+                            title: "E-911 Site Locations",
+                            visible: false, 
+                            minScale: 4514,
+                            renderer: { type: "simple", symbol: { type: "simple-marker", size: 4, color: "#333333", outline: { color: "#ffffff", width: 1 } } }
+                        });
+
+                        mapView = new MapView({
+                            container: "map-view",
+                            map: new Map({ basemap: "hybrid", layers: [inactiveParcelLayer, parcelLayer, e911Layer] }),
+                            center: [-73.17, 44.46], zoom: 13,
+                            highlightOptions: { color: "#c3d600", fillOpacity: 0.4 }
+                        });
+
+                        const toggleContainer = document.createElement("div");
+                        toggleContainer.className = "esri-widget bg-white shadow-md rounded-md p-4 m-2 flex flex-col gap-3";
+                        toggleContainer.innerHTML = `
+                            <label for="admin-toggle" class="flex items-center cursor-pointer border-b border-gray-100 pb-2">
+                                <input type="checkbox" id="admin-toggle" checked class="h-4 w-4 rounded border-gray-300 text-[#005a3c] focus:ring-[#005a3c]">
+                                <span class="ml-2 text-sm font-medium text-gray-700" title="Contiguous lots with common ownership">Show Administrative Parcels (Tax Boundaries)</span>
+                            </label>
+                            <label for="parcel-toggle" class="flex items-center cursor-pointer border-b border-gray-100 pb-2">
+                                <input type="checkbox" id="parcel-toggle" class="h-4 w-4 rounded border-gray-300 text-[#005a3c] focus:ring-[#005a3c]">
+                                <span class="ml-2 text-sm font-medium text-gray-700" title="Incomplete layer showing partial parcel units">Show Sub-Parcel Geometry (Current 'Inactive' Layer)</span>
+                            </label>
+                            <label for="e911-toggle" class="flex items-center cursor-pointer border-b border-gray-100 pb-2">
+                                <input type="checkbox" id="e911-toggle" class="h-4 w-4 rounded border-gray-300 text-[#005a3c] focus:ring-[#005a3c]">
+                                <span class="ml-2 text-sm font-medium text-gray-700">Show E911 Address Points</span>
+                            </label>
+                        `;
+                        mapView.ui.add(toggleContainer, "top-right");
+
+                        toggleContainer.querySelector('#admin-toggle').addEventListener('change', (e) => parcelLayer.visible = e.target.checked);
+                        toggleContainer.querySelector('#parcel-toggle').addEventListener('change', (e) => inactiveParcelLayer.visible = e.target.checked);
+                        toggleContainer.querySelector('#e911-toggle').addEventListener('change', (e) => e911Layer.visible = e.target.checked);
+
+                        mapView.on("click", (event) => {
+                            mapView.hitTest(event).then((response) => {
+                                const graphic = response.results.find(r => r.graphic.layer === parcelLayer)?.graphic;
+                                if (graphic) {
+                                    highlightFeature(graphic);
+                                    handleMapClick(graphic.attributes.GLIST_SPAN || graphic.attributes.SPAN);
+                                } else { clearMapHighlight(); }
+                            });
+                        });
+                        resolve();
+                    } catch (error) { reject(error); }
+                });
+            });
+        }
+
+        async function highlightFeature(graphic) {
+            clearMapHighlight();
+            const layerView = await mapView.whenLayerView(graphic.layer);
+            highlightHandle = layerView.highlight(graphic);
+        }
+
+        function clearMapHighlight() { if(highlightHandle) { highlightHandle.remove(); highlightHandle = null; } }
+
+        async function zoomToParcelBySpan(spanId) {
+            if (!parcelLayer || !spanId) return;
+            const query = parcelLayer.createQuery(); query.where = `GLIST_SPAN = '${spanId}' OR SPAN = '${spanId}'`; query.returnGeometry = true;
+            try {
+                const { features } = await parcelLayer.queryFeatures(query);
+                if (features.length > 0) {
+                    mapView.goTo(features[0].geometry).catch(err => err.name !== "view:goto-interrupted" && console.error(err));
+                    highlightFeature(features[0]);
+                }
+            } catch(error) {}
+        }
+
+        function handleSearch(e) {
+            const term = e.target.value.toLowerCase();
+            if (term.length < 2) {
+                document.getElementById('table-wrapper').classList.add('hidden');
+                document.getElementById('multi-record-banner').classList.add('hidden');
+                showMessage("Ready. Search or click a map parcel.");
+                return;
+            }
+            document.getElementById('detail-view').classList.add('hidden');
+            document.getElementById('main-view').classList.remove('hidden');
+
+            const results = masterIndex.filter(r => String(r.address).toLowerCase().includes(term) || String(r.span).toLowerCase().includes(term) || String(r.parcel_id).toLowerCase().includes(term));
+            document.getElementById('multi-record-banner').classList.add('hidden'); 
+            renderTable(results);
+        }
+
+        async function handleMapClick(span) {
+            if(!span) return;
+            const cleanSpan = cleanValue(span);
+            document.getElementById('search-input').value = cleanSpan;
+            document.getElementById('detail-view').classList.add('hidden');
+            document.getElementById('main-view').classList.remove('hidden');
+
+            showLoader("Cross-referencing map geometry with CAMA data...");
+            const countsInfo = await getPropertyCounts(cleanSpan);
+            const results = masterIndex.filter(r => countsInfo.relatedGlSpans.includes(r.span));
+            
+            if (results.length === 1) {
+                document.getElementById('multi-record-banner').classList.add('hidden');
+                renderTable(results); openDetailView(results[0].parcel_id, results[0].silo);
+            } else if (results.length > 1) {
+                renderTable(results);
+                document.getElementById('multi-record-banner').classList.remove('hidden');
+                document.getElementById('multi-record-text').innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i>Found <b>${results.length}</b> CAMA records for this physical Administrative boundary. Please select one below.`;
+            } else {
+                document.getElementById('multi-record-banner').classList.add('hidden');
+                renderTable([]); showMessage("No CAMA records found for this footprint.");
+            }
+        }
+
+        function renderTable(results) {
+            document.getElementById('status-message').classList.add('hidden');
+            document.getElementById('table-wrapper').classList.remove('hidden');
+            document.getElementById('result-count').textContent = results.length;
+            const tbody = document.getElementById('results-body'); tbody.innerHTML = '';
+            if (results.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No records found.</td></tr>`; return; }
+
+            results.forEach(row => {
+                const tr = document.createElement('tr'); tr.className = 'row-hover transition'; const s = SILOS[row.silo];
+                tr.innerHTML = `
+                    <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${s.color}"><i class="fa-solid ${s.icon} mr-1.5"></i> ${s.name}</span></td>
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.span || 'N/A'}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${row.parcel_id}</td>
+                    <td class="px-4 py-3 text-sm text-gray-800">${row.owner || '<span class="text-gray-400 italic">Unknown</span>'}</td>
+                    <td class="px-4 py-3 text-sm text-gray-800">${row.cama_desc || '<span class="text-gray-400 italic">N/A</span>'}</td>
+                `;
+                tr.onclick = () => openDetailView(row.parcel_id, row.silo);
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function openDetailView(parcelId, siloType) {
+            const recordInfo = masterIndex.find(r => r.parcel_id === parcelId && r.silo === siloType);
+            document.getElementById('multi-record-banner').classList.add('hidden');
+            document.getElementById('main-view').classList.add('hidden');
+            document.getElementById('detail-view').classList.remove('hidden');
+
+            zoomToParcelBySpan(recordInfo.span);
+
+            const countsInfo = await getPropertyCounts(recordInfo.span);
+            const siblings = masterIndex.filter(r => countsInfo.relatedGlSpans.includes(r.span));
+
+            // Logic to determine 1:1 or 1:Many relationships based on the proposed schema
+            const isAggregated = countsInfo.relatedGlSpans.length > 1 || siblings.length > 1;
+            const adminSpan = countsInfo.gisSpan || 'N/A';
+            const currentSpan = recordInfo.span || 'N/A';
+            const mapId = recordInfo.parcel_id || 'N/A'; 
+            
+            let explanationText = "";
+            let configIcon = isAggregated ? "fa-layer-group text-purple-600" : "fa-check-double text-emerald-600";
+
+            if (isAggregated) {
+                if (siloType === 'condo') {
+                    explanationText = `This footprint represents a condominium structure. The multiple CAMA records reflect individual units stacked within this single 2D map geometry. Duplicate ADMINSPAN values connect them.`;
+                } else if (siloType === 'comm') {
+                    explanationText = `This footprint represents a commercial or multi-family structure. The multiple CAMA records may reflect distinct administrative or tax accounts within the single building geometry.`;
+                } else {
+                    explanationText = `There are multiple distinct CAMA records associated with this single mapped footprint. This may indicate multiple structures, sub-accounts, or an aggregated administrative boundary.`;
+                }
+            } else {
+                explanationText = `ADMINSPAN and State SPAN are the same. All unique values, representing a single parcel unit.`;
+            }
+
+            const banner = document.getElementById('contextual-banner');
+            banner.className = `p-6 rounded-lg shadow-sm border mb-6 relative bg-white`; 
+            banner.innerHTML = `
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 pb-4 border-b border-gray-100 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded border ${SILOS[siloType].color} text-xs font-bold uppercase tracking-wider">
+                                <i class="fa-solid ${SILOS[siloType].icon} mr-2"></i> ${SILOS[siloType].name} Record
+                            </span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900">${recordInfo.address}</h2>
+                        <p class="text-sm font-medium text-gray-700">Owner: ${recordInfo.owner}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-md border border-gray-200 text-sm flex flex-col gap-1 min-w-[250px] shadow-inner">
+                        <div class="flex justify-between border-b border-gray-200 pb-1 mb-1">
+                            <span class="text-gray-500 font-medium text-xs uppercase">Local MAPID:</span>
+                            <span class="font-bold text-gray-900">${mapId}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-200 pb-1 mb-1">
+                            <span class="text-gray-500 font-medium text-xs uppercase" title="Administrative Container">State ADMINSPAN:</span>
+                            <span class="font-bold text-indigo-700">${adminSpan}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 font-medium text-xs uppercase" title="Unique Parcel Identifier">State SPAN (Parcel):</span>
+                            <span class="font-bold text-emerald-700">${currentSpan}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 border-l-4 border-gray-400 p-3 rounded-r text-sm text-gray-700 mb-4 flex items-start">
+                    <i class="fa-solid ${configIcon} mt-0.5 mr-2"></i>
+                    <p><b>Property Configuration:</b> ${explanationText}</p>
+                </div>
+
+                <div id="record-count-indicator" class="absolute top-6 right-6"></div>
+            `;
+
+            if (siblings.length > 1) document.getElementById('record-count-indicator').innerHTML = `<span class="inline-flex bg-white px-2 py-1 rounded text-xs font-bold border border-gray-300 shadow-sm"><i class="fa-solid fa-layer-group text-blue-600 mr-1"></i> Record 1 of ${siblings.length}</span>`;
+
+            buildDynamicTabs(siloType, siblings.length > 1, siblings, parcelId, recordInfo);
+        }
+
+        function buildDynamicTabs(siloType, hasSiblings, siblings, currentParcelId, recordInfo) {
+            const tabsHeader = document.getElementById('tabs-header'); const tabsContent = document.getElementById('tabs-content');
+            tabsHeader.innerHTML = ''; tabsContent.innerHTML = '';
+
+            const tabConfig = [
+                { id: 'overview', name: 'Overview', universal: true },
+                { id: 'bldg', name: 'Building Details', res: true, condo: true, comm: true },
+                { id: 'land', name: 'Land & Site', universal: true },
+                { id: 'occupancy', name: 'Occupancy & Income', comm: true },
+                { id: 'history', name: 'Sales History', universal: true },
+                { id: 'associated', name: 'Associated Records', conditional: hasSiblings }
+            ];
+
+            const activeTabs = tabConfig.filter(t => t.universal || t[siloType] || t.conditional);
+
+            activeTabs.forEach((tab, index) => {
+                const li = document.createElement('li'); li.className = 'mr-2';
+                const a = document.createElement('a');
+                a.className = `inline-block p-4 rounded-t-lg border-b-2 hover:text-gray-600 hover:border-gray-300 cursor-pointer transition ${index === 0 ? 'text-[#005a3c] border-[#005a3c] bg-white active-tab' : 'border-transparent text-gray-500'}`;
+                a.innerText = tab.name; a.onclick = (e) => switchTab(e, tab.id);
+                li.appendChild(a); tabsHeader.appendChild(li);
+
+                const div = document.createElement('div'); div.id = `tab-${tab.id}`;
+                div.className = `p-6 bg-white rounded-b-lg shadow-sm border border-t-0 border-gray-200 tab-pane ${index === 0 ? '' : 'hidden'}`;
+                
+                if (tab.id === 'associated') div.innerHTML = renderAssociatedRecordsTab(siblings, currentParcelId);
+                else if (tab.id === 'overview') div.innerHTML = createSimpleTable([recordInfo.raw]); 
+                else {
+                    div.innerHTML = `<div class="flex flex-col items-center justify-center py-10"><div class="loader w-8 h-8 border-4 mb-2"></div></div>`;
+                    fetchAndRenderTabContent(siloType, currentParcelId, tab.id, div);
+                }
+                tabsContent.appendChild(div);
+            });
+        }
+
+        async function fetchAndRenderTabContent(siloType, parcelId, tabId, containerDiv) {
+            let fileName = "";
+            if (tabId === 'bldg') fileName = `EXP_SECTION_${siloType.toUpperCase()}`;
+            if (tabId === 'land') fileName = `EXP_LAND_${siloType.toUpperCase()}`;
+            if (tabId === 'occupancy') fileName = `EXP_OCCUPNCY_${siloType.toUpperCase()}`;
+            if (tabId === 'history') fileName = `EXP_TRANHIST_${siloType.toUpperCase()}`;
+            if (!fileName) return;
+
+            const url = `${S3_BASE}/${siloType}/${fileName}.json`;
+            const data = await fetchJson(url);
+            if (!data) return;
+
+            const propertyRecords = data.filter(row => cleanValue(row.parcel_id) === cleanValue(parcelId));
+            containerDiv.innerHTML = propertyRecords.length === 0 ? "<p class='text-gray-500 italic'>No associated records found.</p>" : createSimpleTable(propertyRecords);
+        }
+
+        function createSimpleTable(records) {
+            if (!records || records.length === 0) return '';
+            const headers = Object.keys(records[0]);
+            let table = '<div class="overflow-x-auto table-container"><table class="min-w-full divide-y divide-gray-200 border border-gray-200"><thead class="bg-gray-50"><tr>';
+            headers.forEach(h => table += `<th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">${h.replace(/_/g, ' ')}</th>`);
+            table += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+            records.forEach(r => {
+                table += '<tr class="hover:bg-gray-50">';
+                headers.forEach(h => table += `<td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600">${cleanValue(r[h])}</td>`);
+                table += '</tr>';
+            });
+            return table + '</tbody></table></div>';
+        }
+
+        function renderAssociatedRecordsTab(siblings, currentParcelId) {
+            let html = '<div class="space-y-3">';
+            siblings.forEach(sib => {
+                const isCurrent = sib.parcel_id === currentParcelId;
+                html += `
+                    <div class="p-4 border rounded flex justify-between items-center ${isCurrent ? 'bg-gray-50 border-gray-300' : 'bg-white hover:border-[#005a3c] cursor-pointer'}" 
+                         ${!isCurrent ? `onclick="document.getElementById('search-input').value='${sib.parcel_id}'; document.getElementById('search-input').dispatchEvent(new Event('input'));"` : ''}>
+                        <div><p class="font-medium">ID: ${sib.parcel_id}</p><p class="text-sm text-gray-600">${sib.cama_desc || ''}</p></div>
+                        <div>${isCurrent ? '<span class="text-xs font-bold text-gray-400">Viewing</span>' : '<button class="text-sm text-[#005a3c]">View Record</button>'}</div>
+                    </div>`;
+            });
+            return html + '</div>';
+        }
+
+        function switchTab(event, tabId) {
+            document.querySelectorAll('#tabs-header a').forEach(l => l.className = 'inline-block p-4 rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 cursor-pointer transition');
+            event.target.className = 'inline-block p-4 rounded-t-lg border-b-2 text-[#005a3c] border-[#005a3c] bg-white cursor-pointer transition';
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        }
+
+        function showLoader(msg) { document.getElementById('status-message').innerHTML = `<div class="loader w-10 h-10 border-4 mb-4"></div><p>${msg}</p>`; }
+        function showMessage(msg) { document.getElementById('status-message').innerHTML = `<p>${msg}</p>`; }
+        function showError(msg) { document.getElementById('status-message').innerHTML = `<p class="text-red-600">${msg}</p>`; }
+
+        init();
+    });
+    </script>
+</body>
+</html>
