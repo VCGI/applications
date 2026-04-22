@@ -91,7 +91,7 @@ The audiences for the demo are municipal listers and assessors, Vermont's Tax De
 
     - Actions: We federated the three separate NEMRC Microsolve data silos (Residential, Commercial, Condominium) by fetching their respective EXP_MAIN JSON files from S3 locations and mapping common properties into a single, unified masterIndex array in the browser's memory.
 
-    - Challenge: CAMA data is often structurally fragmented based on property type. Commercial properties have tables (like EXP_OCCUPNCY) that do not exist in Residential schemas. A robust data pipeline must account for these structural variances while standardizing core search fields (like Address, Owner, and SPAN) so they can be queried uniformly.
+    - Challenge: CAMA data is often structurally fragmented based on property type. Commercial properties have tables (like EXP_OCCUPNCY) that do not exist in Residential schemas and vice versa. A robust data pipeline must account for these structural variances while standardizing core search fields (like Address, Owner, and SPAN) so they can be queried uniformly.
 
 2. Bridging Tabular Data and Spatial Geometry (Creating a Spatial Hook)
 
