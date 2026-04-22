@@ -87,27 +87,27 @@ Its purpose is to clarify challenges and opportunities for data interoperability
 
 1. Normalizing Fragmented Tabular Data (The Silo Problem)
 
-The Step: We federated the three disparate NEMRC Microsolve data silos (Residential, Commercial, Condominium) by fetching their respective EXP_MAIN JSON files and mapping common properties into a single, unified masterIndex array in the browser's memory.
+    - The Step: We federated the three disparate NEMRC Microsolve data silos (Residential, Commercial, Condominium) by fetching their respective EXP_MAIN JSON files and mapping common properties into a single, unified masterIndex array in the browser's memory.
 
-The Challenge: CAMA data is often structurally fragmented based on property type. Commercial properties have tables (like EXP_OCCUPNCY) that simply do not exist in Residential schemas. A robust data pipeline must account for these structural variances while standardizing core search fields (like Address, Owner, and SPAN) so they can be queried uniformly.
+    - The Challenge: CAMA data is often structurally fragmented based on property type. Commercial properties have tables (like EXP_OCCUPNCY) that simply do not exist in Residential schemas. A robust data pipeline must account for these structural variances while standardizing core search fields (like Address, Owner, and SPAN) so they can be queried uniformly.
 
 2. Bridging Tabular Data and Spatial Geometry (The Spatial Hook)
 
-The Step: We established the parc_span field in the CAMA data as the foreign key that maps to the GLIST_SPAN (Grand List SPAN) field in the statewide parcel polygon layer.
+    - The Step: We established the parc_span field in the CAMA data as the foreign key that maps to the GLIST_SPAN (Grand List SPAN) field in the statewide parcel polygon layer.
 
-The Challenge: A strictly 1-to-1 relationship between a CAMA record and a physical piece of earth is a myth. Multi-use buildings and condominiums force cartographers to "stack" overlapping polygons. Therefore, applications cannot rely purely on the physical footprint (GIS SPAN) to pull data; they must query the GLIST_SPAN to successfully retrieve all the distinct tax records associated with that single spatial footprint.
+    - The Challenge: A strictly 1-to-1 relationship between a CAMA record and a physical piece of earth is a myth. Multi-use buildings and condominiums force cartographers to "stack" overlapping polygons. Therefore, applications cannot rely purely on the physical footprint (GIS SPAN) to pull data; they must query the GLIST_SPAN to successfully retrieve all the distinct tax records associated with that single spatial footprint.
 
 3. Visualizing 1-to-Many Relationships (The UI Disambiguation)
 
-The Step: We implemented an Arcade expression in the map layer to dynamically highlight parcels where the SPAN does not match the GLIST_SPAN (indicating stacked geometry). Furthermore, we forced the user interface to intercept map clicks on these parcels, presenting a disambiguation table rather than blindly opening the first record it finds.
+    - The Step: We implemented an Arcade expression in the map layer to dynamically highlight parcels where the SPAN does not match the GLIST_SPAN (indicating stacked geometry). Furthermore, we forced the user interface to intercept map clicks on these parcels, presenting a disambiguation table rather than blindly opening the first record it finds.
 
-The Challenge: Map interfaces inherently suggest that one click equals one property. Without visual cues (like the purple map highlight) and structural UI interventions (the "Found X records" table), users will miss critical property data hiding "underneath" the top-level polygon.
+    - The Challenge: Map interfaces inherently suggest that one click equals one property. Without visual cues (like the purple map highlight) and structural UI interventions (the "Found X records" table), users will miss critical property data hiding "underneath" the top-level polygon.
 
 4. Exposing the Address Gap (E911 vs. CAMA)
 
-The Step: We utilized a spatial intersect query. When a user clicks a parcel, the map engine literally draws a boundary around the polygon and counts how many E911 point geometries fall inside it, displaying that count alongside the CAMA record count.
+    - The Step: We utilized a spatial intersect query. When a user clicks a parcel, the map engine literally draws a boundary around the polygon and counts how many E911 point geometries fall inside it, displaying that count alongside the CAMA record count.
 
-The Challenge: There is no hard database link between physical E911 address points and CAMA tax records. CAMA addresses (prop_locat or owner_addr) are often mailing addresses, while E911 points represent physical doors. This spatial intersect vividly demonstrates the data gap to policymakers and IT staff: a single tax record might correspond to a dozen physical addresses, and currently, only geography (not tabular keys) links them together.
+    - The Challenge: There is no hard database link between physical E911 address points and CAMA tax records. CAMA addresses (prop_locat or owner_addr) are often mailing addresses, while E911 points represent physical doors. This spatial intersect vividly demonstrates the data gap to policymakers and IT staff: a single tax record might correspond to a dozen physical addresses, and currently, only geography (not tabular keys) links them together.
 
 ## CAMA Vendors
 
