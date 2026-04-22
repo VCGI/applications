@@ -85,7 +85,7 @@ The audiences for the demo are municipal listers and assessors, Vermont's Tax De
 
 The intent is to work with these groups to specify a CAMA data standard, implement normalized data transfer, and define the technical requirements for aggregating CAMA data for publishing as a uniform open data resource. Specific details within CAMA data that are of interest are details and counts of buildings and structures on a property, counts of dwelling units that may not explicitly defined in single fields, and site details that are not detailed in grand list or other data. 
 
-A further goal is to consider all in relation to an updated parcel definition that moves from the current "contiguous", aggregate on common ownership for tax administration purposes definition to one that maps properties based on the smallest sellable real estate unit.
+A further goal is to consider all in relation to an updated parcel definition that moves from the current "contiguous", aggregate on common ownership for tax administration purposes definition to one that maps properties based on the smallest sellable real estate unit. The latter definition may also begin to reflect and replace what are current called "inactive" parcels.
 
 #### Summary of Interoperability Modeling
 
