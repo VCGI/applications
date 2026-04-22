@@ -97,7 +97,7 @@ The audiences for the demo are municipal listers and assessors, Vermont's Tax De
 
     - Actions: We established the parc_span field in the CAMA data as the foreign key that maps to the GLIST_SPAN (Grand List SPAN) field in the statewide parcel polygon layer.
 
-    - Challenge: A strictly 1-to-1 relationship between a CAMA record and a physical piece of earth is a myth. Multi-use buildings and condominiums force cartographers to "stack" overlapping polygons. Therefore, applications cannot rely purely on the physical footprint (GIS SPAN) to pull data; they must query the GLIST_SPAN to successfully retrieve all the distinct tax records associated with that single spatial footprint.
+    - Challenge: A strictly 1-to-1 relationship between a CAMA record and a physical piece of earth is not valid. Multi-use buildings and condominiums force cartographers to "stack" overlapping polygons. Therefore, applications cannot rely purely on the physical footprint (GIS SPAN) to pull data; they must query the GLIST_SPAN to successfully retrieve all the distinct tax records associated with that single spatial footprint.
 
 3. Visualizing 1-to-Many Relationships (UI Disambiguation)
 
@@ -107,7 +107,7 @@ The audiences for the demo are municipal listers and assessors, Vermont's Tax De
 
 4. Exposing the Address Gap (E911 vs. CAMA)
 
-    - Actions: We utilized a spatial intersect query. When a user clicks a parcel, the map engine literally draws a boundary around the polygon and counts how many E911 point geometries fall inside it, displaying that count alongside the CAMA record count.
+    - Actions: We utilized a spatial intersect query. When a user clicks a parcel, the map engine draws a boundary around the polygon and counts how many E911 point geometries fall inside it, displaying that count alongside the CAMA record count.
 
     - Challenge: There is no hard database link between physical E911 address points and CAMA tax records. CAMA addresses (prop_locat or owner_addr) are often mailing addresses, while E911 points represent physical doors. This spatial intersect vividly demonstrates the data gap to policymakers and IT staff: a single tax record might correspond to a dozen physical addresses, and currently, only geography (not tabular keys) links them together.
 
