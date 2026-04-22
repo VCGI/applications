@@ -79,9 +79,11 @@ The table of property details below is informed by the NEMRC Microsolve CAMA sam
 
 ### NEMRC
 
-This section details steps taken by VCGI to create basic interoperability between sample CAMA data extracts from NEMRC's Microsolve CAMA platform, standardized parcel polygons, and related GIS data such as E911 address points.
+This section details steps taken by VCGI to create basic interoperability between sample CAMA data extracts from NEMRC's Microsolve CAMA platform, standardized parcel polygons defined by the parcel data standard, and related GIS data such as E911 address points.
 
-Its purpose is to clarify challenges and opportunities for data interoperability between these sources to improve the quality and availability of existing public information as associated with its property location. The audience for the demo created by these efforts consists of municipal listers and assessors, the State's Tax Department District Advisors, Property Valuation and Review staff, and policy makers, as well as State of Vermont GIS & IT professionals responsible for aggregating and serving municipal CAMA data as an open data resource.
+Its purpose is to clarify challenges and opportunities for data interoperability between these sources to improve the availability of existing public information as associated with its property location. A demo web map application is being developed to display these challenges and opportunities, with data loaded in browser on demand, pulled from S3 buckets, and defined in a single index.html file.
+
+The audiences for the demo are municipal listers and assessors, the State's Tax Department District Advisors, Property Valuation and Review staff, and policy makers, as well as State of Vermont GIS & IT professionals responsible for aggregating and serving municipal CAMA data as an open data resource.
 
 #### Summary of Interoperability Modeling to Date
 
