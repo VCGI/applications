@@ -77,15 +77,15 @@ The table of property details below is informed by the NEMRC Microsolve CAMA sam
 
 ## Interoperability
 
-### NEMRC
-
 VCGI has attempted to create basic interoperability between sample CAMA data extracts from NEMRC's Microsolve CAMA platform, standardized parcel polygons defined by the Vermont parcel data standard, and related GIS data such as E911 address points. This work attempts to inform how to improve the availability of existing public information as associated with its property location. A CAMA extract for South Burlington, VT is used as it contains many complex property types with multiple tabular records per single parcel geometry such as condominiums and apartments.
 
 There are challenges and opportunities for data interoperability between these sources. A demo web map application is used to display them, with data loaded in browser, pulled from S3 buckets, and defined in a single index.html file.
 
 The audiences for the demo are municipal listers and assessors, Vermont's Tax Department District Advisors, Property Valuation and Review staff, and policy makers, as well as State of Vermont GIS & IT professionals responsible for aggregating and serving municipal CAMA data as an open data resource.
 
-The goal is to work with these groups to specify a CAMA data standard, implement normalized data transfer, and define the technical requirements for aggregating CAMA data for publishing as a uniform open data resource. Specific details within CAMA data of interest relate with details and counts of buildings and structures on a property,  counts of dwelling units that may not explicitly defined in single fields, and site details that are not detailed in grand list or other data.
+The intent is to work with these groups to specify a CAMA data standard, implement normalized data transfer, and define the technical requirements for aggregating CAMA data for publishing as a uniform open data resource. Specific details within CAMA data that are of interest are details and counts of buildings and structures on a property, counts of dwelling units that may not explicitly defined in single fields, and site details that are not detailed in grand list or other data. 
+
+A further goal is to consider all in relation to an updated parcel definition that moves from the current "contiguous", aggregate on common ownership for tax administration purposes definition to one that maps properties based on the smallest sellable real estate unit.
 
 #### Summary of Interoperability Modeling
 
