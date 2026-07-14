@@ -8,7 +8,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 ![Parcels Active Layer Popup Example](https://github.com/user-attachments/assets/0359c86f-7b50-40b6-b0a5-45214a1c320d)
 
-### HTML Popup - Parcels - Active Layer v.4.1
+### HTML Popup - Parcels - Active Layer v.4.1 ✅
 
 ```html
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
