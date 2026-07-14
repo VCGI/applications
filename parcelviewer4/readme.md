@@ -1016,6 +1016,8 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 ## Parcels - Current Use
 
+Arcade scripts and html popup formatting result in an example with contingent display of select information:
+
 ### HTML Popup - Parcels - Current Use v.4.1
 
 ```html
