@@ -33,6 +33,8 @@ Reflects Vermont Parcel Viewer version 4.1, updated Spring 2026
 
 The following arcade scripts and html popup formatting result in example displays:
 
+<img width="454" height="1163" alt="Parcels Active Layer Popup Example 4 1" src="https://github.com/user-attachments/assets/0359c86f-7b50-40b6-b0a5-45214a1c320d" />
+
 ### HTML Popup - Parcels - Active Layer v.4.1
 
 ```html
