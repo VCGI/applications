@@ -1018,6 +1018,8 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
+<img width="453" height="843" alt="Parcels Current Use Layer Popup Example 4 1" src="https://github.com/user-attachments/assets/45659900-dac1-4e09-bc17-f7184c05f5fc" />
+
 ### HTML Popup - Parcels - Current Use v.4.1
 
 ```html
