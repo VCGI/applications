@@ -38,7 +38,7 @@ Reflects Vermont Parcel Viewer version 4.1, updated Spring 2026
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
-<img width="454" height="1163" alt="Parcels Active Layer Popup Example 4 1" src="https://github.com/user-attachments/assets/0359c86f-7b50-40b6-b0a5-45214a1c320d" />
+![Parcels Active Layer Popup Example](https://github.com/user-attachments/assets/0359c86f-7b50-40b6-b0a5-45214a1c320d)
 
 ### HTML Popup - Parcels - Active Layer v.4.1
 
@@ -1003,7 +1003,7 @@ return "none"; // Hides the alert box
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
-<img width="453" height="559" alt="Parcels Inactive Layer Popup v 4 1" src="https://github.com/user-attachments/assets/c3c21847-e1e7-472e-b5ee-0b837c0bca49" />
+![Parcels Inactive Layer Popup](https://github.com/user-attachments/assets/c3c21847-e1e7-472e-b5ee-0b837c0bca49)
 
 ### HTML Popup - Parcels - Inactives v.4.1
 
@@ -1013,7 +1013,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
-<img height="551" alt="Parcels Town Status Layer 2 Popup v 4 1" src="https://github.com/user-attachments/assets/dd8607fe-b429-46a5-b330-67a530fa946f" />
+![Parcels Town Status Layer 2 Popup](https://github.com/user-attachments/assets/dd8607fe-b429-46a5-b330-67a530fa946f)
 
 ### HTML Popup - Town Parcel Data Status v.4.1
 
@@ -1023,7 +1023,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
-<img width="453" height="843" alt="Parcels Current Use Layer Popup Example 4 1" src="https://github.com/user-attachments/assets/45659900-dac1-4e09-bc17-f7184c05f5fc" />
+![Parcels Current Use Layer Popup Example](https://github.com/user-attachments/assets/45659900-dac1-4e09-bc17-f7184c05f5fc)
 
 ### HTML Popup - Parcels - Current Use v.4.1
 
@@ -1471,7 +1471,7 @@ return Round(ltm + gtm, 2);
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
-<img width="798" height="438" alt="Parcels Land Survey Layer 2 Popup v 4 1" src="https://github.com/user-attachments/assets/858570db-68ee-43bc-ac25-8cbbb38198e1" />
+![Parcels Land Survey Layer 2 Popup](https://github.com/user-attachments/assets/858570db-68ee-43bc-ac25-8cbbb38198e1)
 
 ### HTML Popup - Surveys - Vermont Land Survey Library v.4.1
 
