@@ -2,38 +2,6 @@
 
 Reflects Vermont Parcel Viewer version 4.1, updated Spring 2026
 
-## Contents
-
-### Parcels - Active Layer v.4.1
-
-- HTML Popup
-- Arcade Expressions
-
-### Parcels - Inactive Layer v.4.1
-
-- HTML Popup
-- Arcade Expressions
-
-### Parcels - Town Parcel Data Status v.4.1
-
-- HTML Popup
-- Arcade Expressions
-
-### Parcels - Current Use v.4.1
-
-- HTML Popup
-- Arcade Expressions
-
-### Surveys - Vermont Land Survey Library v.4.1
-
-- HTML Popup
-- Arcade Expressions
-
-## TIF Districts - v.4.1
-
-- HTML Popup
-- Arcade Expressions
-
 ## Parcels - Active Layer
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
