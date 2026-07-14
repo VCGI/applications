@@ -31,7 +31,7 @@ Reflects Vermont Parcel Viewer version 4.1, updated Spring 2026
 
 ## Parcels - Active Layer
 
-The following arcade scripts and html popup formatting result in example displays:
+Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
 <img width="454" height="1163" alt="Parcels Active Layer Popup Example 4 1" src="https://github.com/user-attachments/assets/0359c86f-7b50-40b6-b0a5-45214a1c320d" />
 
@@ -995,6 +995,9 @@ return "none"; // Hides the alert box
 ```
 
 ## Parcels - Inactive Layer
+
+Arcade scripts and html popup formatting result in an example with contingent display of select information:
+
 
 ### HTML Popup - Parcels - Inactives v.4.1
 
