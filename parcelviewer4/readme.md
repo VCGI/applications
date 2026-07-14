@@ -1,6 +1,40 @@
 # Vermont Parcel Viewer Popup Configuration
 
-## HTML Popup - Parcels - Active Layer (v.4.1)
+Reflects Vermont Parcel Viewer version 4.1, updated Spring 2026
+
+## Contents
+
+### Parcels - Active Layer v.4.1
+
+- HTML Popup
+- Arcade Expressions
+
+### Parcels - Inactive Layer v.4.1
+
+- HTML Popup
+- Arcade Expressions
+
+### Parcels - Town Parcel Data Status v.4.1
+
+- HTML Popup
+- Arcade Expressions
+
+### Parcels - Current Use v.4.1
+
+- HTML Popup
+- Arcade Expressions
+
+### Surveys - Vermont Land Survey Library v.4.1
+
+- HTML Popup
+- Arcade Expressions
+
+## Parcels - Active Layer
+
+The following arcade scripts and html popup formatting result in example displays:
+
+### HTML Popup - Parcels - Active Layer v.4.1
+
 ```html
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
     <div style="margin-bottom:16px;">
@@ -163,7 +197,7 @@
 </div>
 ```
 
-## Arcade Attribute Expressions - Parcels - Active Layer (v.4.1)
+### Arcade Expressions - Parcels - Active Layer v.4.1
 
 ### {expression/expr0} - Ownership (Annual Grand List)
 
@@ -958,60 +992,27 @@ if (Count(transferFeatures) > 0) {
 return "none"; // Hides the alert box
 ```
 
-## 4.0.2 Popup - Town Parcel Data Status
+## Parcels - Inactive Layer
 
-Parcel Status of {TOWN}
-| Current Map Capacity       | Contract GIS Vendor                                                                                                  |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Current Vendor             | CAI                                                                                                                  |
-| Download Link              | [View](https://maps.vcgi.vermont.gov/gisdata/vcgi/packaged_zips/CadastralParcels_VTPARCELS/VTPARCELS_Montpelier.zip) |
-| GIS Geometry Date          | 12/2/2025                                                                                                            |
-| RPC                        | Central Vermont Regional Planning Commission                                                                         |
-| Submission ID              | Montpelier 2025-09-09T22:13:02.000Z                                                                                  |
-| Submittal Grand List Year  | 2025                                                                                                                 |
-| Submittal Reviewed By Town | No                                                                                                                   |
-| Submitter                  | Don Butson                                                                                                           |
-| Submitting Entity          | CAI                                                                                                                  |
-| Status Updated             | 19-Mar-26                                                                                                            |
-| Note                       |                                                                                                                      |
+### HTML Popup - Parcels - Inactives v.4.1
 
-## HTML Popup - Town Parcel Data Status (v.4.1)
+### Arcade Expressions - Parcels - Inactive v.4.1
 
-## Arcade Attribute Expressions - Town Parcel Data Status (v.4.1)
+## Parcels - Town Parcel Data Status
 
-## 4.0.2 Popup - Surveys - Vermont Land Survey Library
+### HTML Popup - Town Parcel Data Status v.4.1
 
-{Name of Survey}
+### Arcade Expressions - Town Parcel Data Status v.4.1
 
-| Name of Surveyor      | Mark Day                |
-| --------------------- | ----------------------- |
-| Date of Survey        | 1/8/2024                |
-| Name of Uploader      | up loaded by surveyor   |
-| Uploader Email        | mark@dlsvt.com          |
-| Survey Type           | General Property Survey |
-| Town                  | Milton                  |
-| Notes                 |                         |
-| Recording Information | unknown                 |
+## Parcels - Current Use
 
-## HTML Popup - Surveys - Vermont Land Survey Library (v.4.1)
+## Surveys - Vermont Land Survey Library
 
-## Arcade Attribute Expressions - Vermont Land Survey Library (v.4.1)
+### HTML Popup - Surveys - Vermont Land Survey Library v.4.1
 
-## 4.0.2 Popup - Parcels - Inactives
+### Arcade Expressions - Vermont Land Survey Library v.4.1
 
-INACTIVE PARCEL
-
-| STATUS     | INACTIVE |
-| ---------- | -------- |
-| PARENTSPAN |          |
-| SPAN       |          |
-| TOWN       | MILTON   |
-
-## HTML Popup - Parcels - Inactives (v.4.1)
-
-## Arcade Attribute Expressions - Parcels - Inactives (v.4.1)
-
-## HTML Popup - Parcels - Current Use (v.4.1)
+### HTML Popup - Parcels - Current Use v.4.1
 
 ```html
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
