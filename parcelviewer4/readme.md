@@ -1006,12 +1006,6 @@ return "none"; // Hides the alert box
 
 ## Parcels - Current Use
 
-## Surveys - Vermont Land Survey Library
-
-### HTML Popup - Surveys - Vermont Land Survey Library v.4.1
-
-### Arcade Expressions - Vermont Land Survey Library v.4.1
-
 ### HTML Popup - Parcels - Current Use v.4.1
 
 ```html
@@ -1453,3 +1447,9 @@ return Round(ltm + gtm, 2);
 ### {expression/expr18}
 ### {expression/expr19}
 ### {expression/expr20}
+
+## Surveys - Vermont Land Survey Library
+
+### HTML Popup - Surveys - Vermont Land Survey Library v.4.1
+
+### Arcade Expressions - Vermont Land Survey Library v.4.1
