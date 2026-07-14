@@ -1006,6 +1006,8 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 ## Parcels - Town Parcel Data Status
 
+Arcade scripts and html popup formatting result in an example with contingent display of select information:
+
 ### HTML Popup - Town Parcel Data Status v.4.1
 
 ### Arcade Expressions - Town Parcel Data Status v.4.1
