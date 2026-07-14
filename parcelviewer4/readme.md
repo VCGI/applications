@@ -1481,7 +1481,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
-<img width="716" height="501" alt="Parcels TIF District Layer Popup v 4 1" src="https://github.com/user-attachments/assets/94241def-d9df-4052-a190-193846be3c03" />
+![Parcels TIF District Layer Popup](https://github.com/user-attachments/assets/94241def-d9df-4052-a190-193846be3c03)
 
 ### HTML Popup - TIF Districts
 
