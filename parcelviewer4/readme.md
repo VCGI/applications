@@ -1464,6 +1464,8 @@ return Round(ltm + gtm, 2);
 
 ## Surveys - Vermont Land Survey Library
 
+Arcade scripts and html popup formatting result in an example with contingent display of select information:
+
 ### HTML Popup - Surveys - Vermont Land Survey Library v.4.1
 
 ### Arcade Expressions - Vermont Land Survey Library v.4.1
