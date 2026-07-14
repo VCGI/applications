@@ -1466,6 +1466,8 @@ return Round(ltm + gtm, 2);
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
+<img width="798" height="438" alt="Parcels Land Survey Layer 2 Popup v 4 1" src="https://github.com/user-attachments/assets/858570db-68ee-43bc-ac25-8cbbb38198e1" />
+
 ### HTML Popup - Surveys - Vermont Land Survey Library v.4.1
 
 ### Arcade Expressions - Vermont Land Survey Library v.4.1
