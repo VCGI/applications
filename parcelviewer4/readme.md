@@ -29,6 +29,11 @@ Reflects Vermont Parcel Viewer version 4.1, updated Spring 2026
 - HTML Popup
 - Arcade Expressions
 
+## TIF Districts - v.4.1
+
+- HTML Popup
+- Arcade Expressions
+
 ## Parcels - Active Layer
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
@@ -1471,3 +1476,11 @@ Arcade scripts and html popup formatting result in an example with contingent di
 ### HTML Popup - Surveys - Vermont Land Survey Library v.4.1
 
 ### Arcade Expressions - Vermont Land Survey Library v.4.1
+
+## TIF Districts
+
+Arcade scripts and html popup formatting result in an example with contingent display of select information:
+
+### HTML Popup - TIF Districts
+
+### Arcade Expressions - TIF Districts
