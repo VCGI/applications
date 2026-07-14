@@ -998,6 +998,7 @@ return "none"; // Hides the alert box
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
+<img width="453" height="559" alt="Parcels Inactive Layer Popup v 4 1" src="https://github.com/user-attachments/assets/c3c21847-e1e7-472e-b5ee-0b837c0bca49" />
 
 ### HTML Popup - Parcels - Inactives v.4.1
 
