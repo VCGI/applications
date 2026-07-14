@@ -1008,7 +1008,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 Arcade scripts and html popup formatting result in an example with contingent display of select information:
 
-<img width="1030" height="551" alt="Parcels Town Status Layer 2 Popup v 4 1" src="https://github.com/user-attachments/assets/dd8607fe-b429-46a5-b330-67a530fa946f" />
+<img height="551" alt="Parcels Town Status Layer 2 Popup v 4 1" src="https://github.com/user-attachments/assets/dd8607fe-b429-46a5-b330-67a530fa946f" />
 
 ### HTML Popup - Town Parcel Data Status v.4.1
 
