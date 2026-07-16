@@ -1,6 +1,9 @@
 # Vermont Parcel Viewer Popup Configuration
 
-Reflects Vermont Parcel Viewer version 4.1, updated Spring 2026
+*Applies to Version 4.1, updated Spring 2026*
+
+✅ Green checkmark denotes that script is IN USE <br>
+❌ Red X denotes that script is NOT IN USE in current version, remains either as archive of past instance or for testing purposes
 
 ## Parcels - Active Layer
 
@@ -185,7 +188,7 @@ Concatenate([$feature.OWNER1,$feature.OWNER2], ', ') +TextFormatting.NewLine
 +Concatenate([$feature.CITYGL,$feature.STGL,$feature.ZIPGL], ', ')
 ```
 
-### {expression/expr1} - Resident Ownership Code IN USE
+### {expression/expr1} - Resident Ownership Code ✅
 
 This script decodes the RESCODE field for display.
 
@@ -205,7 +208,7 @@ else if($feature.RESCODE == 'C') {
 }
 ```
 
-### {expression/expr2} Property Transfers since 2019 IN USE
+### {expression/expr2} Property Transfers since 2019 ✅
 
 Returns property transfers since 2019 for selected parcel
 
@@ -261,7 +264,7 @@ return "This feature is categorized as "+parcelFeature.PROPTYPE+". Transfer data
 }
 ```
 
-### {expression/expr3} Property Transfers since Annual Grand List IN USE
+### {expression/expr3} Property Transfers since Annual Grand List ✅
 
 Displays property transfers since annual grand list.
 
@@ -326,7 +329,7 @@ if (parcelFeature.PROPTYPE == "PARCEL") {
 }
 ```
 
-### {expression/expr4} Survey Information IN USE
+### {expression/expr4} Survey Information ✅
 
 Gets survey information if available.
 
@@ -375,7 +378,7 @@ if (Count(surveysIntersect) > 0) {
 }
 ```
 
-### {expression/expr5} Link to Survey IN USE
+### {expression/expr5} Link to Survey ✅
 
 Links to survey if available.
 
@@ -400,7 +403,7 @@ if (Count(intersectingAtts) > 0) {
 return "";
 ```
 
-### {expression/expr6} Total Acreage Formatting IN USE
+### {expression/expr6} Total Acreage Formatting ✅
 
 ```javascript
 // {expresssion/expr6} Total Acreage
@@ -494,7 +497,7 @@ if (parcelFeature.PROPTYPE == "PARCEL") {
 return result
 ```
 
-### {expression/expr8} Current Use IN USE
+### {expression/expr8} Current Use ✅
 
 ```javascript
 // {expression/expr8} Current Use
@@ -548,7 +551,7 @@ if (!IsEmpty(match)) {
 }
 ```
 
-### {expression/expr9} Link to Current Use Dataset IN USE
+### {expression/expr9} Link to Current Use Dataset ✅
 
 ```javascript
 // {expression/expr9} Link to Current Use Dataset
@@ -563,7 +566,7 @@ if (!IsEmpty(match)) {
 }
 ```
 
-### {expression/expr10} Not in Use (For development) ❌
+### {expression/expr10} (For development) ❌
 
 Parcel Summary with PTTRs and Current Use
 {expression/expr10}
@@ -691,7 +694,7 @@ result += TextFormatting.NewLine + TextFormatting.NewLine + cuNote;
 return result;
 ```
 
-### {expression/expr11} IN USE
+### {expression/expr11} Homestead Status ✅
 
 Homestead Status & Value
 {expression/expr11}
@@ -710,7 +713,7 @@ if (isDecl == 'Y' || isDecl == 'Yes') {
 }
 ```
 
-### {expression/expr12} IN USE
+### {expression/expr12} GIS Source Intersector ✅
 
 GIS Source Intersector
 {expression/expr12}
@@ -733,7 +736,7 @@ if (!IsEmpty(firstStatus)) {
 }
 ```
 
-### {expression/expr13} IN USE
+### {expression/expr13} Parcel ID Null Handler ✅
 
 Parcel ID Null Handler
 {expression/expr13}
@@ -747,7 +750,7 @@ if (IsEmpty(pid) || Trim(pid) == "") {
 }
 ```
 
-### {expression/expr14} IN USE
+### {expression/expr14} Map ID Null Handler ✅
 
 Map ID Null Handler
 {expression/expr14}
@@ -761,7 +764,7 @@ if (IsEmpty(mid) || Trim(mid) == "") {
 }
 ```
 
-### {expression/expr15} IN USE
+### {expression/expr15} Survey Visibility Toggle ✅
 
 Survey Visibility Toggle
 {expression/expr15}
@@ -797,7 +800,7 @@ if (!IsEmpty(match)) {
 }
 ```
 
-### {expression/expr17} IN USE
+### {expression/expr17} GIS Acres ✅
 
 GIS Acres
 {expression/expr17}
@@ -808,7 +811,7 @@ var GISACRES = AreaGeodetic($feature, 'acres');
 return Round(GISACRES, 2);
 ```
 
-### {expression/expr18} IN USE
+### {expression/expr18} Acreage Percent Difference ✅
 
 Acreage Percent Difference
 {expression/expr18}
@@ -824,7 +827,7 @@ var AC_Diff_PCT = ((Abs(GLACRES - GISACRES)) / ((GLACRES + GISACRES) / 2)) * 100
 return Round(AC_Diff_PCT, 1) + '%';
 ```
 
-### {expression/expr19} IN USE
+### {expression/expr19} Category Lookup ✅
 
 Category Lookup
 {expression/expr19}
@@ -865,7 +868,7 @@ if (HasKey(catDict, cat)) {
 }
 ```
 
-### {expression/expr20} IN USE
+### {expression/expr20} Unmatched Parcel Warning Toggle ✅
 
 Unmatched Parcel Warning Toggle
 {expression/expr20}
@@ -882,7 +885,7 @@ if (pType == "PARCEL" && mStat == "UNMATCHED") {
 }
 ```
 
-### {expression/expr21} IN USE
+### {expression/expr21} Recent Transfer Summary ✅
 
 Recent Transfer Summary
 {expression/expr21}
@@ -910,7 +913,7 @@ if (Count(transferFeatures) > 0) {
 return "";
 ```
 
-### {expression/expr22} Not in use (for development)
+### {expression/expr22} Current Use Summary (for development) ❌
 
 Current Use Summary
 {expression/expr22}
@@ -940,7 +943,7 @@ if (!IsEmpty(match)) {
 }
 ```
 
-### {expression/expr23} IN USE
+### {expression/expr23} Recent Transfer Display Toggle ✅
 
 Recent Transfer Display Toggle
 {expression/expr23}
