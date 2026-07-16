@@ -996,7 +996,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 ![Parcels Current Use Layer Popup Example](https://github.com/user-attachments/assets/45659900-dac1-4e09-bc17-f7184c05f5fc)
 
-### HTML Popup - Parcels - Current Use v.4.1
+### HTML Popup - Parcels - Current Use v.4.1 ✅
 
 ```html
 <div style="color:#0f172a;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">
@@ -1176,7 +1176,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 </div>
 ```
 
-## Arcade Attribute Expressions - Parcels - Current Use (v.4.1)
+## Arcade Attribute Expressions - Parcels - Current Use (v.4.1) ✅
 
 ### {expression/expr0}
 
