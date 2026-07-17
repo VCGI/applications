@@ -1178,7 +1178,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 ## Arcade Attribute Expressions - Parcels - Current Use (v.4.1) ✅
 
-### {expression/expr0}
+### {expression/expr0} Land Type Title ✅
 
 Bins and Displays Land Type Title based on Total Ag and Total Forest Enrolled Acre Values
 
@@ -1193,7 +1193,7 @@ else if (fr > 0) { return "Forest Enrollment"; }
 else { return "Current Use Enrollment"; }
 ```
 
-### {expression/expr1}
+### {expression/expr1} Percent Enrolled ✅
 
 Displays Percent Enrolled; Calculated in ETL
 
@@ -1210,7 +1210,7 @@ if (tot > 0) { return Round((enr / tot) * 100, 1) + "%"; }
 return "N/A";
 ```
 
-### {expression/expr2}
+### {expression/expr2} 
 
 Sums Total Conservation Acres
 
