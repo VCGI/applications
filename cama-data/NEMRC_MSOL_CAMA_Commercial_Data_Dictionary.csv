@@ -1,0 +1,141 @@
+﻿Label,field name,type,len
+Parcel ID,PARCEL_ID,C,25
+Owner Name,OWNER_NAME,C,40
+Owner Name2,owner_nam2,C,40
+OwnerAdd,OWNER_ADDR,C,40
+City,OWNER_CITY,C,25
+State,OWNER_STAT,C,10
+ZipCode,OWNER_ZIP,C,10
+Pr Zip Code,PROP_ZIP,C,10
+Description,owner_add2,C,40
+Tax Map #,tax_map_nu,C,40
+Prop Class,prop_class,N,10
+St/Road #,PROP_CITY,N,9
+Suffix,suffix,C,4
+St/Road,PROP_ADDR,C,40
+Neighborhood,Neighborho,N,3
+Land Size,land_size,N,12
+Inspect Date,inspect_dt,D,8
+Inspected By,current_st,C,6
+Reinspect,re_inspect,N,3
+Book,book,C,10
+Page,page,C,10
+Sale Price,sale_price,N,12
+Sale Date,sale_date,D,8
+Validity,validity,N,3
+Last Update,p_misc9,D,8
+Vac/Cr Loss,cr_loss,N,15
+Tot Expense,total_exp,N,15
+Tot Income,total_inc,N,15
+Cap Rate,cap_rate,N,12
+Lan As Perc,LAN_AS_PER,N,6
+Bld As Perc,BLD_AS_PER,N,6
+Section Type,sec_t,N,12
+Land ID,LAN_ID,C,3
+Calc.Method,calc_meth,N,3
+Land Type,type,N,3
+Area,area,N,12
+Grade,grade,N,10
+Frontage,frontage,N,10
+Depth,depth,N,10
+Rate,rate,N,7
+SITEIMP ID,SITEIMPID,C,3
+Type,TYPE,N,3
+Quality,QUALITY,N,3
+Quantity,QUANTITY,N,3
+Name,SI_NAME,C,20
+Rate,RATE,N,12
+Section ID,SECTION_ID,C,3
+Tot Flr Area,TOT_FL_AR,N,12
+Stor per sec,STOR_SEC,N,6
+Stor per bld,STOR_BLD,N,6
+Sec/Perimet,SEC_PERI,N,12
+Sec Shape,SEC_SHAPE,N,3
+Base Date,BASE_DATE,D,8
+Bldg Adj,BD_ADJ,N,7
+Year Built,YEAR_BUILT,I,4
+Eff. Age,EFF_AGE,I,4
+Overall Depr,OVRL_DEPR,N,6
+Phys Depr,PHYS_DEPR,N,6
+Func Depr,FUNC_DEPR,N,6
+Econ Depr,EXTL_DEPR,N,6
+Inc Mo/Gros,inc_sf,N,10
+Income Rms,inc_rms,N,10
+Income Unit,inc_units,N,10
+Rate/SF,rate_sf,N,12
+Rate/Room,rate_rm,N,12
+Rate/Unit,rate_unit,N,12
+Occ ID,OCC_ID,C,3
+Occ Type,OCC_CODE,N,3
+Occ Perc,OCC_PERC,N,6
+Occ Class,OCC_CLASS,C,1
+Occ Grade,OCC_RANK,N,5
+Occ Wall Hgt,OCC_STY_HT,N,6
+Occ D Rate,OCC_DRATE,N,6
+Extwall ID,EXW_ID,C,3
+Wall Type,EXW_CODE,N,3
+Wall Perc,EXW_PERC,N,6
+Wall Units,EXW_UNITS,N,6
+Wall Grade,EXW_RANK,N,5
+Wall UOM,EXW_OT_UOM,N,3
+Wall Depr,EXW_DEPR,N,6
+HC Type,HTC_CODE,N,3
+HC Perc,HTC_PERC,N,6
+HC Units,HTC_UNITS,N,6
+Comp ID,COM_ID,C,3
+Comp Type,COM_CODE,N,3
+Comp Perc,COM_PERC,N,6
+Comp Units,COM_UNITS,N,12
+Comp Grade,COM_RANK,N,5
+Comp UOM,COM_OT_UOM,N,3
+ComOthUn,COM_OT_UNT,N,10
+Comp Depr,COM_DEPR,N,3
+Addition ID,ADD_ID,C,3
+RPT Heading,ADD_RPT_HD,N,3
+Add Units,ADD_UNITS,N,12
+Add Cost,ADD_COST,N,12
+Add Depr,ADD_DEPR,N,6
+Add Loc Lult,ADD_LMULT,L,1
+AddBaseDate,ADD_BAS_DT,C,6
+Name Addit,DESC,C,30
+Bsmt Levels,BSMT_LVLS,N,6
+Bsmt Peri,BMST_PERI,N,12
+Bsmt Shape,BSMT_SHAPE,N,3
+Fireproof,FIREPROOF,L,1
+BsmtOcc ID,BOC_ID,C,3
+B Occup,BOC_CODE,N,3
+B Occ Class,BOC_CLASS,C,1
+B Occ Type,BOC_BTYPE,N,3
+B Occ Area,BOC_AREA,N,12
+B Occ Depth,BOC_DEPTH,N,10
+B Occ Grade,BOC_RANK,N,5
+B Occ Depr,BOC_DEPR,N,6
+B Comp ID,BCM_ID,C,3
+B Comp Type,BCM_CODE,N,3
+B Comp Perc,BCM_PERC,N,6
+B Comp Units,BCM_UNITS,N,6
+B Comp Grade,BCM_RANK,N,5
+B Comp OUOM,BCM_OT_UOM,N,3
+B Comp Ot Un,BCM_OT_UNT,N,10
+B Comp Depr,BCM_DEPR,N,6
+Assess Year,assess_yea,N,5
+CAMA Ste Imp,two_acre_v,N,12
+CAMA RCNLD,CAMA_IMP,N,10
+CAMA Land,CAMA_LAND,N,10
+CAMA Total,CAMA_TOTAL,N,10
+Cama Ratio,CAMA_RATIO,N,12
+Other Value,othervalue,N,12
+Other Ratio,otherratio,N,12
+Misc Adjust,misc_adjus,N,12
+Housesite $,homestd_va,N,12
+Homestead $,prop_type,N,12
+SKETCH,SKETCH,G,4
+PHOTO_ID,PHOTO_ID,C,3
+PHOTO,PHOTO,G,4
+REMARKS,REMARKS,M,4
+mSketch,mSketch,M,4
+SKETDATE,SKETDATE,D,8
+Status,PARCSTATUS,C,1
+SPAN,PARC_SPAN,C,13
+Select Value,SELECTVALU,N,3
+T.Inc.Value,CAMATINC,N,15

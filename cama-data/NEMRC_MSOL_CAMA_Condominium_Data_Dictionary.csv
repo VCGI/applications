@@ -1,0 +1,116 @@
+﻿Label,field name,type,len
+Description,FACTORH,C,40
+Tax Map #,tax_map_nu,C,40
+Prop Class,FACTORI,N,3
+St/Road #,FACTORG,N,9
+Suffix,owner_addr2,C,40
+ST/Road,PROP_LOCAT,C,40
+Neighborhood,NEIGHBORHO,N,3
+Land Size,FACTORJ,N,12
+Inspect Date,inspect_dt,D,8
+Inspected By,FACTORF,C,12
+Reinspect,re_inspect,N,3
+Book,book,C,12
+Page,page,C,12
+Sale Date,SALE_DATE,D,8
+Sale Price,SALE_PRICE,N,12
+Validity,validity,N,3
+Project Loc,FAC_221,N,3
+Condo Loc,FAC_222,N,3
+Factor A,FAC_233,N,12
+Factor B,FAC_224,N,12
+SKETCHBMP,SKETCHBMP,C,20
+Factor E (n),FAC_214,N,12
+Factor F (n),FAC_215,N,12
+Trans ID,IMPROVEID,C,3
+SALE DATE,TYPE,C,8
+SALE PRICE,UNITS,C,12
+SPAN,PARC_SPAN,C,13
+Sec ID,SECID,C,10
+Quality,QUALITY,N,3
+Level,CAMA_DWELL,N,3
+End Unit,IMPROV,N,3
+Building SF,BLDG_SQFT,N,10
+Bsmt SF,BASEMNT_SQ,N,12
+Bsmt FNA,BASEMNT_FI,N,3
+Bsmt Fin SF,BASEMNT_SF,N,5
+Heat ID,HEATID,C,3
+Heat/Cool,Type,N,3
+Spa Rms#,PREV_DWELL,N,12
+HT/WP/Sauna,IMP_TOTAL,N,10
+Lock-Off #,IMPR_TOTAL,N,12
+Plumb Fixt,PLUMB_FIXT,N,3
+Extra Fixt #,EXSTAIRSOF,N,3
+Stove/hrth#,EXSTAIRSTYP,N,3
+Total Rooms,TOTAL_ROOM,N,5
+Bedrooms,BEDROOMS,N,3
+Full Baths,FULL_BATHS,N,3
+Half Baths,HALF_BATHS,N,3
+Extra Baths,PROP_DWELL,N,3
+Ex Half Bths,GARA_TOTAL,N,12
+Porch Amt,rcn,N,3
+SKETDATE,SKETDATE,D,8
+PHOTOLOC,PHOTOLOC,M,4
+PARCEL_ID,PARCEL_ID,C,25
+SECID,SECID,C,10
+NOTES,NOTES,M,4
+RCNLD,rcnld,N,12
+Depr.Page,T40PAGEVAL,N,4
+Fireplce #,FIREPLACES,N,3
+Loft SF,landings_S,N,12
+Year Built,YEAR_BUILT,N,5
+Yr/Time Diff,EXSTAIRFLI,N,12
+Condition,CONDITION,N,3
+% Complete,Complete_p,N,3
+Func Adeq,FUNC_DEPR,N,12
+Porch ID,PORCHID,C,3
+Porch Type,FLOOR,N,3
+Porch Area,AREA,N,10
+Total Prch V,Tot_Prch_V,N,6
+Garage ID,GARAGEID,C,3
+Gar/Shd Type,TYPE,N,3
+Area,AREA,N,8
+Amenity ID,AMENID,C,10
+Amenity Type,AMENTYPE,N,3
+OYval ID,OYVALID,C,3
+Period,nperiod,N,4
+Prior Dwell,cama_dwell,N,12
+Prior Land,cama_land,N,12
+Prior Siteim,cama_sitei,N,12
+Prior Outbld,cama_outb,N,12
+Prior Total,cama_total,N,12
+Prior Ratio,PriorRatio,N,10
+Misc Adjust,MISC_ADJUS,N,10
+DevTLag,FAC_213,N,12
+CAMA Dwell,cama_dwell,N,12
+CAMA Land,cama_land,N,12
+CAMA SiteImp,cama_sitei,N,12
+CAMA Outbuil,cama_outb,N,12
+CAMA Total,CAMA_TOTAL,N,12
+CAMA Ratio,FAC_209,N,12
+Comp Value,FACTORA,N,12
+Comp Ratio,FACTORB,N,12
+Regr Value,FAC_210,N,12
+Regr Ratio,FAC_211,N,12
+Prior Value,FAC_216,N,12
+Prior Ratio,FAC_217,N,12
+Condo Value,FAC_218,N,12
+Condo Ratio,FAC_219,N,12
+Auto Hms/Hst,homestead,N,3
+Busi/Rent %,FAC_212,N,12
+Housesite $,homestd_va,N,12
+Homestead $,CAMA_SITE2,N,12
+Select Value,SelectValu,N,3
+OPDV Cd,FAC_238,N,12
+Bsmt Wall,BASEMNT_WA,N,3
+Sec ID,SECID,C,10
+Parcel ID,PARCEL_ID,C,25
+Owner Name,OWNER_NAME,C,40
+Owner Name2,owner_nam2,C,40
+Owner Addres,OWNER_ADDR,C,40
+City,CITY,C,35
+State,STATE,C,10
+ZipCode,ZIP_CODE,C,11
+Status,PARCSTATUS,C,1
+Last Update,LastUpdate,D,8
+Photo #,PhotoID,C,10
