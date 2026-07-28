@@ -1,0 +1,209 @@
+﻿Label,field name,type,len
+Description,FACTORH,C,40
+Tax Map #,tax_map_nu,C,40
+Prop Class,FACTORI,N,10
+St/Road #,FACTORG,N,9
+Suffix,owner_add2,C,4
+St/Road #,PROP_LOCT,C,40
+Neighborhood,NEIGHBORHO,N,3
+Land Size,FACTORJ,N,12
+Inspect Date,inspect_dt,D,8
+Inspected By,FACTORF,C,6
+Reinspect,re_inspect,N,3
+Book,book,C,12
+Page,page,C,12
+Sale Date,SALE_DATE,D,8
+Sale Price,SALE_PRICE,N,12
+Validity,validity,N,3
+LastUpdate,LastUpdate,D,8
+Cost Updated,FACTORE,D,8
+Street Numbr,street_num,C,50
+Factor A,FAC_220,N,12
+Factor B,FAC_221,N,12
+Factor C,FAC_222,N,12
+Factor D,FAC_223,N,12
+CLAVla,FAC_224,N,12
+Factor F,FAC_225,N,12
+Factor G,FAC_226,N,12
+Factor H,FAC_227,N,12
+Factor I,FAC_228,N,12
+Factor J,FAC_229,N,12
+Factor K,FAC_230,N,12
+Tran ID,tran_id,C,3
+Sale Date,sale_date,D,8
+Sale Price,sale_price,N,12
+Grantor,grantor,C,30
+Grantee,grantee,C,30
+Validity,validity,N,3
+Book,book,N,12
+Page,page,N,12
+Insp ID,insp_id,C,3
+Inspect Date,insp_date,D,8
+Inspected By,insp_by,N,3
+Reason,reason,C,30
+Insp. Type,ITYPE,N,3
+Insp. Status,ISTATUS,N,3
+Insp. Result,IRESULT,N,3
+Insp. Reason,IREASON,N,3
+Appt Request,IAPPTREQ,N,3
+ApptSchdBy,IAPPTBY,C,30
+Appt Date,IAPPTDATE,D,8
+Appt Tim,IAPPTTIME,C,8
+Land ID,LANDID,C,3
+Calc Method,calc_meth,N,3
+Land Type,TYPE,N,3
+Area,AREA,N,12
+Grade,GRADE,N,10
+Frontage,FRONTAGE,N,4
+Depth,DEPTH,N,3
+Rate,RATE,N,7
+S-Imp ID,siteImpID,C,3
+Type,Type,N,3
+Quality,Quality,N,3
+Quantity,Quantity,N,3
+SI Name,SI_Name,C,20
+Rate,Rate,N,12
+Add to Hsite,Add_SI,N,3
+Add to Hmstd,Total,N,3
+Outbld ID,OUTBID,C,3
+Type,TYPE,N,3
+Area/Diam,dimensionl,N,5
+Siding,Siding,N,3
+Finish,Finish,N,5
+Class,CLASS,N,3
+Quality,QUALITY,N,3
+% Good,Grade,N,5
+Name,Name,C,20
+Rate,RATE,N,7
+Add to Hsite,Add-OB,N,3
+Add to Hmstd,TOTAL,N,3
+Silo/BarnHt,DIMENSION2,N,5
+Sec ID,SECID,C,10
+Bldg Type,BLDG_TYPE,N,3
+Quality,QUALITY,N,5
+Style,STYLE,N,3
+Building SF,BLDG_SQFT,N,10
+Design,design,N,3
+Frame,FRAME,N,3
+Extwall ID,EXTWALLID,C,3
+Siding,Type,N,3
+Siding %,percent,N,3
+Roof ID,ROOFID,C,3
+Roof Cover,Type,N,3
+Roof Cov %,Percent,N,3
+Dormer LinFt,DORMER_LIN,N,10
+Dormer Roof,DORMER_ROO,N,3
+Energy Adj,ENERGY_ADJ,N,3
+P/Crawl/Slab,FOUNDATION,N,3
+Bsmt Wall,BASEMNT_WA,N,3
+Bsmt SF,BASEMNT_SQ,N,12
+Bsmt Garage,BASEMNT_GA,N,3
+Bsmt FNA,BASEMNT_FI,N,3
+Bsmt Fin SF,BASEMNT_SF,N,5
+Bsmt Entry,OUTSD_ENTR,N,3
+Subfloor,SUBFLOOR,N,3
+Floor Insul,FLOOR_INSU,N,3
+Floor Ins FL,FLOOR_INS,N,4
+HEAT ID,HEATID,C,3
+Heat/Cool,Type,N,3
+Heat/Cool %,Percent,N,3
+Plaster Int,PLASTER_IN,N,3
+Floor ID,FLOORID,C,3
+Floor Cover,Type,N,3
+Floor Cov %,Percent,N,3
+Wall Height,WALL_HEIGH,N,3
+Feature ID,FEATURID,C,3
+Type,Type,N,3
+Quality,Grade,N,5
+Count,Quantity,N,8
+Rate,Rate,N,12
+Name,Name,C,20
+Plumb Fixt,PLUMB_FIXT,N,3
+Plumb Roughn,PLUMB_ROUGHN,N,3
+Total Rooms,TOTAL_ROOM,N,5
+Bedrooms,BEDROOMS,N,3
+Full Baths,FULL_BATHS,N,3
+Half Baths,HALF_BATHS,N,3
+Kitchens,KITCHENS,N,3
+Fireplce #,FIREPLACES,N,3
+Firepl Type,FPType,N,3
+Year Built,YEAR_BUILT,N,5
+Effect Age,EFFECT_AGE,N,5
+Life Expect,LIFE_EXPEC,N,3
+Condition,CONDITION,N,3
+Phys Deprec,PHYS_DEPR,N,12
+Func Deprec,FUNC_DEPR,N,12
+Econ Deprec,ECON_DEPR,N,12
+% Complete,Complete_p,N,3
+%Bus/Rental,EXSTAIRFLI,N,5
+Add to Hsite,EXTSTAIRTYP,N,3
+Add to Hmstd,EXSTAIRSOF,N,3
+Porch ID,PORCHID,C,3
+Porch Area,AREA,N,10
+Floor,FLOOR,N,3
+Wall Height,WALL,N,3
+Roof,ROOF,N,3
+Ceiling,CEILING,N,3
+Manuf Width,MANUF_WIDTH,N,12
+Manuf Length,MANUF_LEN,N,12
+Tipouts SF,Tipouts_SF,N,12
+Skirting,SKIRTING,N,3
+Skirting LF,SKIRTING_L,N,12
+Garage ID,GARAGEID,C,3
+Gar/Shd Type,TYPE,N,3
+Area,AREA,N,8
+Siding,SIDING,N,3
+Floor,FLOOR,N,3
+Finish,FINISH,N,3
+Finish SF,FIN_Sqft,N,5
+Cpt Rood,ROOF,N,3
+# Unit Multi,NO_OF_UNIT,N,3
+Story Multi,STORIES,N,3
+Total Prch V,Tot_Prch_V,N,6
+Tot Porch SF,PORC_TOTAL,N,12
+Tot Gar SF,GARA_TOTAL,N,12
+RCN,rcn,N,12
+RCNLD,rcnld,N,12
+Depr.Page,T40PAGEVAL,N,4
+Photo Desc,SKETCHBMP,C,20
+OYval ID,OYVALID,C,3
+Period,nperiod,N,4
+Prior Dwell,cama_dwell,N,12
+Prior Land,cama_land,N,12
+Prior Siteim,cama_sitei,N,12
+Prior Outbld,cama_outb,N,12
+Prior Total,cama_TOTAL,N,12
+Prior Ratio,FAC_209,N,10
+CAMA Dwell,cama_dwell,N,12
+CAMA Land,cama_land,N,12
+CAMA SiteImp,cama_sitei,N,12
+CAMA Outbuil,cama_outb,N,12
+CAMA Total,CAMA_TOTAL,N,12
+CAMA Ratio,FAC_209,N,12
+Comp Value,FACTORA,N,12
+Comp Ratio,FACTORB,N,12
+Regr Value,FAC_210,N,12
+Regr Ratio,FAC_211,N,12
+Other Value,FAC_216,N,12
+Other Ratoi,FAC_217,N,12
+Misc Adjust,MISC_ADJUS,N,10
+Housesite,homestead,N,3
+Housesite $,homestd_va,N,12
+Homestead $,CAMA_SITE2,N,12
+Select Value,SelectValu,N,3
+OPDV Cd,FAC_238,N,12
+SPAN,PARC_SPAN,C,13
+MSKETCH,MSKETCH,M,4
+SKETDATE,SKETDATE,D,8
+PHOTOLOC,PHOTOLOC,M,4
+NOTES,NOTES,M,4
+Parcel ID,PARCEL_ID,C,25
+Owner Name,OWNER_NAME,C,40
+Owner Name2,owner_nam2,C,40
+Owner Addres,OWNER_ADDR,C,40
+City,CITY,C,35
+State,STATE,C,10
+ZipCode,ZIP_CODE,C,11
+Status,PARCSTATUS,C,1
+Category,prop_type,N,3
+Ownership,ownership,N,3
