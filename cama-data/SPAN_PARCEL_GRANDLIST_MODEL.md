@@ -279,6 +279,27 @@ The `(varies)*` owner annotation reflects a real legal constraint, not just a da
 - **Update of the Parcel Data Standard, guidance, and templates** — v2.3 (§4) would need a substantial revision; possible new tooling, developed jointly with vendors.
 - **CAMA data integration:** improved record identification/management is expected to permit a more reliable relationship with detailed CAMA property info — explicitly tied to **32 V.S.A. § 5404**, the existing statutory reporting requirement that is *also* the reason VCGI has been collecting the NEMRC/Aumentum/Vision/Catalis CAMA samples documented in [readme.md](readme.md) and [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) in the first place. **This connects the two initiatives:** the CAMA-schema documentation effort and this parcel/SPAN redesign aren't separate tracks — §5404 compliance is the throughline linking both.
 
+### 6.5 Regional Assessment Districts and PVR's rulemaking mandate (Act 170 §3417)
+
+*This section corrects a stale cross-reference: [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md)'s gap analysis said this content "lives in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §§6–7" — it hadn't actually been written up here until now.*
+
+Act 170 creates a new 32 V.S.A. chapter 121, subchapter 1A (§§3415–3419), establishing **Regional Assessment Districts**. This is the one place in either act that names CAMA systems directly, and it's a **statutory mandate**, not a suggestion:
+
+> §3415 (Legislative Intent): "...to create regional assessment districts so that: (1) properties on grand lists are regularly reappraised; **(2) property data collection is consistent and standardized across the State**; and (3) property valuation is conducted by trained and certified individuals and firms."
+
+> §3417 (Standard Guidelines; Procedures; Rulemaking): "The Director of Property Valuation and Review shall establish standard guidelines and procedures, and may adopt rules, for regional assessment districts, including: (1) guidelines for contracting with third parties...; (2) **standards for the collection and recordation of parcel data**; (3) **requirements relating to information technology, including standards for data software contracts and computer-assisted mass appraisal systems**; and (4) standardized practices for a full reappraisal..."
+
+**Why this matters more than any other single provision documented here:** §3417 gives the PVR Director explicit rulemaking authority over exactly the two things this entire documentation set is about — parcel data collection standards, and CAMA/IT software contract requirements. Everything in §6.1–6.4 (the proposed `KIND`/`TYPE`/`ADMINSPAN`/`GROUNDSPAN`/`TAXBILL`/`PARCLCOUNT`/`DWELLINGS`/`FLR_PCT_*` fields) is a candidate *input* to that rulemaking, not a separate, informal side-conversation with NEMRC. This is the statutory hook that could turn this documentation effort into an actual adopted state standard rather than a bilateral vendor negotiation.
+
+**Mechanics and timing:**
+- Member municipalities of a regional assessment district must fully reappraise their grand lists every six years (§3416), and may jointly contract with third parties (CAMA vendors, appraisal firms) to do so.
+- District boundaries are to align with school districts, each with a minimum of 10,000 parcels (Sec. 54); boundary recommendations are due to the Legislature by December 15, 2029.
+- Districts commence operation **January 1, 2031**.
+- New **Regional Assessment District Appeals Boards** (§§3418–3419) replace municipal Boards of Civil Authority for valuation appeals, with board seats scaling at one per 1,000 parcels (rounded up) in the municipality — taking over appeal jurisdiction **July 1, 2031**.
+- All of this is contingent on the same foundation-formula trigger condition referenced elsewhere in Act 170 (2025 Acts & Resolves No. 73, as amended).
+
+**Practical implication:** PVR's rulemaking authority under §3417 isn't itself gated to the 2031 district start date — there's no statutory reason the standards-setting couldn't begin sooner, and 2031 will arrive with towns needing a common CAMA/parcel-data standard to actually operate jointly across a multi-town district. That makes this section, and the redesign proposal in §6.1–6.4, directly relevant to PVR now, not just in 2031.
+
 ## 7. Open questions for the ongoing workgroup
 
 *VCGI, the Tax Department, and NEMRC are already meeting on this — these are gaps identified while reconciling the workgroup's proposal against the actual current-state pipeline documented in §§3–4, not a suggestion that discussion hasn't started.*

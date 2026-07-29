@@ -1,16 +1,122 @@
-# Vermont CAMA Data Overview
+# Vermont Property Data Modernization
 
-## Status per 32 V.S.A. § 5404
+*How Vermont identifies, tracks, transmits, maps, and publishes municipal property information — and what's changing under Act 164 (H.933) and Act 170 (H.955) of 2026.*
 
-*Last Updated: January 26, 2026*
+## Purpose of This Document
+
+Vermont's property tax system runs on three loosely-connected systems: a municipality's **CAMA** software (appraisal record-keeping), a **Grand List** module (billing and the statewide **SPAN** identifier), and VCGI's **statewide parcel GIS layer** (the map). Two 2026 laws — Act 164 and Act 170 — require these three systems to work together more precisely, on a series of deadlines running through 2031: a new physical/legal definition of "parcel," a new required dwelling-unit count, a new three-way property classification, and a direct legislative mandate for the state to set data standards across all of it.
+
+This repository is an attempt to document, as precisely as the available evidence allows, how these systems *actually* work today — reverse-engineered from sample data, vendor training materials, and direct conversations with VCGI, Tax Department, and NEMRC staff — so that the coming changes can be implemented on a shared, accurate factual basis rather than guessed at independently by each party. This document is the entry point and synthesis; the detailed technical findings live in the linked documents below.
+
+## Who This Is For
+
+- **Tax Department / Property Valuation and Review (PVR):** you hold the legislative authority behind most of this — SPAN is legally "the numbering system prescribed by the Director" (32 V.S.A. §5404(b)), and Act 170 §3417 directs you to set statewide standards for parcel data collection and CAMA/IT contracts. Start with [The Short Version](#the-short-version), [The Legislative Timeline](#the-legislative-timeline), and [What This Means for Tax Department / PVR](#if-youre-at-the-tax-department--pvr).
+- **CAMA vendors** (Aumentum, Vision, Catalis, and others who may contract with VT towns in the future): you'll need to implement new extract fields and reporting on the timeline below. Start with [What This Means for CAMA Vendors](#if-youre-a-cama-vendor) and your product's own as-built document, linked there.
+- **NEMRC:** you are, at once, one of four CAMA vendors *and* the sole statewide source of SPAN for every Vermont town, regardless of which CAMA product that town runs. Nearly everything documented here eventually depends on your Grand List module's cooperation, not just your CAMA product's. Start with [What This Means for NEMRC](#if-youre-nemrc), which includes the legislative-change summary you asked for.
+
+## The Short Version
+
+- Three systems, three different owners: **CAMA** (town-level, vendor-specific — NEMRC MicroSolve for ~77% of towns, Aumentum/ProVal, Vision, or Catalis/AssessPro elsewhere), **Grand List** (a separate NEMRC product used statewide for SPAN issuance and billing, regardless of CAMA vendor), and **VCGI's parcel GIS layer** (which joins the two together, via the Tax Department, using SPAN).
+- The single most consequential change: Vermont's legal definition of "parcel" is splitting in two — an **ownership/billing parcel** (who pays one tax bill) and a **mapping/sellable-lot parcel** (a physical, separately-sellable piece of land) — and today's software mostly only models the first one well.
+- Two other concrete new requirements: a **count of dwelling units per parcel** (required on grand lists starting with those lodged in calendar year 2027 — the nearest deadline of anything here, and no field exists anywhere today to source it), and a **three-way property classification** (homestead / nonhomestead residential / nonhomestead nonresidential) with percentage-of-floor-space splitting for mixed-use buildings (2029, contingent on further legislative action).
+- **None of this works without SPAN**, and NEMRC's Grand List module is the only source of SPAN for all ~260 Vermont towns today, independent of CAMA vendor.
+- Act 170 §3417 gives PVR direct rulemaking authority over parcel-data and CAMA/IT standards — this documentation is meant to be usable input to that rulemaking, not just a set of talking points for a NEMRC conversation.
+
+## The Legislative Timeline
+
+*Requested by NEMRC. Every row links to the fuller technical discussion — this table is meant to orient, not replace that detail.*
+
+| When | What Happens | Statute | Why It Matters |
+|---|---|---|---|
+| Ongoing (2026–) | VCGI, the Tax Department, and NEMRC are jointly drafting a proposed parcel/SPAN/Grand List schema redesign; this documentation set is a direct input to that work. | 32 V.S.A. §5404(b) *(pre-existing)* | Baseline requirement: annual CAMA extract to PVR by **August 15**, identifying every parcel by SPAN. See [§1.4](SPAN_PARCEL_GRANDLIST_MODEL.md#14-the-cama-extract-submission-channel-32-vsa--5404b-and-globalscape-ftp). |
+| Grand lists lodged beginning **CY2027** | New required "number of dwelling units" column on the Grand List. | Act 170, 32 V.S.A. §4152(a)(10) | **Nearest deadline of anything here.** No field exists today — in CAMA, the Grand List, or the GIS layer — to source this count. See [§6.3](SPAN_PARCEL_GRANDLIST_MODEL.md#63-new-field-definitions-per-the-workgroup-pdf). |
+| **April 1, 2028** | Legal definition of "parcel" splits: an ownership/billing parcel (today's "Active" parcel) vs. a mapping/sellable-lot parcel. | Act 164, 32 V.S.A. §4152(a)(3) | Directly drives the proposed Parcel vs. Administrative Parcel model. See [§6.1](SPAN_PARCEL_GRANDLIST_MODEL.md#61-core-idea-split-parcel-from-administrative-parcel). |
+| CY2028 *(contingent)* | Tax Dept begins collecting property-use data toward classification; reports to the Joint Fiscal Office by Oct. 1, 2028. | Act 170, Sec. 60 | Precursor to the 2029 classification rollout below. |
+| **July 1, 2029** *(contingent — auto-repealed if the Legislature hasn't enacted a tax-rate-multiplier statute by then)* | Parcels classified three ways (homestead / nonhomestead residential / nonhomestead nonresidential), with floor-area proration for mixed use; new dwelling-use attestation. | Act 170, 32 V.S.A. §4152a, §5410 | No analog today beyond a binary homestead flag. See [§6.3](SPAN_PARCEL_GRANDLIST_MODEL.md#63-new-field-definitions-per-the-workgroup-pdf). |
+| **July 1, 2031** | Statewide assessment/lien date moves from April 1 to January 1 (dozens of statutes amended). | Act 164, Secs. 24–48 | Mechanical, but touches nearly every date-driven field/workflow in CAMA and the Grand List. |
+| **January 1, 2031** | Regional Assessment Districts begin operating (joint 6-year reappraisal cycles, ≥10,000 parcels each). | Act 170, 32 V.S.A. §§3415–3419 | See [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417). |
+| Not gated to a specific date | PVR Director directed to set statewide standards for parcel data collection and CAMA/IT software contracts. | Act 170, §3417 | **The direct statutory hook for adopting this documentation as an actual state standard.** See [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417). |
+| **July 1, 2031** | Regional Assessment District Appeals Boards take over valuation-appeal jurisdiction from municipal Boards of Civil Authority. | Act 170, 32 V.S.A. §§3418–3419 | See [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417). |
+
+## The Current System, in Brief
+
+- **CAMA** holds the appraisal detail — building characteristics, land lines, valuation math — for whichever vendor's software a town runs. It does **not** issue SPAN; it just stores whatever SPAN the Grand List module assigned. See [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md).
+- **The Grand List** (a separate NEMRC product, used statewide) generates and maintains SPAN, produces the annual lodged Grand List, and is the record a town submits to the state — regardless of which CAMA vendor that same town uses for appraisal.
+- **VCGI's parcel GIS layer** joins town-submitted parcel geometry to the Grand List — which VCGI receives from the Tax Department, not directly from towns or NEMRC — using SPAN as the key, publishing the result as the statewide "Active" and "Inactive" parcel layers.
+- Full detail, including the actual Globalscape FTP mechanism NEMRC uses to submit CAMA data today, and a first direct look at the Grand List module's own "Active/Inactive/Contiguous Parcel" screens: [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §1.
+
+## What's Changing
+
+- **Parcel vs. Administrative Parcel.** Today, when several adjoining lots share one owner, they're combined into one "Active" parcel for billing, with the individual lots marked "Inactive." Act 164 requires the *mapping* definition of parcel to mean a separate, sellable lot instead — which is exactly what today's "Inactive" layer already models, just not as the primary published layer. The proposed fix: elevate that layer to primary, and introduce two new linking fields — `ADMINSPAN` (combines multiple physical lots into one tax bill) and `GROUNDSPAN` (links condo units to their shared ground/common element). Full detail: [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §6.
+- **Dwelling units.** A new `DWELLINGS`-type field, required by CY2027, that doesn't exist today at the CAMA, Grand List, or GIS level in any of the three CAMA products examined so far — though two of those three vendors have *something* dwelling-count-adjacent already (Aumentum's `ResLivingUnits`, Catalis's `Rental Living Units`), neither of which has been confirmed as the right source. The definition of "dwelling unit" itself is still being worked out.
+- **Three-way classification.** Replacing today's simple homestead/non-homestead flag with three categories (homestead / nonhomestead residential / nonhomestead nonresidential) and percentage-of-floor-space proration for mixed-use buildings — mechanically similar to what already exists in commercial CAMA valuation tables, but not wired to this purpose anywhere yet.
+- **A real statutory lever for standardization.** Act 170 §3417 gives PVR authority to set the actual parcel-data and CAMA/IT standards this documentation has been reverse-engineering the *current state* of — see the timeline above.
+
+## What This Means for You
+
+### If you're at the Tax Department / PVR
+
+- Your authority is already the backbone of this: 32 V.S.A. §5404(b) makes SPAN "the numbering system prescribed by the Director," and Act 170 §3417 gives you rulemaking authority over parcel-data collection standards and CAMA/IT contracts — see [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417).
+- A handful of decisions here are genuinely policy calls, not IT questions, and are yours to make: what actually counts as a "dwelling unit"; whether the 2028 parcel-definition change and the 2029 classification work roll out together or on separate tracks; how (or whether) cross-town contiguous parcels get handled uniformly, since SPAN is town-scoped but ownership isn't always.
+- The full, current list of open technical/policy questions the workgroup is tracking is in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 — organized so you can hand specific ones to specific parties rather than treating this as one large undifferentiated problem.
+
+### If you're a CAMA vendor
+
+- The concrete, near-term ask: participate in formalizing your product's data-extract format under 32 V.S.A. §5404(b) — this is literally what's already happened for three of the four vendors serving VT towns (documented in [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md)).
+- What's coming that will likely require product or schema work: a dwelling-unit count field, floor-area-percentage classification fields, and — if adopted — `ADMINSPAN`/`GROUNDSPAN`-style relational fields for multi-parcel/multi-unit conditions.
+- Vendor-specific open questions are listed at the end of each product's as-built document — e.g. whether Aumentum's `tax_bill_id` is reliably equivalent to SPAN statewide and what `ResLivingUnits` actually represents ([PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6); whether Catalis/AssessPro tracks a Vermont SPAN internally at all, given the one sample examined has none ([ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6); no sample has yet been received from Vision Government Solutions, which is itself an open item.
+
+### If you're NEMRC
+
+You're the most consequential vendor in this entire picture, for a reason that has nothing to do with market share: you are, at once, one of four CAMA vendors *and* the sole statewide source of SPAN, via a separate Grand List product used regardless of which CAMA software a town runs. Nearly every change described above eventually routes through your Grand List module, not just MicroSolve.
+
+- **The legislative timeline you asked for is above** — see [The Legislative Timeline](#the-legislative-timeline).
+- Specific technical questions that are yours to answer, drawn from the full open-questions list in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7:
+  - Can `EXP_DATADICT`/`EXP_CATEG` (the self-describing schema files that were missing entirely from the Lincoln sample but present in South Burlington's) be included in every future extract as standard practice?
+  - Your Grand List module's own "Contiguous Parcel Information" screen already tracks the relationship a proposed `ADMINSPAN` field would formalize — today, keyed by `Parcel #`, not SPAN. Could it be exposed SPAN-keyed instead?
+  - Where would a `DWELLINGS` rollup actually be computed — your Grand List module, MSOL CAMA, or both?
+  - Will Aumentum, Vision, and Catalis use the same Globalscape FTP arrangement your CAMA data already flows through, or something else?
+  - Does contiguous-parcel combination ever actually cross town lines in practice, given each town runs a separate Grand List database?
+  - Could the existing `HS-122` and `TIF` tabs on your Grand List module's parcel record be extended to carry the 2029 dwelling-use attestation, rather than building something new?
+
+## Open Questions Still Being Worked Through
+
+The complete, current lists (30+ items across all documents) are linked below by theme rather than repeated here:
+
+- **Dwelling units — definition and sourcing:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 1, 13, 15; [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6; [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6.
+- **SPAN structure, `ADMINSPAN`/`GROUNDSPAN`, and the Grand List module's own mechanics:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 5, 8, 13, 14.
+- **Vendor-specific data-transfer and SPAN-reliability questions:** [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8; [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6; [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6; [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 11–12.
+- **Classification/floor-area proration sourcing:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, item 2.
+- **Timing, sequencing, and statutory compliance:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 3, 6, 11.
+
+## The Full Documentation Set
+
+| Document | Covers |
+|---|---|
+| **`readme.md`** *(this file)* | Entry point and synthesis; CAMA vendor status/contacts below. |
+| [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) | SPAN authority and structure, the statewide Grand List table, the current GIS parcel pipeline, the Grand List module's own Active/Inactive UI, and the proposed future-state model — the core technical document behind this synthesis. |
+| [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) | NEMRC MicroSolve CAMA schema (South Burlington and Lincoln samples). |
+| [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) | Aumentum ProVal CAMA schema (Barre Town sample). |
+| [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) | Catalis AssessPro CAMA schema (statewide flat-file sample) — and why it has no SPAN. |
+| [cama-explorer-demo-msolve](../cama-explorer-demo-msolve) | Working mock-up viewer + documentation for the MicroSolve/Lincoln sample. |
+| [cama-explorer-demo-aumentum](../cama-explorer-demo-aumentum) | Working mock-up viewer + dwelling-unit methodology for the Aumentum/Barre Town sample. |
+| [cama-explorer-demo-assesspro](../cama-explorer-demo-assesspro) | Source files for the Catalis/AssessPro sample (no viewer — see [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §3 for why). |
+
+---
+
+## CAMA Data Overview
+
+### Status per 32 V.S.A. § 5404
+
+*Last Updated: July 29, 2026*
 
 **What the statute actually requires (32 V.S.A. § 5404(b)):** annually, on or before **August 15**, the clerk of a municipality (or the supervisor of an unorganized town or gore) must transmit to the Director of Property Valuation and Review (PVR) at the Vermont Department of Taxes "an extract of the assessor database also referred to as a Computer Assisted Mass Appraisal (CAMA) system or Computer Assisted Mass Appraisal database" that identifies each parcel by "a parcel identification number assigned under a numbering system prescribed by the Director." **That numbering system is SPAN, and is expected to remain SPAN** even as the parcel-definition changes under Act 164/H.933 take effect (see [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §2/§7 for the redesign discussion). There is currently **no prescribed electronic transfer method** — CAMA vendors are expected to build tailored reports for Vermont's request (as they do in other states) and submit on behalf of their towns. See [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §1.4 for how this is actually happening today (the Globalscape FTP arrangement with NEMRC) and what remains unconfirmed for the other vendors.
 
 | **Percent   of Towns** | **Towns Per Tax** | **Tool**                      | **Vendor**                                                              | **Sample Received** | **Date Received** | **Notes**                                                                                                                                     | **Mock Up** |
 |:----------------------:|:-----------------:|-------------------------------|-------------------------------------------------------------------------|:-------------------:|:-----------------:|-----------------------------------------------------------------------------------------------------------------------------------------------|-------------|
 |           12%          |         32        | ASSESSPRO / AP5                     | Catalis (New England Municipal Consultants / NEMC acts as local vendor) |         Yes         |     1/28/2026     | Single flat-file "Banker & Tradesman" format extract (3,052 records), not a relational export. No SPAN-equivalent field found — no mock up could be built as a result. As-built documentation: [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md). |             |
-|           77%          |        200        | MicroSolve CAMA               | NEMRC                                                                   |         Yes         |     12/4/2025     | 2 towns received. Multiple tables/complete extract. 1 town (Lincoln) dummy data only with no multi-fam or condo conditions within. South Burlingtion received, contains condos and commercial properties. As-built documentation: [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md).                              | Created     |
-|           7%           |         19        | PROVAL                        | Aumentum                                                                |         Yes         |     7/23/2025     | Barre Town extract. Multiple   tables/complete extract. Mock up created. Useful if representative. Data dictionary needed. As-built documentation: [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md).                  | Created     |
+|           77%          |        200        | MicroSolve CAMA               | NEMRC                                                                   |         Yes         |     12/4/2025     | 2 towns received. Multiple tables/complete extract. 1 town (Lincoln) dummy data only with no multi-fam or condo conditions within. South Burlingtion received, contains condos and commercial properties. As-built documentation: [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md).                              | [South Burlington](https://files.vcgi.vermont.gov/other/demo/cama-sample-microsolve-sburl/index.html) / [Lincoln](https://files.vcgi.vermont.gov/other/demo/cama-sample-microsolve/index.html) |
+|           7%           |         19        | PROVAL                        | Aumentum                                                                |         Yes         |     7/23/2025     | Barre Town extract. Multiple   tables/complete extract. Mock up created. Useful if representative. Data dictionary needed. As-built documentation: [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md).                  | [Barre Town](https://files.vcgi.vermont.gov/other/demo/cama-sample-aumentum/index.html) |
 |           3%           |         7         | Vision Governmental Solutions | Vision Governmental Solutions                                           |          No         |                   |                                                                                                                                               |             |
 |           1%           |         2         | No CAMA Program               | No CAMA Program                                                         |          -          |                   |                                                                                                                                               |             |
 |        **100%**        |      **260**      |                               |                                                                         |                     |                   |                                                                                                                                               |             |
@@ -18,102 +124,6 @@
 [Stats Source Per Tax District Advisors](https://tax.vermont.gov/municipal-officials/listers-and-assessors/district-advisors)
 
 *Status Doc: Documents - VCGI\VCGI-Administration\Program_Admin\Parcels\General Program Administration\Tax Dept\CAMA Data*
-
-## Property Details Contents
-
-The table of property details below is informed by the NEMRC Microsolve CAMA sample for the town of Lincoln, VT. This data sample does not include condominiums or other complex multi-record properties with stacked polygons.
-
-| Location       | Info                           | Types                                                                                                                  | Display       | Derivation |
-|----------------|--------------------------------|------------------------------------------------------------------------------------------------------------------------|---------------|------------|
-| Header         | Full Property  Address         |                                                                                                                        |               | Source     |
-| Header         | Total Assessed Value           |                                                                                                                        |               | Source     |
-| Header         | Total Assessed Value Year      |                                                                                                                        |               | Source     |
-| Summary Badges | Count of Total Structures      |                                                                                                                        |               | Calculated |
-| Summary Badges | Count of Residential Buildings |                                                                                                                        |               | Calculated |
-| Summary Badges | Count of Dwelling Units        |                                                                                                                        | Conditional   | Calculated |
-| Summary Badges | Count of Commercial Buildings  |                                                                                                                        | Conditional   | Calculated |
-| Summary Badges | Count of Total Improvements    |                                                                                                                        |               | Calculated |
-| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Two Units, Three Units, Four   Unit, 5-8 Units, >8 Units, Co-Op, Mixed-Use    | Conditional   | Lookup     |
-| Summary Badges | Type of Use                    | Residential, Commercial, Industrial, Farm/Ag, Timberland, Government,   Open Land/Misc, Other (specified), Unspecified | Conditional   | Lookup     |
-| Summary Badges | Homestead Status               | Homestead, Nonhomestead residential, Nonhomestead nonresidential                                                       | Conditional   | Source     |
-| Summary Badges | Utilities Service              | Water, Sewer, Septic, Electric, None                                                                                   | Conditional   | Source     |
-| Property       | Owner Name                     |                                                                                                                        |               | Source     |
-| Property       | Parcel ID                      |                                                                                                                        |               | Source     |
-| Property       | SPAN                           |                                                                                                                        |               | Source     |
-| Property       | LRSN / CAMA ID                 |                                                                                                                        |               | Source     |
-| Property       | Parcel Status                  |                                                                                                                        |               | Source     |
-| Site           | Type                           |                                                                                                                        |               | Lookup     |
-| Site           | Description                    |                                                                                                                        |               | Source     |
-| Site           | Acres                          |                                                                                                                        |               | Source     |
-| Site           | Land Types                     |                                                                                                                        | Conditional   | Lookup     |
-| Site           | Frontage                       |                                                                                                                        | Conditional   | Source     |
-| Site           | Town                           |                                                                                                                        |               | Source     |
-| Site           | TOWNGEOID                      |                                                                                                                        | Not Displayed | Lookup     |
-| Site           | TVGEOID                        |                                                                                                                        | Not Displayed | Lookup     |
-| Site           | VILLGEOID                      |                                                                                                                        | Not Displayed | Lookup     |
-| Site           | Neighborhood                   |                                                                                                                        |               | Source     |
-| Site           | Zoning                         |                                                                                                                        |               | Source     |
-| Site           | Homestead Status               |                                                                                                                        |               | Source     |
-| Buildings      | Building Number                |                                                                                                                        | Conditional   | Source     |
-| Buildings      | Style                          |                                                                                                                        |               | Source     |
-| Buildings      | Type                           |                                                                                                                        |               | Source     |
-| Buildings      | Year Built                     |                                                                                                                        |               | Source     |
-| Buildings      | Effective Year Built           |                                                                                                                        |               | Source     |
-| Buildings      | Living/Finished Area           |                                                                                                                        |               | Source     |
-| Buildings      | Total Area                     |                                                                                                                        |               | Source     |
-| Buildings      | Bedrooms                       |                                                                                                                        |               | Source     |
-| Buildings      | Bathrooms                      |                                                                                                                        |               | Source     |
-| Buildings      | Kitchens                       |                                                                                                                        |               | Source     |
-| Buildings      | Total Rooms                    |                                                                                                                        |               | Source     |
-| Buildings      | Dwelling Units                 |                                                                                                                        | Conditional   | Calculated |
-| Valuation      | Assessment Year                |                                                                                                                        |               | Source     |
-| Valuation      | Land                           |                                                                                                                        |               | Source     |
-| Valuation      | Dwellings                      |                                                                                                                        |               | Source     |
-| Valuation      | Outbuildings                   |                                                                                                                        |               | Source     |
-| Valuation      | Site Improvements              |                                                                                                                        |               | Source     |
-| Valuation      | Total                          |                                                                                                                        |               | Source     |
-| Record         | Tax Map #                      |                                                                                                                        |               | Source     |
-| Record         | Book                           |                                                                                                                        |               | Source     |
-| Record         | Page                           |                                                                                                                        |               | Source     |
-| Record         | Last Update                    |                                                                                                                        |               | Source     |
-
-## Interoperability and Relation With Parcel Geometry
-
-VCGI has attempted to create basic interoperability between sample CAMA data extracts from NEMRC's Microsolve CAMA platform, standardized parcel polygons defined by the Vermont parcel data standard, and related GIS data such as E911 address points. This work attempts to inform how to improve the availability of existing public information as associated with its property location. A CAMA extract for South Burlington, VT is used as it contains many complex property types with multiple tabular records per single parcel geometry such as condominiums and apartments.
-
-There are challenges and opportunities for data interoperability between these sources. A demo web map application is used to display them, with data loaded in browser, pulled from S3 buckets, and defined in a single index.html file.
-
-The audiences for the demo are municipal listers and assessors, Vermont's Tax Department District Advisors, Property Valuation and Review staff, and policy makers, as well as State of Vermont GIS & IT professionals responsible for aggregating and serving municipal CAMA data as an open data resource.
-
-The intent is to work with these groups to specify a CAMA data standard, implement normalized data transfer, and define the technical requirements for aggregating CAMA data for publishing as a uniform open data resource. Specific details within CAMA data that are of interest are details and counts of buildings and structures on a property, counts of dwelling units that may not explicitly defined in single fields, and site details that are not detailed in grand list or other data. 
-
-A further goal is to consider all in relation to an updated parcel definition that moves from the current "contiguous", aggregate on common ownership for tax administration purposes definition to one that maps properties based on the smallest sellable real estate unit. The latter definition may also begin to reflect and replace what are current called "inactive" parcels.
-
-#### Summary of Interoperability Modeling
-
-1. Normalizing Fragmented Tabular Data (Addressing Data Silos without an ETL)
-
-    - Actions: We federated the three separate NEMRC Microsolve data silos (Residential, Commercial, Condominium) by fetching their respective EXP_MAIN JSON files from S3 locations and mapping common properties into a single, unified masterIndex array in the browser's memory.
-
-    - Challenge: CAMA data is often structurally fragmented based on property type. Commercial properties have tables (like EXP_OCCUPNCY) that do not exist in Residential schemas and vice versa. A robust data pipeline must account for these structural variances while standardizing core search fields (like Address, Owner, and SPAN) so they can be queried uniformly.
-
-2. Bridging Tabular Data and Spatial Geometry (Creating a Spatial Hook)
-
-    - Actions: We established the parc_span field in the CAMA data as the foreign key that maps to the GLIST_SPAN (Grand List SPAN) field in the statewide parcel polygon layer.
-
-    - Challenge: A strictly 1-to-1 relationship between a CAMA record and a physical piece of earth is not valid. Multi-use buildings and condominiums force cartographers to "stack" overlapping polygons. Therefore, applications cannot rely purely on the physical footprint (GIS SPAN) to pull data; they must query the GLIST_SPAN to successfully retrieve all the distinct tax records associated with that single spatial footprint.
-
-3. Visualizing 1-to-Many Relationships (UI Disambiguation)
-
-    - Actions: We implemented an Arcade expression in the map layer to dynamically highlight parcels where the GIS SPAN does not match the GLIST_SPAN (indicating stacked geometry). We also forced the user interface to intercept map clicks on these parcels, presenting a disambiguation table rather than blindly opening the first record it finds.
-
-    - Challenge: Map interfaces inherently suggest that one click equals one property. Without visual cues (like the purple map highlight) and structural UI interventions (the "Found X records" table), users will miss critical property data hiding "underneath" the top-level polygon.
-
-4. Exposing the Address Gap (E911 vs. CAMA)
-
-    - Actions: We utilized a spatial intersect query. When a user clicks a parcel, the map engine draws a boundary around the polygon and counts how many E911 point geometries fall inside it, displaying that count alongside the CAMA record count.
-
-    - Challenge: There is no hard database link between physical E911 address points and CAMA tax records. CAMA addresses (prop_locat or owner_addr) are often mailing addresses, while E911 points represent physical doors. This spatial intersect vividly demonstrates the data gap to policymakers and IT staff: a single tax record might correspond to a dozen physical addresses, and currently, only geography (not tabular keys) links them together.
 
 ## CAMA Vendors
 

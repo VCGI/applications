@@ -169,3 +169,103 @@ The core rendering engine for the Property Details screen.
 ### `cleanValue(val)`
 
 A utility helper that sanitizes data by removing surrounding quotes (`"`) and extra whitespace, ensuring clean display of CSV-style JSON data.
+
+## Property Details Contents
+
+*Moved here from `cama-data/readme.md` (2026-07-29) — this table is specific to this Lincoln-based mock up and was the original property-details field inventory drafted before the broader, multi-vendor documentation effort in [`cama-data/`](../cama-data) existed.*
+
+The table of property details below is informed by the NEMRC Microsolve CAMA sample for the town of Lincoln, VT. This data sample does not include condominiums or other complex multi-record properties with stacked polygons.
+
+| Location       | Info                           | Types                                                                                                                  | Display       | Derivation |
+|----------------|--------------------------------|------------------------------------------------------------------------------------------------------------------------|---------------|------------|
+| Header         | Full Property  Address         |                                                                                                                        |               | Source     |
+| Header         | Total Assessed Value           |                                                                                                                        |               | Source     |
+| Header         | Total Assessed Value Year      |                                                                                                                        |               | Source     |
+| Summary Badges | Count of Total Structures      |                                                                                                                        |               | Calculated |
+| Summary Badges | Count of Residential Buildings |                                                                                                                        |               | Calculated |
+| Summary Badges | Count of Dwelling Units        |                                                                                                                        | Conditional   | Calculated |
+| Summary Badges | Count of Commercial Buildings  |                                                                                                                        | Conditional   | Calculated |
+| Summary Badges | Count of Total Improvements    |                                                                                                                        |               | Calculated |
+| Summary Badges | Type of Residence              | Single-Family, Mobile Home, Camp, Condo, Two Units, Three Units, Four   Unit, 5-8 Units, >8 Units, Co-Op, Mixed-Use    | Conditional   | Lookup     |
+| Summary Badges | Type of Use                    | Residential, Commercial, Industrial, Farm/Ag, Timberland, Government,   Open Land/Misc, Other (specified), Unspecified | Conditional   | Lookup     |
+| Summary Badges | Homestead Status               | Homestead, Nonhomestead residential, Nonhomestead nonresidential                                                       | Conditional   | Source     |
+| Summary Badges | Utilities Service              | Water, Sewer, Septic, Electric, None                                                                                   | Conditional   | Source     |
+| Property       | Owner Name                     |                                                                                                                        |               | Source     |
+| Property       | Parcel ID                      |                                                                                                                        |               | Source     |
+| Property       | SPAN                           |                                                                                                                        |               | Source     |
+| Property       | LRSN / CAMA ID                 |                                                                                                                        |               | Source     |
+| Property       | Parcel Status                  |                                                                                                                        |               | Source     |
+| Site           | Type                           |                                                                                                                        |               | Lookup     |
+| Site           | Description                    |                                                                                                                        |               | Source     |
+| Site           | Acres                          |                                                                                                                        |               | Source     |
+| Site           | Land Types                     |                                                                                                                        | Conditional   | Lookup     |
+| Site           | Frontage                       |                                                                                                                        | Conditional   | Source     |
+| Site           | Town                           |                                                                                                                        |               | Source     |
+| Site           | TOWNGEOID                      |                                                                                                                        | Not Displayed | Lookup     |
+| Site           | TVGEOID                        |                                                                                                                        | Not Displayed | Lookup     |
+| Site           | VILLGEOID                      |                                                                                                                        | Not Displayed | Lookup     |
+| Site           | Neighborhood                   |                                                                                                                        |               | Source     |
+| Site           | Zoning                         |                                                                                                                        |               | Source     |
+| Site           | Homestead Status               |                                                                                                                        |               | Source     |
+| Buildings      | Building Number                |                                                                                                                        | Conditional   | Source     |
+| Buildings      | Style                          |                                                                                                                        |               | Source     |
+| Buildings      | Type                           |                                                                                                                        |               | Source     |
+| Buildings      | Year Built                     |                                                                                                                        |               | Source     |
+| Buildings      | Effective Year Built           |                                                                                                                        |               | Source     |
+| Buildings      | Living/Finished Area           |                                                                                                                        |               | Source     |
+| Buildings      | Total Area                     |                                                                                                                        |               | Source     |
+| Buildings      | Bedrooms                       |                                                                                                                        |               | Source     |
+| Buildings      | Bathrooms                      |                                                                                                                        |               | Source     |
+| Buildings      | Kitchens                       |                                                                                                                        |               | Source     |
+| Buildings      | Total Rooms                    |                                                                                                                        |               | Source     |
+| Buildings      | Dwelling Units                 |                                                                                                                        | Conditional   | Calculated |
+| Valuation      | Assessment Year                |                                                                                                                        |               | Source     |
+| Valuation      | Land                           |                                                                                                                        |               | Source     |
+| Valuation      | Dwellings                      |                                                                                                                        |               | Source     |
+| Valuation      | Outbuildings                   |                                                                                                                        |               | Source     |
+| Valuation      | Site Improvements              |                                                                                                                        |               | Source     |
+| Valuation      | Total                          |                                                                                                                        |               | Source     |
+| Record         | Tax Map #                      |                                                                                                                        |               | Source     |
+| Record         | Book                           |                                                                                                                        |               | Source     |
+| Record         | Page                           |                                                                                                                        |               | Source     |
+| Record         | Last Update                    |                                                                                                                        |               | Source     |
+
+## Interoperability and Relation With Parcel Geometry
+
+*Moved here from `cama-data/readme.md` (2026-07-29). **This section reflects only the initial pass done with this Lincoln-based mock up and is not as thorough a review as the work since completed** — see [`cama-data/SPAN_PARCEL_GRANDLIST_MODEL.md`](../cama-data/SPAN_PARCEL_GRANDLIST_MODEL.md) and the per-vendor `*_AS_BUILT.md` documents in [`cama-data/`](../cama-data) for the current, comprehensive treatment of SPAN, the Grand List, and parcel geometry interoperability across all documented CAMA vendors.*
+
+VCGI has attempted to create basic interoperability between sample CAMA data extracts from NEMRC's Microsolve CAMA platform, standardized parcel polygons defined by the Vermont parcel data standard, and related GIS data such as E911 address points. This work attempts to inform how to improve the availability of existing public information as associated with its property location. A CAMA extract for South Burlington, VT is used as it contains many complex property types with multiple tabular records per single parcel geometry such as condominiums and apartments.
+
+There are challenges and opportunities for data interoperability between these sources. A demo web map application is used to display them, with data loaded in browser, pulled from S3 buckets, and defined in a single index.html file.
+
+The audiences for the demo are municipal listers and assessors, Vermont's Tax Department District Advisors, Property Valuation and Review staff, and policy makers, as well as State of Vermont GIS & IT professionals responsible for aggregating and serving municipal CAMA data as an open data resource.
+
+The intent is to work with these groups to specify a CAMA data standard, implement normalized data transfer, and define the technical requirements for aggregating CAMA data for publishing as a uniform open data resource. Specific details within CAMA data that are of interest are details and counts of buildings and structures on a property, counts of dwelling units that may not explicitly defined in single fields, and site details that are not detailed in grand list or other data. 
+
+A further goal is to consider all in relation to an updated parcel definition that moves from the current "contiguous", aggregate on common ownership for tax administration purposes definition to one that maps properties based on the smallest sellable real estate unit. The latter definition may also begin to reflect and replace what are current called "inactive" parcels.
+
+#### Summary of Interoperability Modeling
+
+1. Normalizing Fragmented Tabular Data (Addressing Data Silos without an ETL)
+
+    - Actions: We federated the three separate NEMRC Microsolve data silos (Residential, Commercial, Condominium) by fetching their respective EXP_MAIN JSON files from S3 locations and mapping common properties into a single, unified masterIndex array in the browser's memory.
+
+    - Challenge: CAMA data is often structurally fragmented based on property type. Commercial properties have tables (like EXP_OCCUPNCY) that do not exist in Residential schemas and vice versa. A robust data pipeline must account for these structural variances while standardizing core search fields (like Address, Owner, and SPAN) so they can be queried uniformly.
+
+2. Bridging Tabular Data and Spatial Geometry (Creating a Spatial Hook)
+
+    - Actions: We established the parc_span field in the CAMA data as the foreign key that maps to the GLIST_SPAN (Grand List SPAN) field in the statewide parcel polygon layer.
+
+    - Challenge: A strictly 1-to-1 relationship between a CAMA record and a physical piece of earth is not valid. Multi-use buildings and condominiums force cartographers to "stack" overlapping polygons. Therefore, applications cannot rely purely on the physical footprint (GIS SPAN) to pull data; they must query the GLIST_SPAN to successfully retrieve all the distinct tax records associated with that single spatial footprint.
+
+3. Visualizing 1-to-Many Relationships (UI Disambiguation)
+
+    - Actions: We implemented an Arcade expression in the map layer to dynamically highlight parcels where the GIS SPAN does not match the GLIST_SPAN (indicating stacked geometry). We also forced the user interface to intercept map clicks on these parcels, presenting a disambiguation table rather than blindly opening the first record it finds.
+
+    - Challenge: Map interfaces inherently suggest that one click equals one property. Without visual cues (like the purple map highlight) and structural UI interventions (the "Found X records" table), users will miss critical property data hiding "underneath" the top-level polygon.
+
+4. Exposing the Address Gap (E911 vs. CAMA)
+
+    - Actions: We utilized a spatial intersect query. When a user clicks a parcel, the map engine draws a boundary around the polygon and counts how many E911 point geometries fall inside it, displaying that count alongside the CAMA record count.
+
+    - Challenge: There is no hard database link between physical E911 address points and CAMA tax records. CAMA addresses (prop_locat or owner_addr) are often mailing addresses, while E911 points represent physical doors. This spatial intersect vividly demonstrates the data gap to policymakers and IT staff: a single tax record might correspond to a dozen physical addresses, and currently, only geography (not tabular keys) links them together.
