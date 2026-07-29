@@ -6,17 +6,19 @@
 
 ---
 
-## 1. The end-to-end pipeline — more systems than a first pass suggests
+## 1. The end-to-end pipeline — three systems towns use, and a fourth, downstream of all of them
 
-Getting from "a piece of land in Vermont" to "a row in VCGI's published statewide parcel dataset" passes through more separately-governed systems than a first pass suggests. At minimum:
+From a town's perspective, there are **three systems** they're actually subject to — not VCGI's GIS layer, which is downstream of all three:
 
-1. **CAMA (valuation/assessment record-keeping)** — town-level, vendor-specific (NEMRC MicroSolve for ~77% of towns; Aumentum/ProVal, Vision, Catalis/AssessPro elsewhere). This is what [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) documents. CAMA's job is appraisal detail (building characteristics, land lines, valuation math) — it does **not** issue SPAN.
+1. **CAMA (valuation/assessment record-keeping)** — town-level, vendor-specific (NEMRC MicroSolve for ~77% of towns; Aumentum/ProVal, Vision, Catalis/AssessPro elsewhere — "CAMA" does not necessarily mean NEMRC's MSOL). This is what [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) documents. CAMA's job is appraisal detail (building characteristics, land lines, valuation math) — it does **not** issue SPAN.
 2. **Grand List (billing & SPAN issuance)** — a separate NEMRC product ("Grand List module") that, per VCGI's understanding, is used essentially **statewide regardless of which CAMA vendor a town uses**. This is the system that actually generates and maintains SPAN, produces the annual lodged Grand List, and is the record a town submits to the state. **Even towns running Aumentum/Vision/Catalis for CAMA still rely on NEMRC's Grand List module for SPAN.** This is a materially important correction to how [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) should be read: NEMRC's role in Vermont property administration is broader than "CAMA vendor for 77% of towns" — they are also the de facto statewide SPAN-issuing authority, independent of CAMA market share.
 
    **This does not mean every non-NEMRC CAMA product exports a SPAN-equivalent field, though.** Of the two non-NEMRC CAMA samples examined so far: Aumentum ProVal's extract carries a genuine SPAN-equivalent field, just under a misleading name (`tax_bill_id` — [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §2), while Catalis AssessPro's sample carries **no SPAN-equivalent field at all** in any of its three identifier fields ([ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §3) — and that sample happens to be in a generic third-party export format (Banker & Tradesman) that predates and isn't specific to Vermont's SPAN system, so the absence may reflect the export format's limits rather than AssessPro's actual database. Whether AssessPro's CAMA product tracks a SPAN internally at all, sourced from NEMRC the same way ProVal's does, is genuinely unconfirmed — see [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6.
-3. **VCGI's statewide parcel GIS pipeline** — aggregates every town's submitted parcel geometry + Grand List extract, joins them by SPAN via an intersection table and a SQL stored procedure (`JoinGL2Parcels`), and publishes the result as the standardized statewide parcel FeatureServer layers.
+3. **VTPIE (Vermont Property Information Exchange)** — a Tax-Department-led platform towns also use, covering select tax-program activities (detail in §1.2).
 
-Two more systems belong in this picture — **VTPIE** (§1.2) and **NEMRC's much broader municipal-software footprint beyond CAMA/Grand List** (§1.3) — plus a more precise account of how data actually routes between all of these (§1.1).
+**VCGI's statewide parcel GIS pipeline is downstream of all three of these — it is not a fourth system towns are subject to in the same way.** It aggregates whatever parcel geometry a town chooses to submit and joins it to the Grand List via SPAN, publishing the result as the standardized statewide parcel dataset. **Town participation — specifically, submitting updated, SPAN-attributed parcel geometry — remains voluntary**, unlike CAMA, the Grand List, and VTPIE, which are effectively required. Despite that, this published dataset remains the single easiest and most useful way for the public to access property information across the state. That gap — a high-value, high-dependency public resource built on voluntary submission of data VCGI doesn't itself control — is a central reason VCGI undertook this documentation and modernization effort, which has had to go beyond passively receiving whatever geometry towns choose to submit, as-is.
+
+NEMRC's much broader municipal-software footprint beyond CAMA/Grand List (§1.3) and a more precise account of how data actually routes between all of these (§1.1) follow below.
 
 MSOL's `parc_span` field (documented in [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §3) is simply **whatever SPAN the town's Grand List module assigned** — CAMA stores it, but doesn't generate or govern it.
 
@@ -33,9 +35,9 @@ The diagram lays out three tiers — **Town & Vendors → State → Public** —
 - At the **State** tier: the Map Layers extract becomes "Active" Parcels + "Inactive" Parcels + the Intersection Table, all governed by the **GIS Data Standard** (§4). Separately, the Grand List extract becomes the Tax Department's own **"Active" GL** table.
 - **VCGI obtains the annual Grand List extract *from the Tax Department*** (not directly from NEMRC or towns) and joins it with **the best available parcel geometry received from each town on a rolling basis** — meaning the Grand List year and the geometry vintage being joined for any given town are not guaranteed to match. This join (formally, the `JoinGL2Parcels` stored procedure documented in §4) combines the GIS-side artifacts with the Tax-Dept-sourced Grand List into the final product: **Statewide Standardized Parcels**, published from the **VCGI dB** to the public.
 
-### 1.2 VTPIE — a third mandatory town platform
+### 1.2 VTPIE in detail
 
-Towns are required to use at least three separate software platforms, per VCGI's understanding: **CAMA** (item 1 above), **NEMRC's Grand List module** (item 2 above), and **VTPIE**. VTPIE is used specifically for:
+VTPIE (Vermont Property Information Exchange) is a Tax-Department-led platform, distinct from CAMA and the Grand List module (item 3 in §1 above). It handles only select parts of the State's tax-program-related activities:
 
 - Sales Ratio and Equalization Study
 - Current Use Processing and Grievances
