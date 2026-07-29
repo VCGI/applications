@@ -37,22 +37,22 @@ This is the headline finding. None of the three identifier-like fields resembles
 - `Parcel ID Number` — e.g. `"202005.902"` — looks like a tax-map-style reference, not a SPAN.
 - `User Account Number` — e.g. `"13124"` — another short internal ID.
 
-There is no field in the B&T layout resembling MSOL's `parc_span` or even ProVal's disguised `tax_bill_id` (PROVAL_AS_BUILT.md §2) — no candidate SPAN proxy exists in this export at all. **As a direct consequence, no demo/mockup viewer could be built for this extract, and it cannot currently be joined to VCGI's statewide standardized parcel dataset** — unlike MSOL and ProVal, there's no map-linked companion application for AssessPro.
+There is no field in the B&T layout resembling MSOL's `parc_span` or even ProVal's disguised `tax_bill_id` ([PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §2) — no candidate SPAN proxy exists in this export at all. **As a direct consequence, no demo/mockup viewer could be built for this extract, and it cannot currently be joined to VCGI's statewide standardized parcel dataset** — unlike MSOL and ProVal, there's no map-linked companion application for AssessPro.
 
 **Two competing, unresolved explanations — genuinely open, not settled by this sample:**
 
 1. **Format limitation, not a database limitation.** Per §1, the B&T layout is a fixed, generic 82-field third-party export spec that predates Vermont's SPAN system and isn't Vermont-specific. It's plausible AssessPro's own database tracks a Vermont SPAN internally (however it gets there — see below) and the B&T export format simply has no designated slot to carry it, since the format wasn't built with VT's system in mind.
 2. **Export configuration gap.** It's equally plausible this specific extract just wasn't configured to include a SPAN-equivalent field, independent of the B&T format's limitations — i.e. a fixable export-request problem, not a structural one.
 
-This directly bears on the still-open question in `SPAN_PARCEL_GRANDLIST_MODEL.md` §1 about whether non-NEMRC CAMA vendors reliably reflect SPAN. The ProVal sample (`PROVAL_AS_BUILT.md` §2) suggested one non-NEMRC vendor *does* carry a SPAN-equivalent field, just under a misleading name (`tax_bill_id`). This AssessPro sample shows the opposite: no SPAN-equivalent field found anywhere. **The two non-NEMRC vendors examined so far do not behave the same way on this point**, and this sample alone can't determine whether that's because AssessPro genuinely doesn't track/receive SPAN from NEMRC's Grand List module, or because this particular export format/request just wasn't asked to include it. Worth a direct question to Catalis (§6).
+This directly bears on the still-open question in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §1 about whether non-NEMRC CAMA vendors reliably reflect SPAN. The ProVal sample ([PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §2) suggested one non-NEMRC vendor *does* carry a SPAN-equivalent field, just under a misleading name (`tax_bill_id`). This AssessPro sample shows the opposite: no SPAN-equivalent field found anywhere. **The two non-NEMRC vendors examined so far do not behave the same way on this point**, and this sample alone can't determine whether that's because AssessPro genuinely doesn't track/receive SPAN from NEMRC's Grand List module, or because this particular export format/request just wasn't asked to include it. Worth a direct question to Catalis (§6).
 
 ## 4. A third data point for the "dwelling units" question
 
-`Rental Living Units` — populated across the full range 0 to 60 in the 3,052-record sample (single-family parcels show `1`, a mobile home shows `1`, apartment/multi-unit buildings show up to `60`) — is clearly a real, actively-used field, not a placeholder. This is the **third different vendor answer** to a concept resembling Act 170's "number of dwelling units," after MSOL (no equivalent field found at all, per `MSOL_AS_BUILT.md` §7.1) and ProVal (`Valuation_History.ResLivingUnits`, per `PROVAL_AS_BUILT.md` §4.2).
+`Rental Living Units` — populated across the full range 0 to 60 in the 3,052-record sample (single-family parcels show `1`, a mobile home shows `1`, apartment/multi-unit buildings show up to `60`) — is clearly a real, actively-used field, not a placeholder. This is the **third different vendor answer** to a concept resembling Act 170's "number of dwelling units," after MSOL (no equivalent field found at all, per [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §7.1) and ProVal (`Valuation_History.ResLivingUnits`, per [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §4.2).
 
 **Semantic caution, not an equivalence claim:** the field is named "*Rental* Living Units," which may specifically mean units that are rented out — a subset of total dwelling units — rather than a literal total unit count. An owner-occupied duplex, for instance, might record `1` here (the rented-out half) rather than `2` (total units). Worth confirming directly rather than assuming this is a drop-in dwelling-unit-count source.
 
-## 5. Cross-vendor comparison (see also PROVAL_AS_BUILT.md §5 for the MSOL/ProVal columns)
+## 5. Cross-vendor comparison (see also [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §5 for the MSOL/ProVal columns)
 
 | Concept | MSOL (NEMRC) | ProVal (Aumentum) | AssessPro (Catalis) |
 |---|---|---|---|
@@ -72,4 +72,4 @@ This directly bears on the still-open question in `SPAN_PARCEL_GRANDLIST_MODEL.m
 
 ## A note on naming
 
-Named for the CAMA product (AssessPro), consistent with `MSOL_AS_BUILT.md` and `PROVAL_AS_BUILT.md` — Catalis is the corporate vendor (having acquired the former Patriot Properties AssessPro product), much as NEMRC and Aumentum are vendor names distinct from their MicroSolve/ProVal products.
+Named for the CAMA product (AssessPro), consistent with [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) and [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) — Catalis is the corporate vendor (having acquired the former Patriot Properties AssessPro product), much as NEMRC and Aumentum are vendor names distinct from their MicroSolve/ProVal products.
