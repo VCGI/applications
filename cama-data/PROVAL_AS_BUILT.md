@@ -59,7 +59,7 @@ Results are annotated with a `~` (estimate, from Priority C's apartment fallback
 
 **This means, within this one non-NEMRC vendor's extract, there are two different candidate sources for "how many dwelling units does this parcel have" — a native field (`ResLivingUnits`) and a derived heuristic (§4.1) — and they were never cross-checked against each other in building this demo.** This directly informs the open question in SPAN_PARCEL_GRANDLIST_MODEL.md §7 (item 1): before deciding whether/how to build a new `DWELLINGS` field at the CAMA or Grand List level, it's worth checking whether vendors *already* carry a native dwelling/living-unit field that's simply gone unused or unstandardized — `ResLivingUnits` here is a concrete example — rather than assuming the field needs to be invented from scratch industry-wide.
 
-## 5. Cross-vendor comparison (MSOL vs. ProVal, so far)
+## 5. Cross-vendor comparison (MSOL vs. ProVal, so far — see also [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §5 for the 3-way table including Catalis AssessPro)
 
 | Concept | MSOL (NEMRC) | ProVal (Aumentum) |
 |---|---|---|
