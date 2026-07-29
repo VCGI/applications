@@ -2,19 +2,57 @@
 
 *Companion to [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md), which documents NEMRC MicroSolve CAMA specifically. This document is about the layer above CAMA: how SPAN is issued and governed, how the statewide Grand List table is structured, how it joins to parcel geometry today, and a concrete proposed redesign (as of a July 27, 2026 VCGI/NEMRC prep workgroup) to meet Act 164 (H.933) and Act 170 (H.955).*
 
-*Sources: the [Vermont GIS Parcel Data Standard v2.3](https://vcgitimterway.github.io/claude-code-demo-day-2/examples/parcel/parcel-standard.html) (Oct. 20, 2016, VCGI); [VCGI/documentation's stacked-polygons workflow doc](https://github.com/VCGI/documentation/blob/b37f3ee7c91fbcade5f7918e1cfdbb6c8726776f/parceldata/parcel_data_stacked_polygons.md), which includes the actual production `JoinGL2Parcels` SQL and the real statewide `GRANDLIST` table's field list; the two published statewide parcel FeatureServer endpoints (Active/Inactive, linked below); [VCGI's Act 68 of 2024 parcels report](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md) (submitted Dec. 12, 2024 — the report that first recommended a statewide CAMA data standard and formal vendor submittal requirement, and that flagged unlanded-structure/acreage attribution as an open item); `20260727_Parcel_Definition_Workgroup_NEMRC_Prep_Diagrams.pdf` (in this folder); and direct clarification from VCGI staff and Vermont Tax Department colleagues (2026-07-28 conversation) correcting/confirming several points below. Corrections to this document's own prior assumptions are called out explicitly where they occur.*
+*Sources: the [Vermont GIS Parcel Data Standard v2.3](https://vcgitimterway.github.io/claude-code-demo-day-2/examples/parcel/parcel-standard.html) (Oct. 20, 2016, VCGI); [VCGI/documentation's stacked-polygons workflow doc](https://github.com/VCGI/documentation/blob/b37f3ee7c91fbcade5f7918e1cfdbb6c8726776f/parceldata/parcel_data_stacked_polygons.md), which includes the actual production `JoinGL2Parcels` SQL and the real statewide `GRANDLIST` table's field list; the two published statewide parcel FeatureServer endpoints (Active/Inactive, linked below); [VCGI's Act 68 of 2024 parcels report](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md) (submitted Dec. 12, 2024 — the report that first recommended a statewide CAMA data standard and formal vendor submittal requirement, and that flagged unlanded-structure/acreage attribution as an open item); `20260727_Parcel_Definition_Workgroup_NEMRC_Prep_Diagrams.pdf` and `20260518_Parcel_Definition_Workgroup_Source_of_SPAN_Diagram.pdf` (both in this folder); and direct clarification from VCGI staff and Vermont Tax Department colleagues (2026-07-28 and 2026-07-29 conversations) correcting/confirming several points below. Corrections to this document's own prior assumptions are called out explicitly where they occur.*
 
 ---
 
-## 1. Three distinct systems — don't conflate them
+## 1. The end-to-end pipeline — more systems than a first pass suggests
 
-Getting from "a piece of land in Vermont" to "a row in VCGI's published statewide parcel dataset" passes through three separately-governed systems, each maintained by a different party:
+Getting from "a piece of land in Vermont" to "a row in VCGI's published statewide parcel dataset" passes through more separately-governed systems than a first pass suggests. At minimum:
 
 1. **CAMA (valuation/assessment record-keeping)** — town-level, vendor-specific (NEMRC MicroSolve for ~77% of towns; Aumentum/ProVal, Vision, Catalis/AssessPro elsewhere). This is what [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) documents. CAMA's job is appraisal detail (building characteristics, land lines, valuation math) — it does **not** issue SPAN.
 2. **Grand List (billing & SPAN issuance)** — a separate NEMRC product ("Grand List module") that, per VCGI's understanding, is used essentially **statewide regardless of which CAMA vendor a town uses**. This is the system that actually generates and maintains SPAN, produces the annual lodged Grand List, and is the record a town submits to the state. **Even towns running Aumentum/Vision/Catalis for CAMA still rely on NEMRC's Grand List module for SPAN.** This is a materially important correction to how MSOL_AS_BUILT.md should be read: NEMRC's role in Vermont property administration is broader than "CAMA vendor for 77% of towns" — they are also the de facto statewide SPAN-issuing authority, independent of CAMA market share.
 3. **VCGI's statewide parcel GIS pipeline** — aggregates every town's submitted parcel geometry + Grand List extract, joins them by SPAN via an intersection table and a SQL stored procedure (`JoinGL2Parcels`), and publishes the result as the standardized statewide parcel FeatureServer layers.
 
+Two more systems belong in this picture — **VTPIE** (§1.2) and **NEMRC's much broader municipal-software footprint beyond CAMA/Grand List** (§1.3) — plus a more precise account of how data actually routes between all of these (§1.1).
+
 MSOL's `parc_span` field (documented in MSOL_AS_BUILT.md §3) is simply **whatever SPAN the town's Grand List module assigned** — CAMA stores it, but doesn't generate or govern it.
+
+### 1.1 The full pipeline, town-to-public
+
+*Source: `20260518_Parcel_Definition_Workgroup_Source_of_SPAN_Diagram.pdf` (in this folder) — titled, verbatim, **"AS BUILT?"** by its own authors, with an explicit "?" also placed over the VTPIE box. Treat this as VCGI's own current-best-understanding working model of the existing pipeline, flagged by the workgroup itself as provisional, not a fully confirmed ground truth beyond what's independently corroborated elsewhere in this document (e.g. the real `JoinGL2Parcels` SQL in §4).*
+
+The diagram lays out three tiers — **Town & Vendors → State → Public** — with SPAN originating at the leftmost point ("SOURCE OF SPAN"):
+
+- **NEMRC dB** (the Grand List module's own database) has a **bidirectional** relationship with the **CAMA dB's** (the four vendor CAMA databases — NEMRC MicroSolve, Aumentum/ProVal, Vision, Catalis/AssessPro). The diagram draws this as a two-way arrow, not a one-way "CAMA just reads SPAN from NEMRC" relationship. The exact mechanics of what flows back from CAMA to NEMRC's Grand List database (e.g. valuation totals feeding grand-list value fields, or new-parcel/SPAN requests originating in CAMA) aren't specified in the diagram and are worth confirming directly (§7). Each **CAMA (Vendors)** front-end application separately reads/writes its own **CAMA dB** — the ordinary app-to-its-own-database relationship, not otherwise notable.
+- Two **separate extract channels** leave the Town & Vendors tier, and they do **not** travel the same path to the State:
+  - **Map Layers (Vendors)** — parcel geometry (Active *and* Inactive layers) produced by GIS/mapping vendors hired by towns (a *different* vendor relationship than the CAMA vendor relationship) — sent to the State on a rolling, per-town basis, not synced to the annual Grand List cycle.
+  - **Grand List, other files** — CSV reports generated by NEMRC's Grand List module (fed directly from **NEMRC dB**, per the diagram's own arrow), one of which is the annual Grand List — sent to the **Vermont Department of Taxes**, not directly to VCGI.
+- At the **State** tier: the Map Layers extract becomes "Active" Parcels + "Inactive" Parcels + the Intersection Table, all governed by the **GIS Data Standard** (§4). Separately, the Grand List extract becomes the Tax Department's own **"Active" GL** table.
+- **VCGI obtains the annual Grand List extract *from the Tax Department*** (not directly from NEMRC or towns) and joins it with **the best available parcel geometry received from each town on a rolling basis** — meaning the Grand List year and the geometry vintage being joined for any given town are not guaranteed to match. This join (formally, the `JoinGL2Parcels` stored procedure documented in §4) combines the GIS-side artifacts with the Tax-Dept-sourced Grand List into the final product: **Statewide Standardized Parcels**, published from the **VCGI dB** to the public.
+
+### 1.2 VTPIE — a third mandatory town platform
+
+Towns are required to use at least three separate software platforms, per VCGI's understanding: **CAMA** (item 1 above), **NEMRC's Grand List module** (item 2 above), and **VTPIE**. VTPIE is used specifically for:
+
+- Sales Ratio and Equalization Study
+- Current Use Processing and Grievances
+- Collecting Utility Inventories
+- Homestead and Lister Response
+- Exemption Management
+
+VTPIE **likely also depends on NEMRC for SPAN** — consistent with NEMRC's role as statewide SPAN authority (item 2 above) — but this is **explicitly unconfirmed**: the source diagram itself marks VTPIE with a "?" rather than asserting the relationship. Worth direct confirmation (§7).
+
+### 1.3 NEMRC's broader municipal software footprint
+
+Beyond MSOL CAMA and the Grand List/SPAN-issuing module, NEMRC's product suite also covers, per VCGI's understanding:
+
+- TIF (Tax Increment Financing) Management
+- Tax Billing and Municipal Tax Rates
+- Grand List Management and Grievances
+- Municipal Tax Rate Collections
+
+Worth keeping in view for the redesign conversation: NEMRC's centrality to Vermont municipal tax administration isn't just "CAMA vendor for 77% of towns, and separately the SPAN-issuing authority" — it's infrastructural across most of the municipal finance stack. That's a materially different negotiating position than a single-product CAMA vendor relationship, and worth factoring into how any schema-change ask (§6) is prioritized or sequenced with NEMRC.
 
 ## 2. SPAN: structure and authority
 
@@ -204,5 +242,8 @@ The `(varies)*` owner annotation reflects a real legal constraint, not just a da
 5. **Is NEMRC's Grand List module (not just MSOL CAMA) prepared to originate/expose `ADMINSPAN`, `GROUNDSPAN`, `KIND`, and `TYPE`** — given NEMRC is the SPAN-issuing authority for essentially all VT towns regardless of CAMA vendor (§1), this is arguably a bigger ask of NEMRC's Grand List product than anything asked of MSOL CAMA specifically.
 6. Per §6.4's connection to **32 V.S.A. § 5404**: this is directly the same statute behind VCGI's **current, active effort to formalize CAMA data transfer from all four VT vendors as-is** (building on the Act 68 of 2024 report's original recommendation to create a CAMA data standard and require standardized, regular vendor submittal). VCGI expects the Act 164/170 changes documented here will force further changes to that standard's schema and contents once it's formalized — and one explicit purpose of formalizing the as-is transfer first is to see exactly how (or whether) dwelling units are currently handled across vendors' existing data management, directly informing question 1 above.
 7. **Stacked-unit acreage attribution (§6.2/§6.3) varies by town today** (equal division vs. full-on-common-record-with-zeros) — does the future-state model intend to standardize this practice, or continue accommodating both?
+8. **What exactly flows back from CAMA to NEMRC's Grand List database (§1.1)?** The source diagram draws the NEMRC dB ↔ CAMA dB relationship as bidirectional, not a one-way SPAN handout. Confirming the actual mechanism (API, file exchange, manual re-entry, something else) matters for understanding how reliably CAMA-sourced data (valuations, dwelling counts, floor-area splits) could actually reach the Grand List module in an automated way.
+9. **Does VTPIE (§1.2) actually depend on NEMRC for SPAN?** Flagged with a "?" in VCGI's own working diagram — genuinely unconfirmed, not just unlikely.
+10. **Geometry/Grand-List timing mismatch (§1.1):** parcel geometry arrives from town-hired mapping vendors on a rolling basis, while the Grand List is joined on an annual cycle via the Tax Department. Worth surfacing as a known data-quality consideration (a given town's published parcel could be joined against geometry and Grand List data from different vintages) independent of anything else in this redesign.
 
 See also `MSOL_AS_BUILT.md` §8's CAMA-specific vendor questions (EXP_DATADICT variability, PCCODE crosswalk confirmation, etc.), which remain relevant independent of this document.
