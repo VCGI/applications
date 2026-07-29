@@ -10,11 +10,13 @@ Data are a dummy cut from NEMRC Microsolve dated December 2025, with no modifica
 
 ### Base Configuration
 
-- **Data Source URL:** https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/sample-microsolve/
+- **Data Source URL:** https://s3.us-east-2.amazonaws.com/vtopendata-dev/_Other/CAMA/sample-microsolve/
 
-    - View in Browser: https://vtopendata-prd.s3-us-east-2.amazonaws.com/index.html#_Other/CAMA/sample-microsolve/
+    - View in Browser: https://vtopendata-dev.s3-us-east-2.amazonaws.com/index.html#_Other/CAMA/sample-microsolve/
 
-- **Lookup Source URL:** https://s3.us-east-2.amazonaws.com/vtopendata-prd/_Other/CAMA/vt_tax_property_class_codes.json
+- **Lookup Source URL:** https://s3.us-east-2.amazonaws.com/vtopendata-dev/_Other/CAMA/vt_tax_property_class_codes.json
+
+*(Corrected 2026-07-30: this data was originally hosted in the `vtopendata-prd` bucket and has since moved to `vtopendata-dev`; the live `index.html` already pointed at the `dev` location, but this readme had not been updated to match.)*
 
 - **Primary Key:** `parcel_id` (Internal LRSN)
 

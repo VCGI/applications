@@ -64,6 +64,8 @@ Format: `XXX-YYY-ZZZZZ` (13 characters including dashes) —
 - **YYY** — 3-digit **school district code** (explaining the name "School Property Account Number" — the SPAN literally encodes school-district affiliation, which matters for education-property-tax apportionment). Values correspond to the same table's **`AOE_CODE`** field (Agency of Education-maintained, "code denoting municipalities within Agency of Education data"), stripped of its leading `T` character (e.g. `AOE_CODE` of `T036` → SPAN segment `036`).
 - **ZZZZZ** — 5-digit unique sequence number, generated and maintained by **NEMRC's Grand List module**.
 
+Two concrete, named examples from the MSOL samples documented in `MSOL_AS_BUILT.md`: South Burlington's town code is `600`; Lincoln's is `354` (hardcoded as "Lincoln (354)" in that sample's own demo-app documentation).
+
 **Important nuance on XXX/YYY:** this doesn't mean NEMRC relies on `PT_TOWN`/`AOE_CODE` values to *generate* a SPAN — it means VCGI's own Geographic Area Names and Codes Standard has documented these two fields specifically to reflect how SPAN's first two segments are actually used in practice. The crosswalk table is VCGI's reference for what those digits *correspond to*, not NEMRC's generation mechanism.
 
 SPAN join comparisons in production are done **with dashes stripped** (`REPLACE(span,'-','')`) — worth remembering if building any SPAN-matching logic, since formatting isn't perfectly consistent source to source.
