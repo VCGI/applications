@@ -24,6 +24,9 @@ MSOL's `parc_span` field (documented in [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §3
 
 ### 1.1 The full pipeline, town-to-public
 
+<img width="3140" height="1758" alt="Source of SPAN As Built Diagram" src="https://github.com/user-attachments/assets/4fc3cf66-a073-403d-883e-faeff173db5f" />
+
+
 *Source: `20260518_Parcel_Definition_Workgroup_Source_of_SPAN_Diagram.pdf` (in this folder) — titled, verbatim, **"AS BUILT?"** by its own authors, with an explicit "?" also placed over the VTPIE box. Treat this as VCGI's own current-best-understanding working model of the existing pipeline, flagged by the workgroup itself as provisional, not a fully confirmed ground truth beyond what's independently corroborated elsewhere in this document (e.g. the real `JoinGL2Parcels` SQL in §4).*
 
 The diagram lays out three tiers — **Town & Vendors → State → Public** — with SPAN originating at the leftmost point ("SOURCE OF SPAN"):
