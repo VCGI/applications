@@ -197,6 +197,8 @@ These are produced by the `JoinGL2Parcels` stored procedure: an intersection-tab
 
 **Basic condition (1 lot, 1 owner, 1 dwelling):**
 
+<img width="3067" height="1717" alt="Proposed Condition Basic Condition" src="https://github.com/user-attachments/assets/56853856-dc4f-4cf6-9435-03b75889b341" />
+
 | KIND | TYPE | ADMINSPAN | SPAN | LOCALID | LISTED_AC | PARCLCOUNT | DWELLINGS | OWNER1 | TAXBILL |
 |---|---|---|---|---|---|---|---|---|---|
 | PARCEL | FULL | 036-011-11979 | 036-011-11979 | A | 5.00 | 1 | 1 | A | NO |
@@ -204,12 +206,16 @@ These are produced by the `JoinGL2Parcels` stored procedure: an intersection-tab
 
 Same condition, but a 6-unit apartment building on the one lot — identical structure, `DWELLINGS` carries the count:
 
+<img width="3060" height="1710" alt="Proposed Condition Basic Condition Apartment" src="https://github.com/user-attachments/assets/f0f60de3-2777-4a6c-8e0a-fd18acc2ddf9" />
+
 | KIND | TYPE | ADMINSPAN | SPAN | LOCALID | LISTED_AC | PARCLCOUNT | DWELLINGS | OWNER1 | TAXBILL |
 |---|---|---|---|---|---|---|---|---|---|
 | PARCEL | FULL | 036-011-11979 | 036-011-11979 | A | 5.00 | 1 | 6 | A | NO |
 | ADMINPARCL | SINGLE | 036-011-11979 | *(null)* | A | 5.00 | 1 | 6 | A | YES |
 
 **"Horizontal"/surface condition** (two physically distinct, documented lots, combined under one ownership for one tax bill — the classic "contiguous parcels combined" case):
+
+<img width="3058" height="1712" alt="Proposed Condition Multi Parcel Condition Horizontal Surface" src="https://github.com/user-attachments/assets/f3665faa-c259-447b-9e2c-7b5f0b737b66" />
 
 | KIND | TYPE | ADMINSPAN | SPAN | GROUNDSPAN | LOCALID | LISTED_AC | PARCLCOUNT | DWELLINGS | OWNER1 | TAXBILL |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -221,6 +227,8 @@ Each physical lot keeps its **own distinct SPAN**, but shares one `ADMINSPAN` (t
 
 **"Vertical"/stacked condition** (one physical footprint, multiple ownership units — a 2-unit condo example):
 
+<img width="3059" height="1713" alt="Proposed Condition Multi Parcel Condition Vertical Stacked Condo 3 Records" src="https://github.com/user-attachments/assets/21a38c03-2281-45c6-981b-29e0949e4c21" />
+
 | KIND | TYPE | ADMINSPAN | SPAN | GROUNDSPAN | LOCALID | LISTED_AC | PARCLCOUNT | DWELLINGS | OWNER1 | TAXBILL |
 |---|---|---|---|---|---|---|---|---|---|---|
 | ADMINPARCL | PARTSTACKD | 405-126-10169 | 405-126-10169 | 405-126-13918 | A.1 | 2.50 (or 0)* | 1 | 1 | A | YES |
@@ -228,6 +236,8 @@ Each physical lot keeps its **own distinct SPAN**, but shares one `ADMINSPAN` (t
 | PARCEL | COMMON | 405-126-13918 | 405-126-13918 | 405-126-13918 | A | 5.00 | 2 | 2 | C (varies)* | NO |
 
 Each unit gets its own billing (`ADMINPARCL`) record with its own SPAN, but shares a common `GROUNDSPAN` pointing at the underlying ground/common-element `PARCEL` record (`TYPE=COMMON`). Generalizes cleanly to any number of units (the PDF also shows a 6-unit version: 6 `ADMINPARCL`/`PARTSTACKD` rows sharing one `GROUNDSPAN`, plus one `PARCEL`/`COMMON` row with `PARCLCOUNT=6`, `DWELLINGS=6`).
+
+<img width="3058" height="1709" alt="Proposed Condition Multi Parcel Condition Vertical Stacked Condo 7 Records" src="https://github.com/user-attachments/assets/7c953208-8e54-421c-8017-a416a9d862c2" />
 
 **On the `(or 0)*` and `(varies)*` annotations — confirmed, not speculative:** per direct input from Vermont Tax Department staff, municipal practice on stacked-unit acreage genuinely varies in the field: some towns divide the common land's acreage equally across all associated unit records, others assign the full acreage to the common-land record alone and list `0` on each associated unit record. Both practices exist today; there is no single enforced convention. VCGI's own [Act 68 of 2024 parcels report](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md) flagged exactly this as an open item (Appendix 5, "Clarify Grand List vs. GIS Acreage Guidance Considerations") well before this workgroup — as of that report, stacked polygons accounted for 27,239 grand list records across 3,254 stacked polygons statewide, representing about 200,457 acres (~3.5% of all parcel acreage).
 
