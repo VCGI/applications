@@ -40,7 +40,7 @@ The diagram lays out three tiers — **Town & Vendors → State → Public** —
 
 ### 1.2 VTPIE in detail
 
-VTPIE (Vermont Property Information Exchange) is a Tax-Department-led platform, distinct from CAMA and the Grand List module (item 3 in §1 above). It handles only select parts of the State's tax-program-related activities:
+[VTPIE (Vermont Property Information Exchange)](https://tax.vermont.gov/municipal-officials/vtpie) is a Tax-Department-led platform, distinct from CAMA and the Grand List module (item 3 in §1 above). It handles only select parts of the State's tax-program-related activities:
 
 - Sales Ratio and Equalization Study
 - Current Use Processing and Grievances
