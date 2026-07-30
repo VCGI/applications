@@ -213,4 +213,4 @@ Assessment Pro
 
 [Maryland](https://catalog.data.gov/dataset/cama-detailed-building-characteristics)
 
-[Connecticut](#)
+[Connecticut]([#](https://portal.ct.gov/datapolicy/gis-office/parcel-and-cama))
