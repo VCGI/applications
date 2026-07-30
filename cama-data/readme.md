@@ -20,7 +20,7 @@ This repository is an attempt to document, as precisely as the available evidenc
 - The single most consequential change: Vermont's legal definition of "parcel" is splitting in two — an **ownership/billing parcel** (who pays one tax bill) and a **mapping/sellable-lot parcel** (a physical, separately-sellable piece of land) — and today's software mostly only models the first one well.
 - Two other concrete new requirements: a **count of dwelling units per parcel** (required on grand lists starting with those lodged in calendar year 2027 — the nearest deadline of anything here, and no field exists anywhere today to source it), and a **three-way property classification** (homestead / nonhomestead residential / nonhomestead nonresidential) with percentage-of-floor-space splitting for mixed-use buildings (2029, contingent on further legislative action).
 - **None of this works without SPAN**, and NEMRC's Grand List module is the only source of SPAN for all ~260 Vermont towns today, independent of CAMA vendor.
-- Act 170 §3417 gives PVR direct rulemaking authority over parcel-data and CAMA/IT standards — this documentation is meant to be usable input to that rulemaking, not just a set of talking points for a NEMRC conversation.
+- [Act 170 §3417](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf) gives PVR direct rulemaking authority over parcel-data and CAMA/IT standards. This documentation is meant to be usable input to that rulemaking, not just a set of talking points for vendor conversations.
 
 ## The Legislative Timeline
 
