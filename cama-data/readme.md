@@ -24,7 +24,7 @@ This repository is an attempt to document, as precisely as the available evidenc
 
 ## The Legislative Timeline
 
-*Requested by NEMRC. Every row links to the fuller technical discussion — this table is meant to orient, not replace that detail.*
+*Rows link to the fuller technical discussion. This table is meant to orient, not replace that detail.*
 
 | When | What Happens | Statute | Why It Matters |
 |---|---|---|---|
