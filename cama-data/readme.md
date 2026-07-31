@@ -66,7 +66,7 @@ This repository is an attempt to document, as best as the available evidence all
 
 ### If you're a CAMA vendor
 
-- The concrete, near-term ask: participate in formalizing your product's data-extract format under 32 V.S.A. §5404(b) — this is literally what's already happened for three of the four vendors serving VT towns (documented in [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md)).
+- The concrete, near-term ask: participate in formalizing your product's data-extract format under 32 V.S.A. §5404(b) — this is literally what's already happened for three of the four vendors serving VT towns (documented in [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md)). A concrete starting point for that conversation: [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), a preliminary, VCGI-authored schema built from all four vendors' real data plus VCGI's own 2024 first-pass proposal.
 - What's coming that will likely require product or schema work: a dwelling-unit count field, floor-area-percentage classification fields, and — if adopted — `ADMINSPAN`/`GROUNDSPAN`-style relational fields for multi-parcel/multi-unit conditions.
 - Vendor-specific open questions are listed at the end of each product's as-built document — e.g. whether Aumentum's `tax_bill_id` is reliably equivalent to SPAN statewide and what `ResLivingUnits` actually represents ([PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6); whether Catalis/AssessPro tracks a Vermont SPAN internally at all, given the one sample examined has none ([ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6); no sample has yet been received from Vision Government Solutions, which is itself an open item.
 
@@ -101,6 +101,7 @@ The complete, current lists (30+ items across all documents) are linked below by
 | **`readme.md`** *(this file)* | Entry point and synthesis; CAMA vendor status/contacts below. |
 | [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) | SPAN authority and structure, the statewide Grand List table, the current GIS parcel pipeline, the Grand List module's own Active/Inactive UI, and the proposed future-state model — the core technical document behind this synthesis. |
 | [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) | The actual annual NEMRC Grand List module export received by the Tax Department (Killington sample) — official field schemas, exemption code systems, and a critical finding that genuine Active/Inactive parcel status is only exported for TIF-district towns. |
+| [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) | A preliminary, VCGI-authored draft CAMA data standard — synthesizes every vendor extract, the NEMRC Grand List export, the published GIS layers, and the proposed Act 164/170 fields into one candidate schema, building on VCGI's 2024 Act 68 proposal. |
 | [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) | NEMRC MicroSolve CAMA schema (South Burlington and Lincoln samples). |
 | [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) | Aumentum ProVal CAMA schema (Barre Town sample). |
 | [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) | Catalis AssessPro CAMA schema (statewide flat-file sample) — and why it has no SPAN. |
