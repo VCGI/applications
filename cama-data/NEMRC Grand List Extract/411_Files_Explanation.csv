@@ -18,5 +18,5 @@
 411TOT_HEADERS,,describes field names of the 411TOTXX file
 411TPF_HEADERS,,describes field names of the 411TPFXX file
 411EXP_Transformations,,describes Exemption Types and How They are Applied
-,,
+411_NEMRC_STD_AND_SPEC_EXP,,"descripes naming and contents of the exemption codes, appears somewhat duplicative with the other exemption code value definition lookups"
 XX,,"placeholder for numbers that indentify which GL instance the town is sending from, not used by PVR (only ever two digits)"
