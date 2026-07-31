@@ -73,9 +73,9 @@ Per `411_gl_HEADERS.csv`, described by the Tax Department itself as **"Appears t
 
 **Reconciliation against [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table):** most of that document's inferred field glosses hold up well against this official list (`descprop`, `locaprop`, `cat`↔`CATCODE`, `rescode`↔`RESCODE`, `hsdecl`, `hsiteval`, `uvreduc_hs/nr`, `glval_hs/nr`, `crhouspct`, `mungl1pct`, `aoegl_hs/nr`, `e911addr` all match). Three corrections worth making there directly:
 
-1. **No separate `expdesc` field exists.** [§3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table) lists `vetexamt`, `expdesc`, `enddate`, `statute` together as one bullet — but this official schema has no `EXPDESC`/exemption-description field at all. Instead there are **two separate numeric exemption-code fields** (`EXPCODE_SPEC`, `EXPCODE_STND`, §5) plus `EXPSTATUTE` (statutory cite) and `EXP_END` (end date). A text description, if one appears anywhere downstream, would have to be derived by looking up those codes against `411_gl_EXPCODE_SPEC.csv`/`411_gl_EXPCODE_STND.csv` — it is not a native field.
-2. **Real fields exist upstream of `GRANDLIST` that aren't listed there at all**, notably `SCHID`, `CNTY`, `TCODE` (school/county/town codes — distinct from the SPAN itself, which already encodes school and town), and `HSTED_TX` (taxable, not just full, homestead value).
-3. **`LOCAPROP`'s data-quality caveat is now sourced, not inferred**, and comes with a concrete disposition: it's flagged unmaintained in NEMRC directly by the Tax Department, and is **already removed from the current VTAX/VCGI export** — meaning the version of Grand List data VCGI actually receives is narrower than this raw NEMRC file, not just relabeled (§9).
+1. **No separate `EXPDESC` field exists on *this raw file*** — it has **two separate numeric exemption-code fields** (`EXPCODE_SPEC`, `EXPCODE_STND`, §5) plus `EXPSTATUTE` (statutory cite) and `EXP_END` (end date), no text-description field. **This is genuinely resolved as of §9, using the actual published VCGI schema, not left as an open question:** an `EXPDESC` field really does exist, but only on the *published* product — it's synthesized from these two raw codes somewhere in the Tax-Department transformation step, not carried natively from NEMRC.
+2. **Real fields exist on this raw file that don't survive to the published VCGI layer at all**, per §9's field mapping: `SCHID`, `CNTY`, `TCODE` (school/county/town codes — distinct from the SPAN itself, which already encodes school and town) and `HSTED_TX` (taxable, not just full, homestead value) are all dropped before publication.
+3. **`LOCAPROP`'s data-quality caveat is sourced, not inferred** — flagged unmaintained in NEMRC directly by the Tax Department — but its claimed disposition is not: the raw file says it's "already removed from the current VTAX/VCGI export," yet the live published schema still carries the field (§9). **Treat the removal claim as unconfirmed, not settled** (§11 item 8).
 
 ## 4. Confirmed, real SPAN example (Killington)
 
@@ -234,12 +234,48 @@ Both are worth tracking alongside the Act 164/170 statutory timeline already doc
 
 ## 9. The transformation step between NEMRC's raw export and what VCGI receives
 
-This export (as received by the Tax Department, straight from NEMRC) is **not** the same file VCGI ultimately receives. Per `411_Files_Explanation.csv`, `411GLXX` explicitly requires **"manipulation needed for VTAX and VCGI format"** — confirmed concretely by two specifics:
+This export (as received by the Tax Department, straight from NEMRC) is **not** the same file VCGI ultimately receives. Per `411_Files_Explanation.csv`, `411GLXX` explicitly requires **"manipulation needed for VTAX and VCGI format"**. This section previously listed two confirmed specifics inferred indirectly; it is now grounded in a direct, field-by-field comparison against the actual live, published FeatureServer schema for VCGI's Active parcel layer (`FS_VCGI_OPENDATA_Cadastral_VTPARCELS_poly_standardized_parcels_SP_v1`, retrieved and supplied by the user — see [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table)/[§4](SPAN_PARCEL_GRANDLIST_MODEL.md#4-current-gis-parcel-data-model-vermont-gis-parcel-data-standard-v23-oct-2016)), rather than only the raw `411_gl_HEADERS.csv` dictionary:
 
-1. **Exemption codes are converted into text descriptions** before the Grand List data reaches VCGI. The raw `411_gl` file (§3/§4) carries only numeric `EXPCODE_SPEC`/`EXPCODE_STND` codes; VCGI's version evidently carries resolved text instead (consistent with — though not fully explaining — why [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table) had inferred a single `expdesc` field that doesn't actually exist upstream, §3 above).
-2. **`LOCAPROP` is dropped** from the current VTAX/VCGI export (§3), per the field's own header comment, since it's unmaintained in NEMRC and superseded by the E911 address field.
+| Raw `411_gl` field | Published field | What happened |
+|---|---|---|
+| `YEAR` | `GLYEAR` | Renamed — the published layer's own `YEAR` field is a **different, GIS-side** year value |
+| `SCHID` | *(dropped)* | No school-code field on the published layer |
+| `CNTY` | *(dropped)* | No county-code field on the published layer |
+| `TCODE` | *(dropped, represented by `TOWN`/`TNAME` text instead)* | |
+| `SPAN` | `GLIST_SPAN` | Renamed — the published layer's own `SPAN` field is the **GIS-side** SPAN, a different provenance entirely |
+| `PARCID` | `PARCID` | Unchanged |
+| `OWNER1`, `OWNER2` | `OWNER1`, `OWNER2` | Unchanged |
+| `ADDR1`, `ADDR2` | `ADDRGL1`, `ADDRGL2` | Renamed (GL-suffixed) |
+| `CITY`, `ST`, `ZIP` | `CITYGL`, `STGL`, `ZIPGL` | Renamed (GL-suffixed) |
+| `DESCPROP` | `DESCPROP` | Unchanged |
+| `LOCAPROP` | `LOCAPROP` | **Unchanged — see the contradiction noted below** |
+| `CATCODE` | `CAT` | Renamed |
+| `RESCODE` | `RESCODE` | Unchanged |
+| `ACRES` | `ACRESGL` | Renamed (GL-suffixed) |
+| `REAL_FLV`, `HSTED_FLV`, `NRES_FLV` | Same names | Unchanged |
+| `LAND_LV`, `IMPRV_LV` | Same names | Unchanged |
+| `EQUIPVAL`, `EQUIPCODE`, `INVENVAL` | Same names | Unchanged |
+| `HSDECL` | `HSDECL` | Unchanged |
+| `HSTED_TX` | *(dropped)* | No taxable-homestead-value field on the published layer — only the full-value `HSTED_FLV` is kept |
+| `HSITEVAL`, `VETEXAMT` | Same names | Unchanged |
+| `EXPCODE_SPEC`, `EXPCODE_STND` | `EXPDESC` | **Both numeric codes collapse into one resolved text field** — confirmed real on the published layer (alias "Other Exemption Type"), even though no such field exists on the raw NEMRC file |
+| `EXP_END` | `ENDDATE` | Renamed |
+| `EXPSTATUTE` | `STATUTE` | Renamed |
+| `EXPAMT_HS`, `EXPAMT_NR` | `EXAMT_HS`, `EXAMT_NR` | Renamed (drops the "P") |
+| `UVREDUC_HS`, `UVREDUC_NR` | Same names | Unchanged |
+| `GLVAL_HS`, `GLVAL_NR` | Same names | Unchanged |
+| `CRHOUSPCT`, `MUNGL1PCT` | Same names | Unchanged |
+| `AOEGL_HS`, `AOEGL_NR` | Same names | Unchanged |
+| `E911ADDR` | `E911ADDR` | Unchanged |
+| *(none)* | `OBJECTID`, `SPAN` (GIS), `MAPID`, `PROPTYPE`, `YEAR` (GIS), `TOWN`, `SOURCENAME`, `SOURCETYPE`, `SOURCEDATE`, `EDITMETHOD`, `EDITOR`, `EDITDATE`, `MATCHSTAT`, `EDITNOTE`, `Shape__Area`, `Shape__Length` | Pure GIS-side fields, contributed by `poly_parcels` geometry, not the Grand List at all |
 
-This confirms and sharpens [SPAN_PARCEL_GRANDLIST_MODEL.md §1.1](SPAN_PARCEL_GRANDLIST_MODEL.md#11-the-full-pipeline-town-to-public)'s existing statement that "VCGI obtains the annual Grand List extract from the Tax Department" — it is now clear that extract is a **Tax-Department-transformed** product, not a passthrough of NEMRC's raw file family documented here. The full scope of that transformation (beyond these two confirmed points) is not otherwise documented and is worth asking about directly if VCGI ever needs to reconcile a discrepancy between what it receives and what this raw sample shows (§11).
+Two things this resolves, and one it doesn't:
+
+1. **Exemption codes really are converted into text before publication — now field-confirmed, not just inferred.** The published layer's `EXPDESC` field ("Other Exemption Type") is real; it just doesn't exist anywhere upstream in the raw NEMRC file, which only carries the two numeric codes. This is exactly the transformation [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table) had originally inferred from SQL naming, then walked back after reading the raw NEMRC header file, and has now confirmed again from the opposite direction (the published schema) — both the original inference and the raw-file-based correction were each right about a different stage of the pipeline.
+2. **Several raw fields are simply dropped, not just renamed** — most notably `SCHID`, `CNTY`, `TCODE` (superseded by readable `TOWN`/`TNAME` text) and `HSTED_TX` (taxable homestead value; only the full-value `HSTED_FLV` survives to publication, unexplained — §11).
+3. **`LOCAPROP` is *not* confirmed dropped — this is now a genuine, open contradiction, not a settled fact.** The raw file's own header comment says it's "removed in current VTAX/VCGI export," but the live published schema still carries a `LOCAPROP` field. This document previously took the raw file's claim at face value; that was premature. See [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table) item 2 and §11 item 8 below.
+
+This confirms and sharpens [SPAN_PARCEL_GRANDLIST_MODEL.md §1.1](SPAN_PARCEL_GRANDLIST_MODEL.md#11-the-full-pipeline-town-to-public)'s existing statement that "VCGI obtains the annual Grand List extract from the Tax Department" — it is now clear that extract is a **Tax-Department-transformed** product, not a passthrough of NEMRC's raw file family documented here, and the transformation is now mapped field-by-field rather than only partially known.
 
 ## 10. Summary of known data-quality issues (Tax Department's own admissions, consolidated)
 
@@ -248,7 +284,7 @@ Collected here from callouts throughout this document, since they bear directly 
 | Field / File | Issue, in the Tax Department's own words |
 |---|---|
 | `411_gl.RESCODE` | "DATA NOT WELL MAINTAINED" |
-| `411_gl.LOCAPROP` (also `411TFP.LOCAPROP`) | "not well maintained in NEMRC, superseded by E911 Address" — dropped entirely from the VTAX/VCGI export |
+| `411_gl.LOCAPROP` (also `411TFP.LOCAPROP`) | "not well maintained in NEMRC, superseded by E911 Address" — the raw file claims this is "removed in current VTAX/VCGI export," but the live published FeatureServer schema (§9) still carries a `LOCAPROP` field; **this specific claim is now an open contradiction, not confirmed** (§11 item 8) |
 | `411TFS.TOT_CVHS`/`TOT_CVNR` | "includes current value of inactive parcels, renders field useless" |
 | `411TFP.ACRES`/`OBACRE` | "PVR believes these two field names are erroneously inverted from NEMRC" |
 | `411TFP.TZONE`, `411TFP.SUBSPAN` | "this field is not used" |
@@ -260,8 +296,10 @@ Collected here from callouts throughout this document, since they bear directly 
 2. **Could non-TIF towns' Grand List exports be extended to carry a `PACTIVE`-equivalent field?** Per §7.1, the Grand List module's own UI already tracks Active/Inactive status on every parcel regardless of TIF status ([SPAN_PARCEL_GRANDLIST_MODEL.md §1.5](SPAN_PARCEL_GRANDLIST_MODEL.md#15-the-grand-list-modules-own-parcelcontiguous-parcel-ui)) — the gap here appears to be in what's exported to the Tax Department, not necessarily in what NEMRC's software tracks internally. Confirming this distinction directly with NEMRC would materially de-risk the proposed `ADMINSPAN`/`GROUNDSPAN` redesign in [SPAN_PARCEL_GRANDLIST_MODEL.md §6](SPAN_PARCEL_GRANDLIST_MODEL.md#6-proposed-future-state-model-vcgitax-deptnemrc-workgroup-july-27-2026).
 3. **What is `411LST.PACTINACT`'s actual relationship to `411TFP.PACTIVE`?** Both are status-type fields, but only one (`PACTIVE`) has documented Active/Inactive/Non-taxable semantics; `PACTINACT`'s header only says "A = Active," leaving its full domain and relationship to the TIF-file concept unconfirmed.
 4. **What is the complete `CATCODE` domain used on `411_gl` itself?** The real Killington sample shows values like `O` (§4) that don't map directly onto the 16-category `411TOT` taxonomy (§6) — worth clarifying whether these are two genuinely different code systems or whether `411_gl.CATCODE` is a finer-grained breakdown that rolls up into the 16 `411TOT` categories.
-5. **What is the full scope of the NEMRC-to-VTAX/VCGI transformation** (§9), beyond the two confirmed changes (exemption-code-to-text, `LOCAPROP` removal)? Worth asking directly if VCGI ever needs to explain a discrepancy between this raw sample and what it actually receives.
+5. **What is the full scope of the NEMRC-to-VTAX/VCGI transformation** (§9)? Now mapped field-by-field against the published Active layer schema, but a few specific gaps remain unexplained: why `SCHID`/`CNTY`/`TCODE`/`HSTED_TX` are dropped rather than carried through, and where exactly the `EXPCODE_SPEC`/`EXPCODE_STND` → `EXPDESC` lookup is actually performed (Tax Department, or upstream in NEMRC's own software).
 6. **What exactly is the Tax Department's "state version of the NEMRC software program"** (§1) used for operationally — internal review only, or does it feed any other Tax Department system or process?
 7. **Does the Muni-GL/Ed-GL exemption transformation matrix (§5) match how `MUNGL1PCT`/`GLVAL_HS`/`GLVAL_NR`/`AOEGL_HS`/`AOEGL_NR` are actually computed on `411_gl`**, or is that computation done at a different stage entirely (e.g., inside NEMRC's own software before export, with `411EXP` simply reporting the already-applied results)?
+8. **Is `LOCAPROP` actually populated on the published Active layer, or present in the schema but empty?** The raw file's header comment claims it's "removed in current VTAX/VCGI export" (§9), but the live published schema still carries the field. This is a small, concrete example worth resolving directly — and a reminder that this entire document's claims about "what VCGI receives/publishes" should be checked against the actual live schema wherever possible, not just against Tax-Department-side header comments describing intent.
+9. **Why was `HSTED_TX` (taxable homestead value) dropped from the published layer** (§9) when its full-value counterpart `HSTED_FLV` was kept? Is a taxable-value figure reconstructable downstream from `HSTED_FLV` plus the exemption/reduction fields, making `HSTED_TX` redundant to carry — or is this simply an oversight?
 
 See also [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) for the broader open-questions list this document feeds into, and [MSOL_AS_BUILT.md §8](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc) for CAMA-vendor-specific questions.
