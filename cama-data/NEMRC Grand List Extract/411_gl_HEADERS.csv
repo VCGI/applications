@@ -1,0 +1,46 @@
+﻿411_gl,Field Number,Descriptive Field Name,"Data Type - Numeric (N),  Alpha/Numeric (AN), or Date (D)",Comments
+YEAR,1,Tax Year,N,YYYY
+SCHID,2,School Code,N,"1 to 3 digits (e.g.  5, 23, 171) "
+CNTY,3,County Code,N,"1 to 2 digits (e.g. 5=Essex, 11=Rutland)"
+TCODE,4,Town Code,N,"e.g.  003, 087, 126"
+SPAN,5,SPAN,AN,999-999-99999 / No duplicates
+PARCID,6,Parcel ID,AN,Town parcel ID
+OWNER1,7,Owner Name 1,AN,Last Name  First Name
+OWNER2,8,Owner Name 2,AN,Last Name  First Name
+ADDR1,9,Mailing Address 1,AN,Address only / No owner names
+ADDR2,10,Mailing Address 2,AN,Field empty if no 2nd address line
+CITY,11,Mailing Address City,AN,City / Field cannot be empty
+ST,12,Mailing Address State,AN,"VT, etc. / Empty where state included with city"
+ZIP,13,Mailing Address Zip,AN,Retain leading zero / Field cannot be empty
+DESCPROP,14,Parcel Property Description,AN,Physical description
+LOCAPROP,15,Location,AN,this field is not well mainted in NEMRC superseeded by E911 Address (removed in current VTAX/VCGI export)
+CATCODE,*16,Category (Real Estate only),AN,Real property category codes 
+RESCODE,*17,Resident Ownership Code,AN,"T, S, NS, C  (See codes on page 2) DATA NOT WELL MAINTAINED"
+ACRES,18,Total Acres,N,Acreage at 2 decimals
+REAL_FLV,19,Listed Real Value (Full),N,Full value before reductions
+HSTED_FLV,20,Homestead Listed Value (Full),N,Full value before reductions (Consistent with
+NRES_FLV,21,Nonhomestead Value (Full),N,Full value before reductions field 27 status)
+LAND_LV,22,Listed Value of Land,N,
+IMPRV_LV,23,Listed Value of Improvements,N,
+EQUIPVAL,24,Equipment Value (Personal Property),N,"Cable value, or PP value (if not exempt) "
+EQUIPCODE,25,Equipment Code (Cable only),AN,“C”  (If field 24 value is cable property)
+INVENVAL,26,Inventory Value,N,Personal property
+HSDECL,27,Homestead Declared (Y/N),AN,“Y” or “N” / Field cannot be empty
+HSTED_TX,28,Homestead Value (Taxable),N,HS value after any exemption has been applied
+HSITEVAL,29,Housesite Value (Full),N,Full housesite value (Not taxable housesite value)
+VETEXAMT,30,Veterans Exemption Amount,N,$10000 - $40000
+EXPCODE_SPEC,*31,Special Exemption Code,N,Codes # 1-9 
+EXPCODE_STND,*32,Standard Exemption Code,N,Codes # 1-7
+EXP_END,33,Exemption Ending Date,D,mm/dd/yyyy
+EXPSTATUTE,34,Exemption Statute,AN,Statutory authorization
+EXPAMT_HS,35,Exemption Homestead Amount,N,
+EXPAMT_NR,36,Exemption Nonhomestead Amount,N,
+UVREDUC_HS,37,Current Use Homestead Reduction,N,
+UVREDUC_NR,38,Current Use Nonhomestead Reduction,N,
+GLVAL_HS,39,Education Grand List Value Homestead (1%),N,Homestead Ed taxable value on tax bill. Reflects full Veterans and Voted exemption amounts
+GLVAL_NR,40,Education Grand List Value Nonhomestead (1%),N,Nonhomestead Ed taxable value on tax bill. Reflects full Veterans and Voted exemption amounts
+CRHOUSPCT,41,Covenant Restricted Housing %,N,Format:  33.00 
+MUNGL1PCT,42,Municipal Grand List Value (1%),N,1% of taxable municipal value (veterans exemption up to maximum voted by town) 
+AOEGL_HS,43,AOE Grand List Value Homestead (1%),N,Reflects maximum $10K veteran exemption  Includes Voted exemption amount
+AOEGL_NR,44,AOE GL Value Nonhomestead (1%),N,Reflects maximum $10K veteran exemption  Includes Voted exemption amount
+E911ADDR,45,Emergency 911 Address,AN,

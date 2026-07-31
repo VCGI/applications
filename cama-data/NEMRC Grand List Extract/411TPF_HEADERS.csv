@@ -1,0 +1,33 @@
+﻿411TFS,Descriptions,Comment
+TAXYEAR,Grand List Year,
+SCHCODE,School Code,
+TIFID,TIF ID (towns can have multiple TIF districts),
+TZONE,TIF Zone,this field is not used
+SPAN,SPAN,
+SUBSPAN,this field is not used,
+PARCID,Parcel ID,
+PACTIVE,Parcel Status 1= Active 2= Inactive 3 = Non-taxable statutory,
+TCOMM,TIF Comment,
+OWNER1,Owner,
+DESCPROP,Parcel Property Description,
+LOCAPROP,Location,this field is not well mainted in NEMRC superseeded by E911 Address
+CATCODE,Category Code numeric (1-16),
+HSDECL,Homestead Declaration,
+ACRES,Current Acreage,PVR believes these two field names are erroneously inverted from NEMRC and so actually Acres = Base Acres and Base Acres = Acres
+OBACRE,Base Acreage,PVR believes these two field names are erroneously inverted from NEMRC and so actually Acres = Base Acres and Base Acres = Acres
+CVHS,Current Listed Value HS,
+CVNR,Current Listed Value NHS,
+BVHS,Base Value HS,
+BVNR,Base Value NHS,
+INCHS,Increment HS,
+INCNR,Increment NHS,
+MUNCV,Municipal Current Value,
+MUNBV,Municipal Base Value,
+MUNINC,Municipal Increment,
+P_BUILDIN2,,Burlington ONLY
+P_EQPM2,,Burlington ONLY
+P_INV2,,Burlington ONLY
+P_LANDUSE2,,Burlington ONLY
+P_RLANDUSE2,,Burlington ONLY
+p_minv2 ,,Burlington ONLY
+p_meqpm2 ,,Burlington ONLY

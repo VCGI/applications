@@ -1,0 +1,17 @@
+﻿Category Abbreviations,NEMRC TOT file headers,NEMRC Numerical Code,Description
+R1,R1,1,"Residential-1, <6 acres"
+R2,R2,2,"Residential-2, ≥6 acres"
+MHU,MHU,3,Mobile Home Unlanded
+MHL,MHL,4,Mobile Home Landed
+S1,V1,5,"Seasonal-1, <6 acres"
+S2,V2,6,"Seasonal-2,  ≥6 acres"
+COMM,COM,7,Commercial
+CMA,CMA,8,Commercial Apartment
+IND,IND,9,Industrial
+UE,UE,10,Utilities Electric
+UO,UO,11,Utilities Other
+FRM,FRM,12,Farm
+OTH,OTH,13,Other
+WOOD,WD,14,Woodland
+MISC,MSC,15,Miscellaneous
+TC,TC,16,Telecommuncations

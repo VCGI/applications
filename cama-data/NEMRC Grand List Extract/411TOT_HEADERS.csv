@@ -1,0 +1,91 @@
+﻿411TOT Field,Description
+YEAR411,Grand List Year
+SCHOOLTAXID,School Code
+NEMRC ENTITY,Name of NEMRC entity 
+R1CT,Count of Properties in Category R1
+R1_FLV,Full Listed Value of Properties in R1
+R1_HSFLV,Homestead Listed Value of Properties in R1
+R1_NRFLV,NonHomestead Listed Value of Properties in R2
+R2CT,Count of Properties in Category R2
+R2_FLV,Full Listed Value of Properties in R2
+R2_HSFLV,Homestead Listed Value of Properties in R2
+R2_NRFLV,NonHomestead Listed Value of Properties in R2
+MHUCT,Count of Properties in Category MHU
+MHU_FLV,Full Listed Value of Properties in MHU
+MHU_HSFLV,Homestead Listed Value of Properties in MHU
+MHU_NRFLV,NonHomestead Listed Value of Properties in MHU
+MHLCT,Count of Properties in Category MHL
+MHL_FLV,Full Listed Value of Properties in MHL
+MHL_HSFLV,Homestead Listed Value of Properties in MHL
+MHL_NRFLV,NonHomestead Listed Value of Properties in MHL
+V1CT,Count of Properties in Category V1/S1 (Seasonal-1)
+V1_FLV,Full Listed Value of Properties in V1/S1 (Seasonal-1)
+V1_HSFLV,Homestead Listed Value of Properties in V1/S1 (Seasonal-1)
+V1_NRFLV,NonHomestead Listed Value of Properties in V1/S1 (Seasonal-1)
+V2CT,Count of Properties in Category V2/S2 (Seasonal-2)
+V2_FLV,Full Listed Value of Properties in V2/S2 (Seasonal-2)
+V2_HSFLV,Homestead Listed Value of Properties in V2/S2 (Seasonal-2)
+V2_NRFLV,NonHomestead Listed Value of Properties in V2/S2 (Seasonal-2)
+COMCT,Count of Properties in Category COM/COMM (Commercial)
+COM_FLV,Full Listed Value of Properties in COM/COMM (Commercial)
+COM_HSFLV,Homestead Listed Value of Properties in COM/COMM (Commercial)
+COM_NRFLV,NonHomestead Listed Value of Properties in COM/COMM (Commercial)
+CMACT,Count of Properties in Category CMA
+CMA_FLV,Full Listed Value of Properties in CMA
+CMA_HSFLV,Homestead Listed Value of Properties in CMA
+CMA_NRFLV,NonHomestead Listed Value of Proprties in CMA
+INDCT,Count of Properties in Category IND
+IND_FLV,Full Listed Value of Properties in IND
+IND_HSFLV,Homestead Listed Value of Properties in IND
+IND_NRFLV,NonHomestead Listed Value of Properties in IND
+UECT,Count of Properties in Category UE
+UE_FLV,Full Listed Value of Properties in UE
+UE_HSFLV,Homestead Listed Value of Properties in UE
+UE_NRFLV,NonHomestead Listed Value of Properties in UE
+UOCT,Count of Properties in Category UO
+UO_FLV,Full Listed Value of Properties in UO
+UO_HSFLV,Homestead Listed Value of Properties in UO
+UO_NRFLV,NonHomestead Listed Value of Properties in UO
+FRMCT,Count of Properties in Category FRM
+FRM_FLV,Full Listed Value of Properties in FRM
+FRM_HSFLV,Homestead Listed Value of Properties in FRM
+FRM_NRFLV,NonHomestead Listed Value of Properties in FRM
+OTHCT,Count of Properties in Category OTH
+OTH_FLV,Full Listed Value of Properties in OTH
+OTH_HSFLV,Homestead Listed Value of Properties in OTH
+OTH_NRFLV,NonHomestead Listed Value of Properties in OTH
+WDCT,Count of Properties in Category WD/WOOD (Woodland)
+WD_FLV,Full Listed Value of Properties in WD/WOOD (Woodland)
+WD_HSFLV,Homestead Listed Value of Properties in WD/WOOD (Woodland)
+WD_NRFLV,NonHomestead Listed Value of Properties in WD/WOOD (Woodland)
+MSCCT,Count of Properties in Category MSC/MISC (Miscellaneous)
+MSC_FLV,Full Listed Value of Properties in MSC/MISC (Miscellaneous)
+MSC_HSFLV,Homestead Listed Value of Properties in MSC/MISC (Miscellaneous)
+MSC_NRFLV,NonHomestead Listed Value of Properties in MSC/MISC (Miscellaneous)
+TCCT,Count of Properties in Category TC
+TC_FLV,Full Listed Value of Properties in TC
+TC_HSFLV,Homestead Listed Value of Properties in TC
+TC_NRFLV,NonHomestead Listed Value of Properties in TC
+TOTCT,"Total count of taxable properties (does not include statutory exempt parcels which are considered non-taxable, see field NO-NONTAX)"
+TOTFLV,Total Full Listed Value
+TOT_MALV,Total Adjusted Municipal Listed Value (Full Listed Value - Municipal Exemptions)
+PPC_MLV,Municipal Personal Property - Cable
+PPE_MLV,Municipal Personal Property - Equipment
+PPI_MLV,Municipal Personal Property - Inventory
+TPP_MLV,"Total Municipal Personal Property (Cable, Equipment, Inventory)"
+TTX_MLV,Total Municipal Taxable Value = TOT_MALV+TPP_MLV
+TOT_EDALV,Total Adjusted Education Listed Value (Full Listed Value - Education Exemptions)
+PPC_EDLV,Education Personal Property - Cable
+PPE_EDLV,Education Personal Property - Equipment
+PPI_EDLV,Education Personal Property - Inventory
+TPP_EDLV,"Total Education Personal Property (Cable, Equipment, Inventory)"
+TTX_EDLV,Total EducationTaxable Value = TOT_EDALV+TPP_EDLV
+PPE_EXMP,Personal Property Equipment Exempt (PPE)
+PPI_EXMP,Personal Property Inventory Exempt
+VET_CT,Count of Veteran's exemptions
+VET_LIMIT,"Maximum Veteran's exemption (10k statutory, towns may vote up to 40k)"
+PPE_PCT,Personal Property exemption percentage - equipment
+PPE_MTHD,Method for valuing PPE
+NO_NONTAX,Count of Non-taxable parcels
+SPX_CT,Count of parcels with special exemption
+NEMVER,NEMRC Version

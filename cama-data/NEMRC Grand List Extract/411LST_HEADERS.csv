@@ -1,0 +1,22 @@
+﻿411LST,Description
+YEAR,Grand List Year
+SCHOOLTAXID,School Code
+SPAN,SPAN
+PARCID,Parcel ID
+EXPCODE_SPEC,Special Exemption Code
+EXPCODE_STND,Standard Exemption Code
+OWNER1,Owner
+CAT411,Categroy Code Numerical (1-16)
+DESC,Property Description
+VOTDATE,Date Exemption was Voted 
+STARTDATE,Stat Date of Exemption
+ENDDATE,End Date of Exemption
+STATUTE,Statue Abbr
+FULLVAL,Full Listed Value
+TAXVAL,Taxable Value
+EXMP_HS,Exemption HS
+EXMP_NR,Exemption NHS
+REALVALTYPE,Valuation Type (A = Assessment I = Insurance Replacement Cost)
+TNSNEMRC,Resident Ownership Code
+TNSTATUTE,Statute NEMRC
+PACTINACT,Parcel Status  (A = Active)

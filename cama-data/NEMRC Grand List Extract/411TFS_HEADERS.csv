@@ -1,0 +1,21 @@
+﻿411TFS ,Descriptions,Comment
+TAXYEAR,Grand List Year,
+SCHCODE,School Code,
+TIFID,TIF ID (towns can have multiple TIF districts),
+TTYPE,TIF Type,
+PCTKEEP,TIF Retention Percentage (Education),
+TSTATUS,TIF Status,
+STARTDATE,Retention Start Date,
+ENDDATE,Retention End Date,
+TOTCT,Total Parcel Count,
+OBVALUE,Total Base Value,
+OBACRES,Total Base Acreage,
+TOT_CVHS,Total Current Listed Value HS,"includes current value of inactive parcels, renders field useless"
+TOT_CVNR,Total Current Listed Value NHS,"includes current value of inactive parcels, renders field useless"
+TOT_BVHS,Total Base Value HS,
+TOT_BVNR,Total Base Value NHS,
+TOT_INCHS,Total Increment HS,
+TOT_INCNR,Total Increment NHS,
+MUNTOT_BVLOCk,Municipal Base Value - field not used,
+MUNTOT_CV,Municipal Current Value,
+MUNTOT_BV,Municipal Base Value,

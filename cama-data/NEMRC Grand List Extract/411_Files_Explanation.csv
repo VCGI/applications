@@ -1,0 +1,22 @@
+﻿File Name,Alt File Name,Description
+411GLXX,411_glXX,parcel level grand list (GL) data (manipulation needed for VTAX and VCGI format)
+411EXPXX,,exemption data summed by category
+411LSTXX,,exemption data by parcel
+411TFSXX,,"only for towns with tif district, TIF summary information, caution as current values and acreages include values of inactive parcels"
+411TFPXX,,"only for towns with tif district, TIF information by parcel, Burlington file has additional fields used for their ""special"" increment calculation, waterfront TIF district 100% of increment retained from 1996 - 2010, 75% from 2010 to CY"
+411TOTXX,,fair listed values by category and other important town level data such as personal property and total taxable value
+411GL_EXPECTOD_SPEC,411_gl_EXPECTOD_SPEC,Special Exemption Code value definitions
+411GL_EXPCODE_STND,411_gl_EXPCODE_STND,Standard Exemption Code value definitions
+411GL_HEADERS,411_gl_HEADERS,describes field names and details of the 411GL / 411_gl file. Appears to be close to the fields in final annual grand list as joined with parcel data by VCGI
+411GL_RESCODE,411_gl_RESCODE,Resident Ownership of Real Property value definitions. Found in RESCODE field and potentially others
+411EXP_HEADERS,,describes field names of the 411EXPXX file
+411LST_HEADERS,,describes field names of the 411LSTXX file
+411TFS_HEADERS,,describes field names of the 411TFSXX file
+411TFS_TSTATUS_CODES,,TIF Status value definitions
+411TFS_TTYPE_CODES,,TIF Type value definitions
+411TOT_CATEGORIES,,describes 411TOTXX property categories at the Tax Department and their equivalents across NEMRC grand list exports
+411TOT_HEADERS,,describes field names of the 411TOTXX file
+411TPF_HEADERS,,describes field names of the 411TPFXX file
+411EXP_Transformations,,describes Exemption Types and How They are Applied
+,,
+XX,,"placeholder for numbers that indentify which GL instance the town is sending from, not used by PVR (only ever two digits)"

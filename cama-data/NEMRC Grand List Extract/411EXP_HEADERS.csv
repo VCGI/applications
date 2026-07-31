@@ -1,0 +1,23 @@
+﻿411EXP,Description
+YEAR411,Grand List Year
+SCHOOLTAXID,School Code
+CAT411,Category Code (numeric)
+VEPC_HS,Approved (VEPC) Exemptions HS
+VEPC_NR,Approved (VEPC) Exemptions NHS
+TIF_HS,Approved TIFs HS
+TIF_NR,Approved TIFs NHS
+NAPV_HS,Non-Approved (Voted) Exemptions HS
+NAPV_NR,Non-Approved (Voted) Exemptions NHS
+GRNF_HS,Grandfathered Exemptions HS
+GRNF_NR,Grandfathered Exemptions NHS
+PAID_HS,Municipal Contracts (Owner Pays Ed Tax) HS
+PAID_NR,Municipal Contracts (Owner Pays Ed Tax) NHS
+USEV_HS,Current Use Exempt Reduction HS
+USEV_NR,Current Use Exempt Reduction NHS
+VET_HS,Veteran Exemptions HS
+VET_NR,Veteran Exemptions NHS
+SPX_HS,"Special Exemptions (Ski Lifts, Qualified Housing, etc) HS"
+SPX_NR,"Special Exemptions (Ski Lifts, Qualified Housing, etc) NHS"
+VET_MU,Veterans Exemption Municipal
+PST_HS,Partial-Statutory Exemptions HS
+PST_NR,Partial-Statutory Exemptions NHS

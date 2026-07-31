@@ -1,0 +1,6 @@
+﻿TIF Status Code,STATDESC
+1,Active w/increment value
+2,Active - No development
+3,Active – Negative Total Increment
+4,Expired
+5,Rescinded
