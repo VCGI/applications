@@ -24,7 +24,7 @@ This repository is an attempt to document, as precisely as the available evidenc
 
 ## Legislative Timeline
 
-*Rows link to the more complete technical discussion. This table is meant to orient, not replace that detail.*
+*Rows link to the more complete technical discussion. This table is meant to orient, not replace that detail. Cross-checked against a review by the Tax Department's policy advisor on July 30, 2026.*
 
 | When | What Happens | Statute | Why It Matters |
 |---|---|---|---|
@@ -39,8 +39,6 @@ This repository is an attempt to document, as precisely as the available evidenc
 | **January 1, 2031** | Regional Assessment Districts begin operating (joint 6-year reappraisal cycles, ≥10,000 parcels each). | [Act 170](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf), [32 V.S.A. §§3415](https://legislature.vermont.gov/statutes/section/32/121/03415)–3419 | See [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417). |
 | **July 1, 2031** | Statewide assessment/lien date moves from April 1 to January 1 (dozens of statutes amended); applies to the 2032 grand list. | [Act 164, Secs. 24–48](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT164/ACT164%20As%20Enacted.pdf) | Mechanical, but touches nearly every date-driven field/workflow in CAMA and the Grand List. |
 | **July 1, 2031** | Regional Assessment District Appeals Boards take over valuation-appeal jurisdiction from municipal Boards of Civil Authority. | [Act 170](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf), 32 V.S.A. §§3418–3419 | See [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417). |
-
-*Cross-checked against a review by the Tax Department's policy advisor on July 30, 2026.*
 
 ## The Current System, in Brief
 
