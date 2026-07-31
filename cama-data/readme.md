@@ -22,7 +22,7 @@ This repository is an attempt to document, as precisely as the available evidenc
 - **None of this works without SPAN**, and NEMRC's Grand List module is the only source of SPAN for all ~260 Vermont towns today, independent of CAMA vendor.
 - [Act 170 §3417](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf) gives PVR direct rulemaking authority over parcel-data and CAMA/IT standards. This documentation is meant to be usable input to that rulemaking, not just a set of talking points for vendor conversations.
 
-## The Legislative Timeline
+## Legislative Timeline
 
 *Rows link to the more complete technical discussion. This table is meant to orient, not replace that detail.*
 
