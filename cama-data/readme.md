@@ -40,7 +40,7 @@ This repository is an attempt to document, as precisely as the available evidenc
 | **July 1, 2031** | Statewide assessment/lien date moves from April 1 to January 1 (dozens of statutes amended); applies to the 2032 grand list. | [Act 164, Secs. 24–48](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT164/ACT164%20As%20Enacted.pdf) | Mechanical, but touches nearly every date-driven field/workflow in CAMA and the Grand List. |
 | **July 1, 2031** | Regional Assessment District Appeals Boards take over valuation-appeal jurisdiction from municipal Boards of Civil Authority. | [Act 170](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf), 32 V.S.A. §§3418–3419 | See [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417). |
 
-*Cross-checked against a review by the Tax Department's policy advisor. Two statutes new to this table — §4041a and §5405 — are cited without a hyperlink pending verification of the correct legislature.vermont.gov chapter path.*
+*Cross-checked against a review by the Tax Department's policy advisor on July 30, 2026.*
 
 ## The Current System, in Brief
 
