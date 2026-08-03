@@ -31,7 +31,7 @@ Supporting lookup/code files (all read in full, not town-specific): `411_gl_RESC
 
 ## 3. The parcel-level Grand List file (`411_gl`) — official 45-field schema
 
-Per `411_gl_HEADERS.csv`, per VCGI **"Appears to be close to the fields in final annual grand list as joined with parcel data by VCGI."** This is the single most important file in the whole export for cross-checking the abstract `GRANDLIST` table documented in [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table), which was previously built only from field-name inference off the `JoinGL2Parcels` SQL. These are now **official, Tax-Department-confirmed field definitions**, not inference:
+Per `411_gl_HEADERS.csv`, per VCGI **"Appears to be close to the fields in final annual grand list as joined with parcel data by VCGI."** This is the single most important file in the whole export for cross-checking the abstract `GRANDLIST` table documented in [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table), which was previously built only from field-name inference off VCGI's `JoinGL2Parcels` SQL. These are now **official, Tax-Department-confirmed field definitions**, not inference:
 
 | # | Field | Type | Meaning |
 |---|---|---|---|
