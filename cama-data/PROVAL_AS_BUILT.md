@@ -78,7 +78,7 @@ Results are annotated with a `~` (estimate, from Priority C's apartment fallback
 1. **Is `tax_bill_id` reliably equivalent to the statewide SPAN** for every parcel, or only functionally close enough for the Barre Town sample? The `county_number` coincidence in §2 is worth a direct answer.
 2. **What is `ResLivingUnits` actually meant to capture**, and how reliably is it populated across the full Barre Town dataset (not just the two sample records inspected)? If it's a trustworthy native dwelling-unit count, it may be a far better Act 170 `DWELLINGS` source than any derived heuristic — including the one built for this very demo.
 3. **Does `parent_lrsn` correspond to anything resembling the proposed `ADMINSPAN`/`GROUNDSPAN` structure** ([SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §6)? If Aumentum already models parent/child parcel relationships natively, that's a useful existing pattern to compare against the proposed redesign.
-4. What is `Imp_Features.json` (§3), and why wasn't it wired into the demo viewer alongside `Imp_Ext_Features`?
+4. What is `Imp_Features.json` (§3)?
 
 These questions, plus every other open question across this documentation set, are consolidated by theme and responsible party in [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md).
 

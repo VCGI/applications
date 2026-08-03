@@ -12,23 +12,23 @@
 
 ### As Grand List module steward (affects every VT town, regardless of CAMA vendor)
 
-1. **Expose a universal, per-parcel `STATUS` (Active/Inactive) field in the annual export to the Tax Department, for every town — not just TIF-district towns.** This is the single highest-priority ask in the whole standard ([VERMONT_CAMA_DATA_STANDARD_DRAFT.md §4.1](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#41-identification--structuralrelational-fields-phase-1)). The Grand List module's own UI already tracks this status on every parcel ([SPAN_PARCEL_GRANDLIST_MODEL.md §1.5](SPAN_PARCEL_GRANDLIST_MODEL.md#15-the-grand-list-modules-own-parcelcontiguous-parcel-ui)) — this is very likely an export-scope change, not a new data-tracking requirement. *(OQ-16, OQ-9)*
+1. **Expose a universal, per-parcel `STATUS` (Active/Inactive) field in the annual export to the Tax Department, for every town — not just TIF-district towns.** This is the single highest-priority ask in the whole standard ([VERMONT_CAMA_DATA_STANDARD_DRAFT.md §4.1](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#41-identification--structuralrelational-fields-phase-1)). The Grand List module's own UI already tracks this status on every parcel ([SPAN_PARCEL_GRANDLIST_MODEL.md §1.5](SPAN_PARCEL_GRANDLIST_MODEL.md#15-the-grand-list-modules-own-parcelcontiguous-parcel-ui)) — this is very likely an export-scope change, not a new data-tracking requirement. *(OQ-16, OQ-32)*
 2. **Confirm whether `ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE` can be originated or exposed by the Grand List module**, and whether the existing "Contiguous Parcel Information" mechanism (today keyed by `Parcel #`, not SPAN) could be exposed SPAN-keyed instead. This is arguably the single biggest structural ask of NEMRC in the entire Act 164/170 redesign. *(OQ-5, OQ-6)*
 3. **Confirm whether contiguous-parcel combination ever actually crosses town lines** in practice, given each town runs its own separate Grand List database and SPAN is town-scoped — needed before the `ADMINSPAN` design can assume a single-town scope is always sufficient. *(OQ-7)*
 4. **Confirm what, if anything, currently syncs automatically between MicroSolve CAMA and the Grand List module**, beyond the already-confirmed manual, dual-entry process for parcel splits/transfers. *(OQ-13)*
-5. **Establish (or confirm) a change-request process and typical lead time for adding fields/tables to the standard export** — needed regardless of which specific fields the final standard settles on. *(OQ-33)*
+5. **Establish (or confirm) a change-request process and typical lead time for adding fields/tables to the standard export** — needed regardless of which specific fields the final standard settles on. *(OQ-34)*
 
 ### As a CAMA vendor (MicroSolve specifically)
 
 6. **Adopt a canonical dwelling-count field** — either rename/map an existing internal concept to `UNITCNT` (per [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §4.4](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#44-buildingimprovement-detail-phase-1--carried-forward-directly-from-the-act-68-2024-proposal)) or confirm none exists and one needs to be built. Unlike Aumentum and Catalis, no vendor-native dwelling-count-adjacent field has been found in MSOL so far ([MSOL_AS_BUILT.md §7.1](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc)) — MicroSolve may be starting from further behind than the other two vendors on this specific field. *(OQ-1)*
-7. **Commit to including `EXP_DATADICT`/`EXP_CATEG` in every future extract as standard practice** — confirmed missing from one of two samples examined (Lincoln) and present in the other (South Burlington); this is a solvable extract-completeness issue, not an ambiguous one. *(OQ-27)*
-8. **Confirm `factori`/`prop_class` is always populated from the Tax Department's `PCCODE` list verbatim**, and whether a maintained crosswalk exists on NEMRC's end for when it diverges — directly relevant to adopting a single canonical `CATCODE` domain statewide ([VERMONT_CAMA_DATA_STANDARD_DRAFT.md §6](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#6-category-code-reconciliation--one-canonical-list-not-three)). *(OQ-28)*
+7. **Commit to including `EXP_DATADICT`/`EXP_CATEG` in every future extract as standard practice** — confirmed missing from one of two samples examined (Lincoln) and present in the other (South Burlington); this is a solvable extract-completeness issue, not an ambiguous one. *(OQ-51)*
+8. **Confirm `factori`/`prop_class` is always populated from the Tax Department's `PCCODE` list verbatim**, and whether a maintained crosswalk exists on NEMRC's end for when it diverges — directly relevant to adopting a single canonical `CATCODE` domain statewide ([VERMONT_CAMA_DATA_STANDARD_DRAFT.md §6](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#6-category-code-reconciliation--one-canonical-list-not-three)). *(OQ-22)*
 9. **Confirm whether MicroSolve has any native parent/child parcel or unit-grouping concept**, even if not currently exported — Aumentum's `parent_lrsn` is a candidate precedent for `ADMINSPAN`/`GROUNDSPAN` ([PROVAL_AS_BUILT.md §6](PROVAL_AS_BUILT.md#6-open-questions-for-aumentum) item 3); it's unconfirmed whether MicroSolve has an equivalent. *(OQ-29)*
 
 ### Where the two hats overlap — questions only NEMRC itself can answer
 
 10. **Where would a `UNITCNT`/`DWELLINGS` rollup actually be computed — the Grand List module, MicroSolve CAMA, or both?** This is a genuinely NEMRC-internal architecture question, since NEMRC alone controls both candidate systems. *(OQ-2)*
-11. **Would the same Globalscape FTP arrangement NEMRC's CAMA data already flows through also be suitable for submitting the new standard's fields**, or does the Grand List module's own annual Tax Department submission need a separate channel? *(OQ-13, part)*
+11. **Would the same Globalscape FTP arrangement NEMRC's CAMA data already flows through also be suitable for submitting the new standard's fields**, or does the Grand List module's own annual Tax Department submission need a separate channel? *(related to OQ-18)*
 
 *The numbered items above are the ones worth raising directly and specifically with NEMRC (Chris Miele/Ernie Saunders). The full, unabridged context for each is in Part 2 below, cross-referenced by `OQ-` ID.*
 
@@ -63,7 +63,7 @@
 
 | ID | Question | Responsible | Source |
 |---|---|---|---|
-| OQ-16 | Could non-TIF towns' NEMRC Grand List exports be extended to carry a `PACTIVE`-equivalent status field? | NEMRC, Tax Dept/PVR | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 16; [SPAN_PARCEL_GRANDLIST_MODEL.md §5](SPAN_PARCEL_GRANDLIST_MODEL.md#5-limits-of-the-current-model-pre-redesign) item 7 |
+| OQ-16 | Could non-TIF towns' NEMRC Grand List exports be extended to carry a `PACTIVE`-equivalent status field? | NEMRC, Tax Dept/PVR | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 16; [SPAN_PARCEL_GRANDLIST_MODEL.md §5](SPAN_PARCEL_GRANDLIST_MODEL.md#5-limits-of-the-current-model-pre-redesign) item 7; [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 2 |
 | OQ-11 | What is the full code list for MSOL's `parcstatus` field (only `"A"` observed) — is there an inactive/retired status that would let VCGI align it with the GIS inactive-parcels layer? | NEMRC | [MSOL_AS_BUILT.md §8](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc) item 5 |
 | OQ-12 | What is `411LST.PACTINACT`'s actual relationship to `411TFP.PACTIVE`? Both are status-type fields, but only one has documented Active/Inactive/Non-taxable semantics. | Tax Dept/PVR, NEMRC | [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 3 |
 | OQ-32 | Should NEMRC's annual Grand List export to the Tax Department be extended to carry Active/Inactive status for all towns, not just TIF-district ones — as a Tax Department policy decision? | Tax Dept/PVR | readme.md "If you're at the Tax Department / PVR" |
@@ -84,8 +84,9 @@
 | OQ-17 | Is `tax_bill_id` (ProVal) reliably equivalent to statewide SPAN for every parcel, or only functionally close for the one sample examined? | Other vendors (Aumentum) | [PROVAL_AS_BUILT.md §6](PROVAL_AS_BUILT.md#6-open-questions-for-aumentum) item 1 |
 | OQ-18 | Will Aumentum/ProVal, Vision, and Catalis/AssessPro use the same Globalscape FTP arrangement NEMRC uses, in their own vendor-specific folders, or a separate mechanism per vendor? | Other vendors, Tax Dept/VCGI | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 12; readme.md "If you're NEMRC"; [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 2 |
 | OQ-19 | Given the B&T format's real limitations, is a full relational export available from AssessPro (comparable to MSOL/ProVal), or is B&T the only extract format Catalis offers? | Other vendors (Catalis) | [ASSESSPRO_AS_BUILT.md §6](ASSESSPRO_AS_BUILT.md#6-open-questions-for-catalis--assesspro) item 4 |
-| OQ-20 | What is `Imp_Features.json` (ProVal), and why wasn't it wired into the demo viewer alongside `Imp_Ext_Features`? | Other vendors (Aumentum), VCGI | [PROVAL_AS_BUILT.md §6](PROVAL_AS_BUILT.md#6-open-questions-for-aumentum) item 4 |
+| OQ-20 | What is `Imp_Features.json` (ProVal)? | Other vendors (Aumentum) | [PROVAL_AS_BUILT.md §6](PROVAL_AS_BUILT.md#6-open-questions-for-aumentum) item 4 |
 | OQ-34 | Given Act 164/170 may require new reporting categories, does NEMRC have a change-request process for adding fields/tables to the standard export, and what's the typical lead time? | NEMRC | [MSOL_AS_BUILT.md §8](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc) item 7 |
+| OQ-51 | Can NEMRC commit to including `EXP_DATADICT`/`EXP_CATEG` in every future town extract as standard practice, and can VCGI receive each town's own copy rather than assuming one town's mapping is universal? | NEMRC | [MSOL_AS_BUILT.md §8](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc) item 1 |
 
 ### Theme F: Three-way classification and floor-area proration
 
@@ -106,9 +107,9 @@
 
 | ID | Question | Responsible | Source |
 |---|---|---|---|
-| OQ-26 | What does the leading `411` filename prefix actually denote (confirmed not Killington's SPAN town code)? | Tax Dept/PVR | [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 1 |
-| OQ-27 | Is `LOCAPROP` actually still populated on the published Active layer, or present-but-empty? The raw file claims it's removed; the live published schema still carries it. | Tax Dept/PVR, VCGI | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 19; [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 8 |
-| OQ-28 | Are the `YEAR`/`GLYEAR` and `TOWN`/`TNAME` field pairs on the published Active layer ever monitored for disagreement? | VCGI, Tax Dept/PVR | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 20 |
+| OQ-26 | ~~What does the leading `411` filename prefix actually denote?~~ **Resolved (VCGI, 2026-08-03):** `411` is simply the Tax Department's colloquial term for the Grand List itself — not a town or SPAN code. | *(resolved)* | [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §1](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#1-what-this-is-and-why-its-a-different-channel-than-the-cama-extract) |
+| OQ-27 | ~~Is `LOCAPROP` actually still populated on the published Active layer, or present-but-empty?~~ **Resolved (VCGI, 2026-08-03):** present in the schema, but empty for every record. | *(resolved)* | [SPAN_PARCEL_GRANDLIST_MODEL.md §3](SPAN_PARCEL_GRANDLIST_MODEL.md#3-the-statewide-grandlist-table) |
+| OQ-28 | ~~Are the `YEAR`/`GLYEAR` and `TOWN`/`TNAME` field pairs on the published Active layer ever monitored for disagreement?~~ **Resolved (VCGI, 2026-08-03):** these are expected to differ at times — geometry is received/published on a rolling per-town basis while the Grand List is annual, so newer geometry is joined to the most recent available Grand List record rather than a same-vintage one. Not a monitored anomaly, an accepted consequence of the two workflows. | *(resolved)* | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 20 |
 | OQ-35 | Why was `HSTED_TX` dropped from the published Active layer when its full-value counterpart `HSTED_FLV` was kept — intentional scoping, or an oversight? | Tax Dept/PVR, VCGI | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 21; [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 9 |
 | OQ-36 | What is the full scope of the NEMRC-to-VTAX/VCGI transformation, beyond the confirmed changes (exemption codes resolved to text, the disputed `LOCAPROP` removal)? | Tax Dept/PVR | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 17; [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 5 |
 | OQ-37 | Does the Muni-GL/Ed-GL exemption transformation matrix match how `MUNGL1PCT`/`GLVAL_HS`/`GLVAL_NR`/`AOEGL_HS`/`AOEGL_NR` are actually computed on `411_gl`, or is that done earlier, inside NEMRC's own software? | NEMRC, Tax Dept/PVR | [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 7 |
@@ -121,7 +122,7 @@
 
 | ID | Question | Responsible | Source |
 |---|---|---|---|
-| OQ-42 | Is there a real, currently-operating Vermont "Safe At Home" address-confidentiality program, and does VCGI's own published parcel layer (which carries owner mailing addresses) need a suppression mechanism it doesn't have? | Tax Dept/PVR, VCGI | [VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md §8](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md#8-open-questions) item 5; [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 3 |
+| OQ-42 | ~~Is there a real, currently-operating Vermont "Safe At Home" address-confidentiality program?~~ **Resolved (VCGI, 2026-08-03):** yes, stewarded by the Vermont Secretary of State. VCGI checks with the Secretary of State on receipt of each annual Grand List file and redacts before publishing; the Tax Department has separately begun its own checks before sharing elsewhere. **Still genuinely open:** both of those are downstream/reactive — suppression capability should still be implemented at the source, i.e., each municipality's own CAMA/Grand List data entry. | Tax Dept/PVR, NEMRC (municipal-level source data), Other vendors | [VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md §8](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md#8-open-questions) item 5; [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 3; [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §4.2](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#42-ownership--address-fields-phase-1-except-where-noted) |
 | OQ-43 | Should a distinct billing address (`BILLADDR*`) be Phase 1 rather than Phase 2, given it may already be operationally needed today (e.g., escrow/mortgage billing)? | Tax Dept/PVR, VCGI | [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 5 |
 | OQ-44 | Where should `LASTREAPPRAISAL` actually be sourced from if a town has never formally tracked it — is a retroactive backfill feasible ahead of 2031? | Tax Dept/PVR, VCGI | [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 6 |
 
@@ -132,14 +133,14 @@
 | OQ-45 | Does elevating the Inactive layer to primary happen on the 2028 Act 164 timeline independent of the 2029 classification-field work, or as one bundled release? | Tax Dept/PVR, VCGI | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 3 |
 | OQ-46 | Does [32 V.S.A. §5412](https://legislature.vermont.gov/statutes/section/32/135/05412) (PVR-applied education-only exemptions) have any bearing on the proposed classification/exemption fields? | Tax Dept/PVR | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 18 |
 | OQ-47 | Is stacked-unit acreage attribution (equal division vs. full-on-common-record-with-zeros, which varies by town today) meant to be standardized by the future-state model, or continue accommodating both practices? | Tax Dept/PVR, Joint | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 7 |
-| OQ-48 | Given VCGI's active effort to formalize CAMA data transfer from all four vendors as-is (per the Act 68 of 2024 report), how will Act 164/170 changes further modify that standard's schema once formalized? | VCGI, Tax Dept/PVR | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 6 |
+| OQ-48 | ~~Given VCGI's active effort to formalize CAMA data transfer from all four vendors as-is, how will Act 164/170 changes further modify that standard's schema once formalized?~~ **Resolved (VCGI, 2026-08-03):** yes — VCGI expects Act 164/170 changes to impact the CAMA data standard, and by extension the extracts vendors submit to remain in compliance with it. | *(resolved)* | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 6 |
 
 ### Theme K: VTPIE dependency and cross-town/geometry-timing considerations
 
 | ID | Question | Responsible | Source |
 |---|---|---|---|
 | OQ-49 | Does VTPIE actually depend on NEMRC for SPAN? Flagged with a "?" in VCGI's own working diagram — genuinely unconfirmed. | Tax Dept/PVR, NEMRC | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 9 |
-| OQ-50 | Is the geometry/Grand-List timing mismatch (rolling parcel-geometry submission vs. annual Grand List cycle) worth surfacing as a standing data-quality consideration independent of the redesign? | VCGI | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 10 |
+| OQ-50 | ~~Is the geometry/Grand-List timing mismatch worth surfacing as a standing data-quality consideration?~~ **Resolved (VCGI, 2026-08-03):** it's expected, not a defect — geometry is received/published on a rolling per-town basis, the Grand List only once a year, so a town's geometry can be newer than its most recent available Grand List record. Newer geometry is still joined via SPAN to the most recent Grand List record where one exists. See also OQ-28. | *(resolved)* | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 10 |
 
 ---
 
@@ -151,19 +152,23 @@
 OQ-2, OQ-5, OQ-6, OQ-7, OQ-8, OQ-9 *(confirm/compare)*, OQ-10, OQ-11, OQ-12 *(joint)*, OQ-13, OQ-14, OQ-16 *(joint)*, OQ-18 *(joint)*, OQ-33 *(joint)*, OQ-34, OQ-37 *(joint)*, OQ-38, OQ-49 *(joint)*
 
 ### NEMRC (as MSOL CAMA vendor)
-OQ-1, OQ-2 *(shared with above)*, OQ-22, OQ-29
+OQ-1, OQ-2 *(shared with above)*, OQ-22, OQ-29, OQ-51
 
 ### Tax Department / PVR
-OQ-12, OQ-16, OQ-23, OQ-24, OQ-25, OQ-26, OQ-27, OQ-28, OQ-31, OQ-32, OQ-35, OQ-36, OQ-37, OQ-39, OQ-40, OQ-41, OQ-42, OQ-43, OQ-44, OQ-45, OQ-46, OQ-47, OQ-49
+OQ-12, OQ-16, OQ-23, OQ-24, OQ-25, OQ-31, OQ-32, OQ-35, OQ-36, OQ-37, OQ-39, OQ-40, OQ-41, OQ-42, OQ-43, OQ-44, OQ-45, OQ-46, OQ-47, OQ-49
 
 ### VCGI
-OQ-20, OQ-25 *(shared)*, OQ-27 *(shared)*, OQ-28 *(shared)*, OQ-35 *(shared)*, OQ-42 *(shared)*, OQ-43 *(shared)*, OQ-44 *(shared)*, OQ-45 *(shared)*, OQ-48, OQ-50
+OQ-20, OQ-25 *(shared)*, OQ-35 *(shared)*, OQ-42 *(shared)*, OQ-43 *(shared)*, OQ-44 *(shared)*, OQ-45 *(shared)*
 
 ### Other CAMA vendors (Aumentum/ProVal, Vision, Catalis/AssessPro)
 OQ-3, OQ-4a, OQ-9, OQ-15, OQ-17, OQ-18 *(shared)*, OQ-19, OQ-20 *(shared)*, OQ-33 *(shared)*
 
 ### Joint / workgroup-level policy calls (no single party can answer alone)
-OQ-21, OQ-30, OQ-47, OQ-48
+OQ-21, OQ-30, OQ-47
+
+### Resolved this session (2026-08-03, per VCGI)
+
+OQ-26 (411 prefix = colloquial name for the Grand List), OQ-27 (`LOCAPROP` present-but-empty), OQ-28 (`YEAR`/`GLYEAR`, `TOWN`/`TNAME` divergence expected), OQ-48 (Act 164/170 confirmed to impact the CAMA standard), OQ-50 (geometry/Grand-List timing mismatch expected) — full answers in Part 2 above. OQ-20 and OQ-42 were narrowed/partially answered but retain a genuinely open remainder, so they stay in the active lists above.
 
 ---
 
