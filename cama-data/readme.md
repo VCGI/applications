@@ -28,7 +28,7 @@ Vermont towns are subject to three separate systems for property/parcel administ
 - **VTPIE** (the Vermont Property Information Exchange, a Tax-Department-led platform covering select tax-program activities).
 
 VCGI's own statewide parcel GIS layer sits downstream of all three, built from parcel geometry that towns submit voluntarily. Two 2026 laws, [Act 164](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT164/ACT164%20As%20Enacted.pdf) and [Act 170](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf), require these systems to work together more precisely, on a series of deadlines running through 2031: 
-- a new physical/legal definition of "parcel,"
+- a new physical/legal definition of "parcel",
 - a new required dwelling-unit count,
 - a new three-way property classification, and
 - a direct legislative mandate for the state to set data standards across all of it.
