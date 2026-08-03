@@ -8,7 +8,7 @@ Who owns which lands where? With what details? For several reasons these seeming
 
 In lieu of these conditions the [statewide standardized parcel dataset](https://vcgi.vermont.gov/data-and-programs/parcel-program) has become one of the best available resources for considering these questions that keep arising in matters of statewide public policy. These may be related to statewide conservation and development trends, [housing conditions](https://map.vermont.gov/housing), [extent of current tax policies](https://vcgi.vermont.gov/news/current-use-data-now-available-parcel-viewer-updated), and more. While not perfect and for reference purposes only, the uniform parcel dataset with aggregated geometry from municipalities and joined with annual grand list information allows one to quickly investigate where many things are and are happening throughout the state.
 
-Stewardship of statewide parcel data for nearly 10 years has exposed both the limitations of and opportunities for improving the usefulness of underlying property data management, which precedes its assembly and ultimate use toward clarifying or addressing persistent statewide public policy issues.
+Stewardship of statewide parcel data for nearly 10 years has exposed both the limitations of and opportunities for improving the usefulness of underlying property data management, which precedes parcel data assembly and ultimate use toward clarifying or addressing persistent statewide public policy issues.
 
 <img width="2250" height="1400" alt="Existing Parcel Practice" src="https://github.com/user-attachments/assets/e80708e8-5010-4426-9ce9-fcf7e88a00e9" />
 
