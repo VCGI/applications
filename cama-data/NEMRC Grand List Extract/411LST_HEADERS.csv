@@ -13,9 +13,9 @@ STARTDATE,Stat Date of Exemption
 ENDDATE,End Date of Exemption
 STATUTE,Statue Abbr
 FULLVAL,Full Listed Value
-TAXVAL,Taxable Value
 EXMP_HS,Exemption HS
 EXMP_NR,Exemption NHS
+TAXVAL,Taxable Value
 REALVALTYPE,Valuation Type (A = Assessment I = Insurance Replacement Cost)
 TNSNEMRC,Resident Ownership Code
 TNSTATUTE,Statute NEMRC
