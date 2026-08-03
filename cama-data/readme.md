@@ -27,7 +27,11 @@ Vermont towns are subject to three separate systems for property/parcel administ
 - the NEMRC-maintained **Grand List module** (billing and the statewide **SPAN** identifier), and
 - **VTPIE** (the Vermont Property Information Exchange, a Tax-Department-led platform covering select tax-program activities).
 
-VCGI's own statewide parcel GIS layer sits downstream of all three, built from parcel geometry that towns submit voluntarily. Two 2026 laws, [Act 164](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT164/ACT164%20As%20Enacted.pdf) and [Act 170](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf), require these systems to work together more precisely, on a series of deadlines running through 2031: a new physical/legal definition of "parcel," a new required dwelling-unit count, a new three-way property classification, and a direct legislative mandate for the state to set data standards across all of it.
+VCGI's own statewide parcel GIS layer sits downstream of all three, built from parcel geometry that towns submit voluntarily. Two 2026 laws, [Act 164](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT164/ACT164%20As%20Enacted.pdf) and [Act 170](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf), require these systems to work together more precisely, on a series of deadlines running through 2031: 
+- a new physical/legal definition of "parcel,"
+- a new required dwelling-unit count,
+- a new three-way property classification, and
+- a direct legislative mandate for the state to set data standards across all of it.
 
 This repository is an attempt to document, as best as the available evidence allows, how these systems *actually* work today. It is reverse-engineered from sample data, system extracts, vendor training materials, and direct conversations with VCGI, Tax Department, municipal officials, map vendors, NEMRC staff, and CAMA vendor staff so that the coming changes can be implemented on a shared, accurate factual basis rather than guessed at independently by each party. This document is the entry point and synthesis; the detailed technical findings live in the linked documents below.
 
