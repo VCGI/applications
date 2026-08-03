@@ -120,6 +120,8 @@ Concrete, answerable asks for the Chris Miele/Ernie Saunders conversation, deriv
 6. Can the export add/expose a genuine "dwelling units" or "residential type" rollup field at the parcel level (§7.1), or is deriving it from `EXP_SECTION` expected to remain the standard?
 7. Given both Act 164 and Act 170 (see below) may require new categories of reporting, does NEMRC have a change-request process for adding fields/tables to the standard `EXP_*` export set, and what's the typical lead time?
 
+These questions, plus every other open question across this documentation set, are consolidated by theme and responsible party in [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md) — which also pulls several of these into a short, standalone NEMRC-specific asks list.
+
 ## 9. The Lincoln sample: a second, earlier, simpler NEMRC extract
 
 *Source: [`cama-explorer-demo-msolve`](../cama-explorer-demo-msolve) (this repo), its own thorough self-documentation in [that folder's `readme.md`](../cama-explorer-demo-msolve/readme.md), and direct S3 sample records fetched from `vtopendata-dev.s3.us-east-2.amazonaws.com/_Other/CAMA/sample-microsolve/` (19 files).*

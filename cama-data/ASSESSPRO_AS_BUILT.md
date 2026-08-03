@@ -70,6 +70,8 @@ This directly bears on the still-open question in [SPAN_PARCEL_GRANDLIST_MODEL.m
 3. Is `Rental Living Units` a count of *all* dwelling units, or specifically units currently rented out? Confirm before treating it as an Act 170-style dwelling-unit source.
 4. Given the B&T format's real limitations (no full sales history, no building-section-level detail, no land-line detail), **is a full relational export available from AssessPro** (comparable to what MSOL and ProVal provided), or is B&T the only extract format Catalis offers for this product?
 
+These questions, plus every other open question across this documentation set, are consolidated by theme and responsible party in [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md).
+
 ## A note on naming
 
 Named for the CAMA product (AssessPro), consistent with [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) and [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) — Catalis is the corporate vendor (having acquired the former Patriot Properties AssessPro product), much as NEMRC and Aumentum are vendor names distinct from their MicroSolve/ProVal products.

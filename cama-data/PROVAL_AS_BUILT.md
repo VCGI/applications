@@ -80,6 +80,8 @@ Results are annotated with a `~` (estimate, from Priority C's apartment fallback
 3. **Does `parent_lrsn` correspond to anything resembling the proposed `ADMINSPAN`/`GROUNDSPAN` structure** ([SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §6)? If Aumentum already models parent/child parcel relationships natively, that's a useful existing pattern to compare against the proposed redesign.
 4. What is `Imp_Features.json` (§3), and why wasn't it wired into the demo viewer alongside `Imp_Ext_Features`?
 
+These questions, plus every other open question across this documentation set, are consolidated by theme and responsible party in [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md).
+
 ## A note on naming
 
 This document is named for the CAMA *product* (ProVal), matching the convention already used for [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) (also named for a product, MicroSolve, not the vendor NEMRC) — "Aumentum" is the corporate vendor name, much as "NEMRC" is both the company and its product suite. As more vendor samples are added (Vision, Catalis/AssessPro), expect a parallel `<PRODUCT>_AS_BUILT.md` per vendor in this folder, with [readme.md](readme.md) and [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) remaining the cross-vendor/statewide documents.

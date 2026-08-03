@@ -163,3 +163,5 @@ The "VTPIE Imports" section lists a one-time transitional import of TIF data, wi
 3. What does `Tax Entity Code` (§4.3) actually represent? No description is given anywhere in the source document.
 4. Is `P_TZONE` ("TIF ZONE, DEFAULT TO 1," per this document) genuinely meaningful internally to NEMRC's `lsprop`/`lssyst` tables, even though the exported `411TFP.TZONE` field is documented as unused (§6 above)?
 5. Is there a Vermont "Safe At Home" address-confidentiality program that actually requires suppressing certain parcel owners' addresses from public records, and if so, does VCGI's own published statewide parcel layer (which carries owner mailing address fields) need a suppression mechanism it doesn't currently have?
+
+These questions, plus every other open question across this documentation set, are consolidated by theme and responsible party in [../OPEN_QUESTIONS_AND_NEMRC_ASKS.md](../OPEN_QUESTIONS_AND_NEMRC_ASKS.md).

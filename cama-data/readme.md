@@ -89,7 +89,7 @@ This repository is an attempt to document, as best as the available evidence all
 
 - Your authority is already the backbone of this: 32 V.S.A. §5404(b) makes SPAN "the numbering system prescribed by the Director," and Act 170 §3417 gives you rulemaking authority over parcel-data collection standards and CAMA/IT contracts — see [§6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417).
 - A handful of decisions here are policy calls, not IT questions, and are yours to make: what actually counts as a "dwelling unit"; whether the 2028 parcel-definition change and the 2029 classification work roll out together or on separate tracks; how (or whether) cross-town contiguous parcels get handled uniformly, since SPAN is town-scoped but ownership isn't always; and whether NEMRC's annual Grand List export to your department should be extended to carry Active/Inactive parcel status for all towns, not just the TIF-district ones it covers today — see [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §7.
-- The full, current list of open technical/policy questions the workgroup is tracking is in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 — organized so you can hand specific ones to specific parties rather than treating this as one large undifferentiated problem.
+- The full, current list of open technical/policy questions the workgroup is tracking is consolidated in [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md) — organized by theme and by responsible party, so specific items can be handed to specific people rather than treating this as one large undifferentiated problem.
 
 ### If you're a CAMA vendor
 
@@ -101,6 +101,7 @@ This repository is an attempt to document, as best as the available evidence all
 
 You're the most consequential vendor in this entire picture: you are, at once, one of four CAMA vendors *and* the sole statewide source of SPAN, via a separate Grand List module used regardless of which CAMA software a town runs. Nearly every change described above eventually routes through your Grand List module, not just MicroSolve.
 
+- **A short, distilled list of exactly what you'd need to change to accommodate the proposed CAMA data standard, split by your two roles (Grand List steward vs. MicroSolve vendor):** [OPEN_QUESTIONS_AND_NEMRC_ASKS.md, Part 1](OPEN_QUESTIONS_AND_NEMRC_ASKS.md#part-1-distilled-nemrc-asks).
 - **The legislative timeline above was requested by NEMRC** — see [Legislative Timeline](#legislative-timeline) — and is meant to keep everyone working on this (Tax, VCGI, and the other CAMA vendors) aligned on what's coming and by when, not just you.
 - Specific technical questions that are yours to answer, drawn from the full open-questions list in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7:
   - Can `EXP_DATADICT`/`EXP_CATEG` (the self-describing schema files that were missing entirely from the Lincoln sample but present in South Burlington's) be included in every future extract as standard practice?
@@ -112,14 +113,19 @@ You're the most consequential vendor in this entire picture: you are, at once, o
 
 ## Open Questions Still Being Worked Through
 
-The complete, current lists (30+ items across all documents) are linked below by theme rather than repeated here:
+**All 57 open questions across every document in this set are now consolidated in one place, organized by theme and by who's actually responsible for answering each one:** [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md). That document also pulls out a short, standalone list of exactly what NEMRC specifically would need to change to accommodate [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), given NEMRC's dual role as both the Grand List/SPAN steward and a CAMA vendor.
 
-- **Dwelling units — definition and sourcing:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 1, 13, 15; [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6; [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6.
-- **SPAN structure, `ADMINSPAN`/`GROUNDSPAN`, and the Grand List module's own mechanics:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 5, 8, 13, 14, 16.
-- **The NEMRC Grand List export's inactive-parcel-data gap (TIF towns only):** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §5 item 7, §7 item 16; [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §7, §11.
-- **Vendor-specific data-transfer and SPAN-reliability questions:** [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8; [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6; [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6; [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 11–12.
-- **Classification/floor-area proration sourcing:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, item 2.
-- **Timing, sequencing, and statutory compliance:** [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7, items 3, 6, 11.
+Quick theme pointers, if you're looking for one topic specifically (see the document above for the complete, cross-referenced version):
+
+- **Dwelling units — definition and sourcing:** Theme A.
+- **SPAN structure, `ADMINSPAN`/`GROUNDSPAN`, and the Grand List module's own mechanics:** Theme B.
+- **The NEMRC Grand List export's inactive-parcel-data gap (TIF towns only):** Theme C.
+- **Vendor-specific data-transfer and SPAN-reliability questions:** Theme E.
+- **Classification/floor-area proration sourcing:** Theme F.
+- **Category-code standardization:** Theme G.
+- **Confirmed data-quality issues and raw-vs-published discrepancies:** Theme H.
+- **New/privacy fields (Safe At Home, billing address, last reappraisal):** Theme I.
+- **Timing, sequencing, and statutory compliance:** Theme J.
 
 ## The Full Documentation Set
 
@@ -129,6 +135,7 @@ The complete, current lists (30+ items across all documents) are linked below by
 | [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) | SPAN authority and structure, the statewide Grand List table, the current GIS parcel pipeline, the Grand List module's own Active/Inactive UI, and the proposed future-state model — the core technical document behind this synthesis. |
 | [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) | The actual annual NEMRC Grand List module export received by the Tax Department (Killington sample) — official field schemas, exemption code systems, and a critical finding that genuine Active/Inactive parcel status is only exported for TIF-district towns. |
 | [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) | A preliminary, VCGI-authored draft CAMA data standard — synthesizes every vendor extract, the NEMRC Grand List export, the published GIS layers, and the proposed Act 164/170 fields into one candidate schema, building on VCGI's 2024 Act 68 proposal. |
+| [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md) | Every open question across this documentation set (57 items), consolidated by theme and responsible party, plus a distilled list of NEMRC-specific changes needed to accommodate the draft CAMA data standard. |
 | [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) | NEMRC MicroSolve CAMA schema (South Burlington and Lincoln samples). |
 | [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) | Aumentum ProVal CAMA schema (Barre Town sample). |
 | [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) | Catalis AssessPro CAMA schema (statewide flat-file sample) — and why it has no SPAN. |
