@@ -2,7 +2,7 @@
 
 *This document consolidates every open question raised across this documentation set, organized by theme and by who would actually need to answer or act on each one. It also pulls out a short, standalone list of concrete changes NEMRC specifically would need to make to accommodate [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), given NEMRC's unusual dual role as both the statewide SPAN/Grand-List steward and one of four CAMA vendors (MicroSolve).*
 
-*Every item is drawn directly from the per-document "open questions" sections it links to — currently [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 (22 items), [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8 (9 items), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6 (4 items), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6 (4 items), [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §11 (9 items), [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md) §8 (5 items), and [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) §9 (6 items) — 59 items total, growing as new source material is examined. Each item below keeps a stable ID (`OQ-1`, `OQ-2`, ...) so the by-party index at the end can reference them without repeating full text. The original per-document sections are left intact — this is an additional index, not a replacement.*
+*Every item is drawn directly from the per-document "open questions" sections it links to — currently [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 (22 items), [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8 (9 items), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6 (4 items), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6 (4 items), [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §11 (9 items), [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md) §8 (5 items), and [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) §9 (6 items) — 60 items total, growing as new source material is examined (a few of the most recent additions are cited to specific sections of the source documents directly, rather than to their own "open questions" list, since they arose from material reviewed after those lists were first compiled). Each item below keeps a stable ID (`OQ-1`, `OQ-2`, ...) so the by-party index at the end can reference them without repeating full text. The original per-document sections are left intact — this is an additional index, not a replacement.*
 
 ---
 
@@ -127,6 +127,7 @@
 | OQ-42 | ~~Is there a real, currently-operating Vermont "Safe At Home" address-confidentiality program?~~ **Resolved (VCGI, 2026-08-03):** yes, stewarded by the Vermont Secretary of State. VCGI checks with the Secretary of State on receipt of each annual Grand List file and redacts before publishing; the Tax Department has separately begun its own checks before sharing elsewhere. **Still genuinely open:** both of those are downstream/reactive — suppression capability should still be implemented at the source, i.e., each municipality's own CAMA/Grand List data entry. | Tax Dept/PVR, NEMRC (municipal-level source data), Other vendors | [VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md §8](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md#8-open-questions) item 5; [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 3; [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §4.2](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#42-ownership--address-fields-phase-1-except-where-noted) |
 | OQ-43 | Should a distinct billing address (`BILLADDR*`) be Phase 1 rather than Phase 2, given it may already be operationally needed today (e.g., escrow/mortgage billing)? | Tax Dept/PVR, VCGI | [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 5 |
 | OQ-44 | Where should `LASTREAPPRAISAL` actually be sourced from if a town has never formally tracked it — is a retroactive backfill feasible ahead of 2031? | Tax Dept/PVR, VCGI | [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 6 |
+| OQ-54 | What "state payments" data does NEMRC's Grand List module store, that NEMRC's own training material flags as confidential (alongside 911 addresses) and unsuitable for a public-facing tax map — a distinct, not-yet-investigated category from anything else documented so far? | Tax Dept/PVR, NEMRC | [SPAN_PARCEL_GRANDLIST_MODEL.md §1.6](SPAN_PARCEL_GRANDLIST_MODEL.md#16-town-optional-local-tax-map-integration-out-of-scope-for-the-statewide-pipeline-but-worth-a-few-cross-confirmations) |
 
 ### Theme J: Timing, sequencing, and statutory compliance
 
@@ -151,13 +152,13 @@
 *Cross-references `OQ-` IDs from Part 2 — full text lives there, not repeated here.*
 
 ### NEMRC (as Grand List module steward)
-OQ-2, OQ-5, OQ-6, OQ-7, OQ-8, OQ-9 *(confirm/compare)*, OQ-10, OQ-11, OQ-12 *(joint)*, OQ-13, OQ-14, OQ-16 *(joint)*, OQ-18 *(joint)*, OQ-33 *(joint)*, OQ-34, OQ-37 *(joint)*, OQ-38, OQ-49 *(joint)*, OQ-53
+OQ-2, OQ-5, OQ-6, OQ-7, OQ-8, OQ-9 *(confirm/compare)*, OQ-10, OQ-11, OQ-12 *(joint)*, OQ-13, OQ-14, OQ-16 *(joint)*, OQ-18 *(joint)*, OQ-33 *(joint)*, OQ-34, OQ-37 *(joint)*, OQ-38, OQ-49 *(joint)*, OQ-53, OQ-54 *(joint)*
 
 ### NEMRC (as MSOL CAMA vendor)
 OQ-1, OQ-2 *(shared with above)*, OQ-22, OQ-29, OQ-51, OQ-52
 
 ### Tax Department / PVR
-OQ-12, OQ-16, OQ-23, OQ-24, OQ-25, OQ-31, OQ-32, OQ-35, OQ-36, OQ-37, OQ-39, OQ-40, OQ-41, OQ-42, OQ-43, OQ-44, OQ-45, OQ-46, OQ-47, OQ-49
+OQ-12, OQ-16, OQ-23, OQ-24, OQ-25, OQ-31, OQ-32, OQ-35, OQ-36, OQ-37, OQ-39, OQ-40, OQ-41, OQ-42, OQ-43, OQ-44, OQ-45, OQ-46, OQ-47, OQ-49, OQ-54 *(joint)*
 
 ### VCGI
 OQ-20, OQ-25 *(shared)*, OQ-35 *(shared)*, OQ-42 *(shared)*, OQ-43 *(shared)*, OQ-44 *(shared)*, OQ-45 *(shared)*
