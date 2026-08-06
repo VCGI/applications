@@ -2,7 +2,7 @@
 
 *This document consolidates every open question raised across this documentation set, organized by theme and by who would actually need to answer or act on each one. It also pulls out a short, standalone list of concrete changes NEMRC specifically would need to make to accommodate [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), given NEMRC's unusual dual role as both the statewide SPAN/Grand-List steward and one of four CAMA vendors (MicroSolve).*
 
-*Every item is drawn directly from the per-document "open questions" sections it links to — currently [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 (22 items), [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8 (9 items), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6 (4 items), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6 (4 items), [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §11 (9 items), [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md) §8 (5 items), and [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) §9 (6 items) — 62 items total, growing as new source material is examined (a few of the most recent additions are cited to specific sections of the source documents directly, rather than to their own "open questions" list, since they arose from material reviewed after those lists were first compiled). Each item below keeps a stable ID (`OQ-1`, `OQ-2`, ...) so the by-party index at the end can reference them without repeating full text. The original per-document sections are left intact — this is an additional index, not a replacement.*
+*Every item is drawn directly from the per-document "open questions" sections it links to — currently [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 (22 items), [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8 (9 items), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6 (4 items), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6 (4 items), [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §11 (9 items), [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md) §8 (5 items), and [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) §9 (6 items) — 63 items total, growing as new source material is examined (a few of the most recent additions are cited to specific sections of the source documents directly, rather than to their own "open questions" list, since they arose from material reviewed after those lists were first compiled). Each item below keeps a stable ID (`OQ-1`, `OQ-2`, ...) so the by-party index at the end can reference them without repeating full text. The original per-document sections are left intact — this is an additional index, not a replacement.*
 
 ---
 
@@ -105,6 +105,7 @@
 | OQ-23 | What is the complete `CATCODE` domain used on `411_gl` itself — does a real value like `O` (found in a live Killington record) map onto the 16-category `411TOT` taxonomy, or is it a separate, finer-grained system? | Tax Dept/PVR | [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md §11](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md#11-open-questions) item 4 |
 | OQ-24 | Does that same Killington record (`CATCODE=O`) also carry the secondary equalization-target category the VTPIE document's own rule requires for the "Other" category? | Tax Dept/PVR | [VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md §8](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md#8-open-questions) item 2 |
 | OQ-25 | Does adopting a single numeric `CATCODE` (1–16) as canonical require any changes to how PVR's own equalization-study categories are defined, or is it purely a formatting change? | Tax Dept/PVR | [VERMONT_CAMA_DATA_STANDARD_DRAFT.md §9](VERMONT_CAMA_DATA_STANDARD_DRAFT.md#9-open-questions) item 4 |
+| OQ-57 | Is the Grand List module's `Cama file` selector (`R`/`C`/`O`/`N` — confirmed to control which of MSOL's three separate silo databases holds a parcel's CAMA record, [MSOL_AS_BUILT.md §2](MSOL_AS_BUILT.md#2-three-parallel-schemas-silos-not-one)) set automatically from `Category`, or chosen manually by the lister? What happens to existing silo data if it's changed after the fact — is there a migration path, or does changing it orphan the old record? | NEMRC | [MSOL_AS_BUILT.md §2](MSOL_AS_BUILT.md#2-three-parallel-schemas-silos-not-one); [MSOL_AS_BUILT.md §6](MSOL_AS_BUILT.md#6-property-classification-two-parallel-systems) |
 
 ### Theme H: Confirmed data-quality issues and raw-vs-published discrepancies
 
@@ -157,7 +158,7 @@
 OQ-2, OQ-5, OQ-6, OQ-7, OQ-8, OQ-9 *(confirm/compare)*, OQ-10, OQ-11, OQ-12 *(joint)*, OQ-13, OQ-14, OQ-16 *(joint)*, OQ-18 *(joint)*, OQ-33 *(joint)*, OQ-34, OQ-37 *(joint)*, OQ-38, OQ-49 *(joint)*, OQ-53, OQ-54 *(joint)*
 
 ### NEMRC (as MSOL CAMA vendor)
-OQ-1, OQ-2 *(shared with above)*, OQ-22, OQ-51, OQ-52
+OQ-1, OQ-2 *(shared with above)*, OQ-22, OQ-51, OQ-52, OQ-57
 
 ### Tax Department / PVR
 OQ-12, OQ-16, OQ-23, OQ-24, OQ-25, OQ-31, OQ-32, OQ-35, OQ-36, OQ-37, OQ-39, OQ-40, OQ-41, OQ-42, OQ-43, OQ-44, OQ-45, OQ-46, OQ-47, OQ-49, OQ-54 *(joint)*, OQ-55 *(joint)*, OQ-56
