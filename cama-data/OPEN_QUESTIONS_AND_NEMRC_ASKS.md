@@ -2,7 +2,7 @@
 
 *This document consolidates every open question raised across this documentation set, organized by theme and by who would actually need to answer or act on each one. It also pulls out a short, standalone list of concrete changes NEMRC specifically would need to make to accommodate [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), given NEMRC's unusual dual role as both the statewide SPAN/Grand-List steward and one of four CAMA vendors (MicroSolve).*
 
-*Every item is drawn directly from the per-document "open questions" sections it links to — currently [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 (22 items), [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8 (9 items), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6 (4 items), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6 (4 items), [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §11 (9 items), [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md) §8 (5 items), and [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) §9 (6 items) — 60 items total, growing as new source material is examined (a few of the most recent additions are cited to specific sections of the source documents directly, rather than to their own "open questions" list, since they arose from material reviewed after those lists were first compiled). Each item below keeps a stable ID (`OQ-1`, `OQ-2`, ...) so the by-party index at the end can reference them without repeating full text. The original per-document sections are left intact — this is an additional index, not a replacement.*
+*Every item is drawn directly from the per-document "open questions" sections it links to — currently [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §7 (22 items), [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) §8 (9 items), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) §6 (4 items), [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) §6 (4 items), [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md) §11 (9 items), [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md) §8 (5 items), and [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) §9 (6 items) — 61 items total, growing as new source material is examined (a few of the most recent additions are cited to specific sections of the source documents directly, rather than to their own "open questions" list, since they arose from material reviewed after those lists were first compiled). Each item below keeps a stable ID (`OQ-1`, `OQ-2`, ...) so the by-party index at the end can reference them without repeating full text. The original per-document sections are left intact — this is an additional index, not a replacement.*
 
 ---
 
@@ -53,7 +53,8 @@
 |---|---|---|---|
 | OQ-5 | Is the Grand List module (not just MSOL CAMA) prepared to originate/expose `ADMINSPAN`, `GROUNDSPAN`, `KIND`, and `TYPE`? | NEMRC | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 5 |
 | OQ-6 | Could the existing "Contiguous Parcel Information" mechanism (`Parcel #`-keyed today) be exposed SPAN-keyed instead, to build `ADMINSPAN` from it? | NEMRC | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 13; readme.md "If you're NEMRC" |
-| OQ-7 | Does contiguous-parcel combination ever actually occur across town lines, given SPAN is town-scoped and each town's Grand List database is separate? | NEMRC | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 14; readme.md "If you're NEMRC" |
+| OQ-7 | Does contiguous-parcel combination (two *separate* parcels, one per town, administratively combined) ever actually occur across town lines, given SPAN is town-scoped and each town's Grand List database is separate? **Distinct from OQ-55**, which is about one physical parcel straddling a town line, not two being combined. | NEMRC | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 14; readme.md "If you're NEMRC" |
+| OQ-55 | **Should the proposed Parcel/Administrative Parcel model explicitly address parcels that straddle a town line, and if so, how?** Today this is handled entirely as a manual, per-lister CAMA valuation workaround (confirmed via a real NEMRC "Land in Two Towns" training example — [MSOL_AS_BUILT.md §10](MSOL_AS_BUILT.md#10-land-valuation-tables-and-the-land-in-two-towns-cross-town-blending-method)), with no formal linkage between the two towns' separate, independently SPAN-numbered records for what is legally one parcel. Rooted in the same underlying condition as OQ-7 (Vermont has never completed a definitive, modern, statewide municipal boundary/corner-point survey), but a structurally distinct problem from it. | Tax Dept/PVR, VCGI, Joint | [SPAN_PARCEL_GRANDLIST_MODEL.md §5](SPAN_PARCEL_GRANDLIST_MODEL.md#5-limits-of-the-current-model-pre-redesign) item 8; [SPAN_PARCEL_GRANDLIST_MODEL.md §6.1](SPAN_PARCEL_GRANDLIST_MODEL.md#61-core-idea-split-parcel-from-administrative-parcel); [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 23 |
 | OQ-8 | Could the existing `HS-122` and `TIF` tabs on the Grand List module's parcel record be extended to carry a future dwelling-use attestation or classification data? | NEMRC | [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) item 15; readme.md "If you're NEMRC" |
 | OQ-9 | Does `parent_lrsn` (ProVal) correspond to anything resembling the proposed `ADMINSPAN`/`GROUNDSPAN` structure — a useful existing pattern if so? | Other vendors (Aumentum) | [PROVAL_AS_BUILT.md §6](PROVAL_AS_BUILT.md#6-open-questions-for-aumentum) item 3 |
 | OQ-29 | Does MicroSolve have any native parent/child parcel or unit-grouping concept, even if not currently exported? | NEMRC | [MSOL_AS_BUILT.md §8](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc) item 4 |
@@ -158,16 +159,16 @@ OQ-2, OQ-5, OQ-6, OQ-7, OQ-8, OQ-9 *(confirm/compare)*, OQ-10, OQ-11, OQ-12 *(jo
 OQ-1, OQ-2 *(shared with above)*, OQ-22, OQ-29, OQ-51, OQ-52
 
 ### Tax Department / PVR
-OQ-12, OQ-16, OQ-23, OQ-24, OQ-25, OQ-31, OQ-32, OQ-35, OQ-36, OQ-37, OQ-39, OQ-40, OQ-41, OQ-42, OQ-43, OQ-44, OQ-45, OQ-46, OQ-47, OQ-49, OQ-54 *(joint)*
+OQ-12, OQ-16, OQ-23, OQ-24, OQ-25, OQ-31, OQ-32, OQ-35, OQ-36, OQ-37, OQ-39, OQ-40, OQ-41, OQ-42, OQ-43, OQ-44, OQ-45, OQ-46, OQ-47, OQ-49, OQ-54 *(joint)*, OQ-55 *(joint)*
 
 ### VCGI
-OQ-20, OQ-25 *(shared)*, OQ-35 *(shared)*, OQ-42 *(shared)*, OQ-43 *(shared)*, OQ-44 *(shared)*, OQ-45 *(shared)*
+OQ-20, OQ-25 *(shared)*, OQ-35 *(shared)*, OQ-42 *(shared)*, OQ-43 *(shared)*, OQ-44 *(shared)*, OQ-45 *(shared)*, OQ-55 *(shared)*
 
 ### Other CAMA vendors (Aumentum/ProVal, Vision, Catalis/AssessPro)
 OQ-3, OQ-4a, OQ-9, OQ-15, OQ-17, OQ-18 *(shared)*, OQ-19, OQ-20 *(shared)*, OQ-33 *(shared)*
 
 ### Joint / workgroup-level policy calls (no single party can answer alone)
-OQ-21, OQ-30, OQ-47
+OQ-21, OQ-30, OQ-47, OQ-55
 
 ### Resolved this session (2026-08-03, per VCGI)
 
