@@ -4,7 +4,7 @@
 
 *Every claim below is sourced from the as-built documentation in this repo — [readme.md](readme.md), [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md), [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md), [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md), [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md) — cross-referenced per slide below so any claim can be traced back to its evidence if questioned live. Slide bullets are written to be read aloud as-is; **Speaker notes** carry the caveats/hedges that shouldn't be dropped when presenting, even though they're not slide text.*
 
-*Tone note for delivery: this is a collaborative fact-finding effort, not an audit. Findings described as "gaps" below are gaps in the current, decades-old design — not criticisms of NEMRC's product or of any person in the room. Several slides say so explicitly; keep that framing live in the room even where the slide text is terse.*
+*Tone note for delivery: this is a collaborative fact-finding effort, not an audit. Findings described as "gaps" below are gaps in the current, decades-old design — not criticisms of products or of any person in the room.*
 
 ---
 
