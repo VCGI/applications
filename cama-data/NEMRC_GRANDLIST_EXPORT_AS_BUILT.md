@@ -107,6 +107,8 @@ There are **two parallel, independently-numbered exemption code fields** on `411
 | 6 | Statutory Exemptions (town property, schools, churches, etc.) |
 | 7 | Partial-Statutory (e.g. a rental unit on church-owned property) |
 
+**Code 3 ("Grandfathered") is confirmed narrowly scoped** — per a Tax Department town-filing instruction sheet ("Filing Your August 15, 2026, As Billed Grand List," NTC-1362, [`reference/`](reference/Filing-Aug-15-2026-As-Billed-Grand-List-NTC-1362.pdf); see also [SPAN_PARCEL_GRANDLIST_MODEL.md §1.7](SPAN_PARCEL_GRANDLIST_MODEL.md#17-the-annual-august-15-filing-workflow-vtpienemrc-411-reconciliation)): *"The only properties eligible as voted grandfathered are Fire, Rescue & Ambulance."* Anything else appearing under this code in a town's data is flagged as an error to correct in both NEMRC and VTPIE, not a legitimate use of the category.
+
 **Special codes (`EXPCODE_SPEC`, field 31):**
 
 | Code | Description |
@@ -140,6 +142,8 @@ There are **two parallel, independently-numbered exemption code fields** on `411
 | PVR-Applied Exemptions — Municipal/Education | subtract | subtract |
 
 The "PVR-Applied Exemptions" rows are notable: they are **applied by PVR directly**, not sourced from any `411EXP` field (the source-file column for the Education-Only row reads "internal to PVR — [32 V.S.A. §5412](https://legislature.vermont.gov/statutes/section/32/135/05412)"). This is a genuinely new statute surfaced by this sample, not previously documented anywhere in this repo — worth adding to the broader statutory picture alongside §5404(b)/§5405/§4041a/§3417 already tracked in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md).
+
+**Veteran Exemptions have a confirmed, independent external verification source**: per the same NTC-1362 filing instructions, a town's veteran exemption count is reconciled each year against the **"Final Approved Veterans List," issued by VOVA (Vermont Office of Veterans' Affairs) each May** — an external party not previously documented anywhere in this repo. If a veteran is removed from NEMRC (e.g. due to a change in ownership), the instructions require removing the exemption in VTPIE *and* notifying VOVA directly — i.e., VOVA's own list is a third record of veteran-exemption status, alongside NEMRC's and VTPIE's, that must also stay in sync.
 
 The town-level aggregate file `411EXP` sums each of these categories into paired homestead (`_HS`) / nonhomestead (`_NR`) fields (e.g. `VEPC_HS`/`VEPC_NR`, `TIF_HS`/`TIF_NR`, `VET_HS`/`VET_NR`/`VET_MU`) — per `411EXP_HEADERS.csv`. `411LST` carries the same exemption codes at parcel-level detail (`411LST_HEADERS.csv`), including a `PACTINACT` "Parcel Status (A = Active)" field — the *second* place in this export family, after `411TFP` (§7), where an active/inactive-type status field appears, though its exact semantics (whether it captures the same Active/Inactive concept used in the GIS parcel model, or something specific to exemption administration) aren't spelled out in the header file and are worth confirming directly.
 
@@ -176,6 +180,8 @@ The town-level aggregate file `411EXP` sums each of these categories into paired
 | **TC** | `TC` | **16** | **Telecommunications** |
 
 **The `TC` (Telecommunications, code 16) category is new/emerging** — it is the concrete, schema-level confirmation of the user's own note that telecommunications property is becoming taxable for Grand List year 2026 (§8). Note also that the abbreviation used in column headers sometimes differs from the "official" category abbreviation (`S1`/`S2` are called `V1`/`V2` in the actual `411TOT` field names; `COMM`/`WOOD`/`MISC` become `COM`/`WD`/`MSC`) — worth using the header-prefix column, not the category-abbreviation column, when actually parsing `411TOT` files.
+
+**Now confirmed with the exact statutory mechanism, via a Tax Department town-filing instruction sheet** ("Filing Your August 15, 2026, As Billed Grand List," NTC-1362, revised July 2026, [`reference/`](reference/Filing-Aug-15-2026-As-Billed-Grand-List-NTC-1362.pdf) — see also [SPAN_PARCEL_GRANDLIST_MODEL.md §1.7](SPAN_PARCEL_GRANDLIST_MODEL.md#17-the-annual-august-15-filing-workflow-vtpienemrc-411-reconciliation)): *"For 2026 there was a statutory update where PP Cable became Real Property and is categorized as Telecommunications Property (TC)... There is also no Exemption for Cable anymore, so the exemption should be removed completely."* Towns are instructed to check, as part of their annual 411 reconciliation, that no "PP Cable" line remains and that the old Cable exemption has been fully removed — i.e., `TC` isn't merely a new category sitting alongside the old Personal-Property-Cable treatment, it **replaces** it.
 
 ## 7. TIF files, and the critical active/inactive-parcel finding
 
@@ -291,6 +297,7 @@ Collected here from callouts throughout this document, since they bear directly 
 | `411TFP.ACRES`/`OBACRE` | "PVR believes these two field names are erroneously inverted from NEMRC" |
 | `411TFP.TZONE`, `411TFP.SUBSPAN` | "this field is not used" |
 | `411TFS.MUNTOT_BVLOCk` | "field not used" |
+| NEMRC's own "Form 411" report vs. VTPIE's independently-generated "Grand List 411 Summary" | Total listed values on NEMRC's report are the total Listed Value **divided by 100**; VTPIE's own totals are not — per a Tax Department town-filing instruction sheet (NTC-1362), towns must account for this when reconciling the two reports. **Confirmed only for these two printed report outputs** — whether the same ×100 discrepancy also affects the raw `411_gl57.csv`/`411TOT57.csv` files documented in this file is unconfirmed (§11 item 10). |
 
 ## 11. Open questions
 
@@ -303,5 +310,6 @@ Collected here from callouts throughout this document, since they bear directly 
 7. **Does the Muni-GL/Ed-GL exemption transformation matrix (§5) match how `MUNGL1PCT`/`GLVAL_HS`/`GLVAL_NR`/`AOEGL_HS`/`AOEGL_NR` are actually computed on `411_gl`**, or is that computation done at a different stage entirely (e.g., inside NEMRC's own software before export, with `411EXP` simply reporting the already-applied results)?
 8. ~~Is `LOCAPROP` actually populated on the published Active layer, or present in the schema but empty?~~ **Resolved (VCGI, 2026-08-03):** present in the schema, empty for every record (§9). A good reminder that this entire document's claims about "what VCGI receives/publishes" are worth checking against the actual live schema wherever possible, not just against Tax-Department-side header comments describing intent.
 9. **Why was `HSTED_TX` (taxable homestead value) dropped from the published layer** (§9) when its full-value counterpart `HSTED_FLV` was kept? Is a taxable-value figure reconstructable downstream from `HSTED_FLV` plus the exemption/reduction fields, making `HSTED_TX` redundant to carry — or is this simply an oversight?
+10. **Does the confirmed ×100 scaling discrepancy between NEMRC's own "Form 411" report and VTPIE's independently-generated summary (§10) also affect the raw `411_gl57.csv`/`411TOT57.csv` files documented in this file** — the ones VCGI's own pipeline actually consumes — or is it purely an artifact of how each system formats its printed report? A silent 100x error in any listed-value field would be a serious, load-bearing data-quality risk if unaccounted for in VCGI's own downstream processing.
 
 See also [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) for the broader open-questions list this document feeds into, and [MSOL_AS_BUILT.md §8](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc) for CAMA-vendor-specific questions. **All of the above, plus every other open question in this documentation set, are consolidated by theme and responsible party in [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md).**
