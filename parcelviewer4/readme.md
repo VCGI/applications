@@ -177,7 +177,7 @@ Arcade scripts and html popup formatting result in an example with contingent di
 
 ### Arcade Expressions - Parcels - Active Layer v.4.1
 
-### {expression/expr0} - Ownership (Annual Grand List)
+### {expression/expr0} Ownership (Annual Grand List)
 
 This script combines several fields to create a single ownership return.
 
@@ -188,7 +188,7 @@ Concatenate([$feature.OWNER1,$feature.OWNER2], ', ') +TextFormatting.NewLine
 +Concatenate([$feature.CITYGL,$feature.STGL,$feature.ZIPGL], ', ')
 ```
 
-### {expression/expr1} - Resident Ownership Code ✅
+### {expression/expr1} Resident Ownership Code ✅
 
 This script decodes the RESCODE field for display.
 
