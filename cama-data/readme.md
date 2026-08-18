@@ -9,7 +9,7 @@ Who owns which lands where? With what details? For several reasons these seeming
 - hundreds of small municipalities being responsible for authoritative [land records management](https://vmcta.org/Vermont_Land_Records_Online) and access;
 - a parcel definition based on Tax bill and program administration rather than one that reflects and indexes with underlying legal land records;
 - no coordinated effort ever developed to [fully resolve the extents of its jurisdictions](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md#support-survey-of-municipal-boundaries-andor-corner-points); and
-- widely varying technology orientations and resulting practices.
+- widely varying technology orientations and resulting practices, with no small amount of inertia to change in principle.
 
 A result is that statewide questions of public concern that benefit from knowing how much of what kinds of lands are located where remain hard or even impossible to answer due to a lack of common baseline information.
 
