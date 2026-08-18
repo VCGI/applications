@@ -114,7 +114,7 @@ You're the most consequential vendor in this entire picture: you are, at once, o
 
 ## Open Questions Still Being Worked Through
 
-**All 57 open questions across every document in this set are now consolidated in one place, organized by theme and by who's actually responsible for answering each one:** [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md). That document also pulls out a short, standalone list of exactly what NEMRC specifically would need to change to accommodate [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), given NEMRC's dual role as both the Grand List/SPAN steward and a CAMA vendor.
+**All open questions across every document in this set are now consolidated in one place, organized by theme and by who's actually responsible for answering each one:** [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md). That document also pulls out a short, standalone list of exactly what NEMRC specifically would need to change to accommodate [VERMONT_CAMA_DATA_STANDARD_DRAFT.md](VERMONT_CAMA_DATA_STANDARD_DRAFT.md), given NEMRC's dual role as both the Grand List/SPAN steward and a CAMA vendor.
 
 Quick theme pointers, if you're looking for one topic specifically (see the document above for the complete, cross-referenced version):
 
