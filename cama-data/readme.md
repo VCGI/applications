@@ -33,9 +33,9 @@ VCGI's own statewide parcel GIS layer sits downstream of all three, built from p
 - a new physical/legal definition of "parcel",
 - a new required dwelling-unit count,
 - a new three-way property classification, and
-- a direct legislative mandate for the state to set data standards across all of it.
+- a legislative mandate for the state to set data standards across all of it.
 
-This repository is an attempt to document, as best as the available evidence allows, how these systems *actually* work today. It is reverse-engineered from sample data, system extracts, vendor training materials, and direct conversations with VCGI, Tax Department, municipal officials, map vendors, NEMRC staff, and CAMA vendor staff so that the coming changes can be implemented on a shared, accurate factual basis rather than guessed at independently by each party. This document is the entry point and synthesis; the detailed technical findings live in the linked documents below.
+This repository is an attempt to document, as best as the available evidence allows, how these systems *actually* work today to inform improvements. It is reverse-engineered from sample data, system extracts, vendor training materials, and direct conversations with VCGI, Tax Department, municipal officials, map vendors, NEMRC staff, and CAMA vendor staff so that the coming changes can be implemented on a shared, accurate factual basis rather than guessed at independently by each party. This document is the entry point and synthesis; the detailed technical findings live in the linked documents below.
 
 ## Who This Is For
 
