@@ -313,3 +313,51 @@ Collected here from callouts throughout this document, since they bear directly 
 10. **Does the confirmed ×100 scaling discrepancy between NEMRC's own "Form 411" report and VTPIE's independently-generated summary (§10) also affect the raw `411_gl57.csv`/`411TOT57.csv` files documented in this file** — the ones VCGI's own pipeline actually consumes — or is it purely an artifact of how each system formats its printed report? A silent 100x error in any listed-value field would be a serious, load-bearing data-quality risk if unaccounted for in VCGI's own downstream processing.
 
 See also [SPAN_PARCEL_GRANDLIST_MODEL.md §7](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup) for the broader open-questions list this document feeds into, and [MSOL_AS_BUILT.md §8](MSOL_AS_BUILT.md#8-recommended-questions-for-nemrc) for CAMA-vendor-specific questions. **All of the above, plus every other open question in this documentation set, are consolidated by theme and responsible party in [OPEN_QUESTIONS_AND_NEMRC_ASKS.md](OPEN_QUESTIONS_AND_NEMRC_ASKS.md).**
+
+## 12. The NEMRC Standard Import — the vendor-agnostic path from any CAMA system into the Grand List
+
+*Source: "NEMRC Standard Import" specification (dated 03/28/16 in its own footer, "ANYTOWN Grand List" demo output — the same generic demo-town convention used throughout NEMRC's training materials, [MSOL_AS_BUILT.md §9](MSOL_AS_BUILT.md#9-the-lincoln-sample-a-second-earlier-simpler-nemrc-extract)), [`reference/NEMRC Grand List Standard Import Spec.pdf`](<reference/NEMRC Grand List Standard Import Spec.pdf>). Dated 2016, but nothing in this documentation set suggests it has been superseded — it is very plausibly still the current mechanism, and is treated as such below pending direct confirmation.*
+
+**This is a genuinely different channel than everything else documented in this file.** Sections 1–11 above describe the Grand List module's *output* to the Tax Department (the 411 file family). This is an **input** channel: a fixed, vendor-agnostic CSV format that *any* CAMA system — not just MicroSolve — can generate to feed data directly into the Grand List module. It directly answers a question this documentation set has not previously been able to resolve: how does CAMA data from Aumentum/ProVal, Vision, or Catalis/AssessPro actually reach NEMRC's Grand List module, given the CAMA↔Grand-List sync mechanism documented in [SPAN_PARCEL_GRANDLIST_MODEL.md §1.5](SPAN_PARCEL_GRANDLIST_MODEL.md#15-the-grand-list-modules-own-parcelcontiguous-parcel-ui) is MicroSolve-specific (`LSPROP01`↔`MAIN` file-level sync)? This Standard Import is the vendor-agnostic answer.
+
+**The exact 24-field, fixed-order schema** (suggested filename `camaimpt.txt`, plain CSV, all 24 fields required in this order):
+
+| # | Field | Length | Type | Notes |
+|---|---|---|---|---|
+| 1 | Parcel id | 20 | char | Must be unique; **all Parcel IDs must be the same fixed length**; no dashes/dots/separators |
+| 2 | Name 1 | 40 | char | Required |
+| 3 | Name 2 | 40 | char | |
+| 4 | Address A | 40 | char | |
+| 5 | Address B | 40 | char | |
+| 6 | City | 25 | char | |
+| 7 | State | 10 | char | |
+| 8 | Zip | 10 | char | |
+| 9 | 911 number | 9 | numeric | Physical 911 number, e.g. "22" |
+| 10 | 911 suffix | 4 | char | For apartments/units, e.g. "a," "b," "c" |
+| 11 | 911 location | 40 | char | 911 street name, e.g. "Main St" |
+| 12 | Tax map | 40 | char | |
+| 13 | Property Desc | 40 | char | |
+| 14 | Total Acres | 11.2 | numeric | |
+| 15 | Land Value | 12 | numeric | Land only |
+| 16 | Building | 9 | numeric | Buildings only |
+| 17 | Real | 12 | numeric | Sum of Land + Building (NEMRC can round to nearest 100) |
+| 18 | Homestead | 9 | numeric | House + all acres, minus business/rental use |
+| 19 | House site | 9 | numeric | House + up to 2 acres, minus business/rental use |
+| 20 | Category Code | 3 | char | `R1, R2, V1, V2, MHL, MHU, F, O, W, M, CA, C, I, UE, UO` |
+| 21 | Owner Code (Personal Property) | 2 | char | `T, S, NS` |
+| 22 | Equipment | 9 | numeric | |
+| 23 | Inventory | 9 | numeric | |
+| 24 | Category code (Personal Property) | 1 | char | `C`-Cable, `E`-Equipment — stored internally in NEMRC's `p_cd3` field |
+
+**The single-letter Category Codes (field 20) are confirmed to be the same 15-category system already documented in §6, just abbreviated further**: `F`/`O`/`W`/`M`/`CA`/`C`/`I` here map onto `FRM`/`OTH`/`WOOD`/`MISC`/`CMA`/`COMM`/`IND` there, and `V1`/`V2` here match the same `V1`/`V2` header-prefix quirk already noted for `S1`/`S2` (Seasonal). This is a third independent confirmation of the same underlying taxonomy, from yet another NEMRC source document. The `TC` (Telecommunications, code 16) category added for GL2026 (§6, §10) postdates this 2016 spec and isn't listed here — as does the fact that "C-Cable" (field 24) is very likely obsolete given the 2026 statutory reclassification of PP Cable into `TC` with no separate exemption (§6) — worth confirming this spec has actually been updated to match.
+
+**Confirmed business rules, several of which independently corroborate findings already documented elsewhere:**
+
+- **The import cannot create or delete parcel records — only update existing ones matched by Parcel ID.** A reconciliation report after each import shows records in NEMRC not present in the import file, and vice versa; *"the import routine will not automatically add or remove records from the NEMRC database"* — these must be handled manually. This is a second, independent confirmation (via the generic, vendor-agnostic path, not just MicroSolve's proprietary sync) of the already-documented finding that **parcel splits/transfers require manual, dual entry** — it isn't a MicroSolve-specific limitation, it's how the Grand List module's import mechanism works for any vendor.
+- **Parcel ID uniqueness and fixed-length are hard-enforced, all-or-nothing**: *"If the parcel id field does not meet this standard the import will be aborted and no records will be processed."* Not a partial-failure/skip-bad-rows model.
+- **"Split Real" is a town-level toggle**: if off, only the combined `Real` value can be imported (`Building`/`Land` are ignored on import); if on, `Building`/`Land` are imported separately and any incoming `Real` value is ignored, since NEMRC computes it as their sum.
+- **Automatic validation on Homestead/Housesite**: NEMRC checks that neither exceeds the `Real` value, and flags parcels with a Housesite but no Homestead value, among other checks.
+- **The "Change of Appraisal" flag mechanism is confirmed a third time**: *"Flag parcels for Change notice with 'Generic Message'"* — consistent with the automatic Change-of-Appraisal flag already documented in [SPAN_PARCEL_GRANDLIST_MODEL.md §1.5](SPAN_PARCEL_GRANDLIST_MODEL.md#15-the-grand-list-modules-own-parcelcontiguous-parcel-ui) from the "Link between NEMRC and CAMA" document, and consistent with NEMRC's own end-user screen supporting grouped post-import edits (names/address/911/tax map/acres/description; owner/category codes; Land/Building/Real/Homestead/Housesite).
+- **Village/town tax-district differentials** ("if the town... has district differentials... the district portion should be handled by the import routine") are handled within this same mechanism — a real business rule not previously documented, though tangential to parcel identification specifically.
+
+**Directly relevant to the Act 170 dwelling-unit rollout ([§6.3 of SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md#63-new-field-definitions-per-the-workgroup-pdf)):** this fixed, 24-field, no-extra-fields format has **no room for a dwelling-unit count without a schema change** — there is no 25th field, and the spec is explicit that all 24 fields must be present in this exact order. If the Tax Department's own guidance that dwelling-unit data will arrive "as part of the existing CAMA upload" refers to this channel specifically (rather than the separate §5404(b) extract), extending this exact specification with a new field is the concrete, well-defined mechanical step required — a real, actionable ask to put to NEMRC directly, not an abstract one.
