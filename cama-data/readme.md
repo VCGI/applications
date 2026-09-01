@@ -4,7 +4,7 @@
 
 ## Why Modernize
 
-Who owns which lands where? With what details? For several reasons these seemingly simple questions remain complicated or difficult to answer across all of Vermont. Many challenges in answering them are due to Vermont's history as a New England State with:
+Who owns which lands where? With what details? For several reasons these seemingly simple questions remain complicated or difficult to answer across all of Vermont. Challenges in answering them are due to Vermont's history as a New England State with:
 - [at times](https://archive.org/details/statepapersofverv1verm/), [centuries-old](https://archive.org/details/statepapersofver00verm/), [documentation](https://archive.org/details/statepapersofver0000verm_n8r9/) of [where boundaries are](https://archive.org/details/newhampshiregran00newh/);
 - hundreds of small municipalities being responsible for authoritative [land records management](https://vmcta.org/Vermont_Land_Records_Online) and access;
 - a parcel definition based on Tax bill and program administration rather than one that reflects and indexes with underlying legal land records;
