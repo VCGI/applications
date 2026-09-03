@@ -1,6 +1,6 @@
 # Vermont Parcel Data Modernization
 
-*How Vermont identifies, tracks, transmits, maps, and publishes municipal parcel data and what's changing under Act 164 (H.933) and Act 170 (H.955) of 2026. Scoped to parcel identification specifically, not downstream, related taxation/valuation activities.*
+*How Vermont identifies, tracks, transmits, maps, and publishes municipal parcel data and what's changing under Act 164 (H.933) and Act 170 (H.955) of 2026. Scoped to parcel identification specifically and not downstream or related taxation/valuation activities.*
 
 ## Why Modernize
 
