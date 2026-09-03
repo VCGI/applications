@@ -12,7 +12,7 @@ Who owns which lands where? With what details? For several reasons these seeming
 - widely varying technology orientations and resulting practices.
 
 > [!IMPORTANT]
-> A result is that statewide questions of public concern that benefit from knowing how much of what kinds of lands are located where remain hard or even impossible to answer due to a lack of common baseline information. Current public policy and administration expects to be more effective with this information readily and uniformly available.
+> A result is that statewide and cross-town questions of public concern that benefit from knowing how much of what kinds of lands are located where remain hard or even impossible to answer due to a lack of common baseline information.
 
 Given these conditions the [statewide standardized parcel dataset](https://vcgi.vermont.gov/data-and-programs/parcel-program) has become one of the best available resources for considering such questions. These may be related to statewide conservation and development trends, [housing conditions](https://map.vermont.gov/housing), [extent of current tax policies](https://vcgi.vermont.gov/news/current-use-data-now-available-parcel-viewer-updated), emergency management, and more. While not perfect and for reference purposes only, the uniform parcel dataset with aggregated geometry from municipalities joined with annual grand list information allows one to quickly investigate and compare property details across the state.
 
