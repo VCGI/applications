@@ -125,7 +125,7 @@
 - Root cause: the same missing statewide municipal boundary survey from slide 3
 - SPAN is town-scoped today, and stays that way under the proposed model too
 
-**Speaker notes:** This is a genuine open policy question, not something IT alone can resolve — flagged as such in the docs. Don't expect or push for an answer today; the goal is making sure it's on the radar before it becomes a surprise later. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 8, §1.5.
+**Speaker notes:** This is a genuine open policy question, not something IT alone can resolve. Don't expect or push for an answer today; the goal is making sure it's on the radar before it becomes a surprise later. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 8, §1.5.
 
 ---
 
@@ -141,7 +141,7 @@
 
 ---
 
-## Slide 12 — A Worked Example
+## Slide 12 — An Example
 
 **Content:**
 - One lot, one owner, six-unit apartment building:
