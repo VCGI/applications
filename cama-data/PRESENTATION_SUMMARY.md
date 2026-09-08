@@ -6,6 +6,8 @@
 
 *Tone note for delivery: this is a collaborative fact-finding effort, not an audit. Findings described as "gaps" below are gaps in the current, decades-old design — not criticisms of products or of any person in the room.*
 
+*Revision note (this pass): updated to reflect the Tax Department's published "Dwelling Unit Determination" guidance (Aug 13, 2026) — the old single "Dwellings and Classification" slide said the dwelling-unit definition "isn't defined yet," which is now out of date, and the guidance surfaced a more significant finding than the definition itself. Split into three slides (13–15: definition now settled; the parcel-definition wrinkle it surfaces; the still-2029/contingent three-way classification) to give the new material room without burying it. Also lightly incorporated two other findings added since the outline was first drafted: the VTPIE↔NEMRC sync mechanism (Slide 7) and the NEMRC Standard Import spec as the likely vendor-agnostic path into the Grand List (Slide 16). Total slide count grew from 19 to 21 — still comfortably a ~30-minute talk (roughly 1.4 min/slide on average, several of which are quick).*
+
 ---
 
 ## Slide 1 — Title
@@ -39,7 +41,7 @@
 - Result: no single, common baseline for "how much of what land is where," statewide
 - Acts 164 and 170 (2026) require these systems to work together more precisely, on a series of deadlines running through 2031
 
-**Speaker notes:** This slide is deliberately framed as a structural/historical condition, not anyone's fault. Source: readme.md's "Why Modernize" section, citing VCGI's own Act 68 (2024) report's call for a municipal boundary survey. This is also the direct root cause of two later findings (cross-town parcels, §slide 10).
+**Speaker notes:** This slide is deliberately framed as a structural/historical condition, not anyone's fault. Source: readme.md's "Why Modernize" section, citing VCGI's own Act 68 (2024) report's call for a municipal boundary survey. This is also the direct root cause of two later findings (cross-town parcels, Slide 10).
 
 ---
 
@@ -48,7 +50,7 @@
 **Content:**
 - **Act 164 (H.933)** — splits the legal definition of "parcel": tax/Current Use purposes keep today's combined-ownership definition; mapping and per-parcel-payment purposes get a new "separate, sellable lot" definition — **effective April 1, 2028**
 - **Act 170 (H.955)** — adds a required dwelling-unit count and a three-way property classification, plus a PVR rulemaking mandate to set statewide CAMA/parcel data standards
-- **Nearest deadline of all: dwelling-unit count required on grand lists lodged starting CY2027** — no field exists today, anywhere, to source it
+- **Nearest deadline of all: dwelling-unit count required on grand lists lodged starting CY2027**
 - Three-way classification (homestead / nonhomestead-residential / nonhomestead-nonresidential): July 1, 2029, contingent on further legislative action
 - Regional Assessment Districts begin operating January 1, 2031
 
@@ -87,8 +89,9 @@
 - Valuation data (Real / Homestead / Housesite values) flows CAMA → Grand List automatically
 - Built-in verification exists on both sides (a Grand List report, and a "Check Sync with CAMA" button)
 - For a parcel **split or transfer** (i.e., a new parcel record): no automatic sync — manual, dual entry by the same lister in both systems
+- Separately: VTPIE isn't just a passive recipient either — it **independently recalculates its own annual Grand List summary**, which towns must reconcile against NEMRC's own figures every August
 
-**Speaker notes:** This is good news, not a gap — it means the field-level sync infrastructure already exists for ordinary updates. The open item is narrower than it sounds: confirming this ~decade-old mechanism (`LSPROP01` / `MAIN` file-level sync) is still the current architecture, not superseded by something newer. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §1.5.
+**Speaker notes:** This is good news, not a gap — it means the field-level sync infrastructure already exists for ordinary updates. The open item is narrower than it sounds: confirming this ~decade-old mechanism (`LSPROP01` / `MAIN` file-level sync) is still the current architecture, not superseded by something newer. The VTPIE point is worth a beat if there's time — it means any new field this workgroup adds needs to be computable in three systems eventually (CAMA, Grand List, *and* VTPIE), not two. Don't over-invest time here; it's a preview of a later problem, not today's main topic. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §1.5, §1.7.
 
 ---
 
@@ -122,10 +125,10 @@
 - Two distinct situations, both currently handled ad hoc:
   - One physical parcel whose deeded boundary crosses a town line — each town assesses only its own portion, with no link between the two towns' records
   - Two legally separate parcels (one per town) that a lister might consider "contiguous" — whether this is ever actually combined in practice is unconfirmed
-- Root cause: the same missing statewide municipal boundary survey from slide 3
+- Root cause: the same missing statewide municipal boundary survey from Slide 3
 - SPAN is town-scoped today, and stays that way under the proposed model too
 
-**Speaker notes:** This is a genuine open policy question, not something IT alone can resolve. Don't expect or push for an answer today; the goal is making sure it's on the radar before it becomes a surprise later. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 8, §1.5.
+**Speaker notes:** This is a genuine open policy question, not something IT alone can resolve — flagged as such in the docs. Don't expect or push for an answer today; the goal is making sure it's on the radar before it becomes a surprise later. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 8, §1.5.
 
 ---
 
@@ -141,7 +144,7 @@
 
 ---
 
-## Slide 12 — An Example
+## Slide 12 — A Worked Example
 
 **Content:**
 - One lot, one owner, six-unit apartment building:
@@ -153,39 +156,65 @@
 
 - Two records for one physical lot: the mapping record (`PARCEL`) and the billing record (`ADMINPARCL`) — only the billing record generates a tax bill
 
-**Speaker notes:** Keep this on screen a moment — it's the clearest single illustration of the whole redesign. More worked examples (condo stacking, multi-lot combination) exist in the full documentation if the discussion wants to go deeper. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.2.
+**Speaker notes:** Keep this on screen a moment — it's the clearest single illustration of the whole redesign. More worked examples (condo stacking, multi-lot combination) exist in the full documentation if the discussion wants to go deeper. Note for later: this simple example is *why* Slide 14's parcel-definition wrinkle is easy to miss — `DWELLINGS` lines up cleanly here because there's exactly one `PARCEL` per `ADMINPARCL`. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.2.
 
 ---
 
-## Slide 13 — What Act 170 Adds On Top: Dwellings and Classification
+## Slide 13 — Dwelling Units: The Legal Definition Is Now Settled
 
 **Content:**
-- `DWELLINGS` — confirmed not to exist today, anywhere: not in CAMA, not in the Grand List, not in the GIS layer
-- The bigger issue isn't the missing field — it's that **what counts as a "dwelling unit" isn't defined yet** (accessory units, basement apartments, mixed-use buildings)
-- Three-way classification fields (`NRES_RES_FLV`, `NRES_NONRES_FLV`, floor-area-percentage splits) have no analog today beyond a binary homestead flag
-- Both are Phase 2 in the draft data standard — real, but sequenced behind the Phase 1 items below
+- The Tax Department published its own guidance August 13, 2026 — what was previously this effort's single biggest open definitional question is now resolved
+- A dwelling unit needs: its own separate entrance; habitability facilities (sleeping, cooking, sanitary); and — the hard part — to be **fit for year-round habitation** (adequate heating, weatherization, usable year-round plumbing, reasonable year-round access)
+- Explicitly independent of zoning/permitting, and of Homestead status — a camp can be declared a Homestead without qualifying as a "dwelling unit"
+- The guidance also confirms **CAMA, not the Grand List module, is the intended source** of this field — transmitted "as part of the existing CAMA upload"
+- Two things that phrase doesn't resolve: *which* upload channel it means, and whether a simple unit count can ever satisfy a test that requires a habitability *determination*, not just a count
 
-**Speaker notes:** This is a policy definition question for the Tax Department/Legislature, not something NEMRC or VCGI can resolve unilaterally — worth naming that ownership explicitly. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3, `VERMONT_CAMA_DATA_STANDARD_DRAFT.md` §4.5.
+**Speaker notes:** Lead with the good news — this closes out a real, longstanding open question, and it's worth acknowledging that plainly. Then pivot to the "but": neither of the two things this raises (which channel; count vs. determination) is this workgroup's to solve today, but both are concrete enough to become homework items. The bigger, more strategically important wrinkle is next. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3, Tax Department "Dwelling Unit Determination" (Aug 13, 2026).
 
 ---
 
-## Slide 14 — Asks of NEMRC, as Grand List Steward
+## Slide 14 — A New Wrinkle: Which "Parcel" Gets the Dwelling Count?
+
+**Content:**
+- The Tax Department's own guidance defines "parcel," for this purpose, as *"all contiguous land under the same ownership"*
+- That's the **old** definition — not the new "separate, sellable lot" `PARCEL` this whole redesign is built around
+- Read plainly: dwelling units are meant to be counted per **Administrative Parcel** (the billing entity), not the new mapping-purpose `PARCEL`
+- Works cleanly for the simple case on Slide 12 — genuinely unclear for a combined Administrative Parcel aggregating several underlying sellable lots
+- Act 170's dwelling-unit provision and Act 164's parcel-definition split don't appear to have been explicitly reconciled with each other on this specific point
+
+**Speaker notes:** This is the slide worth slowing down for. Frame it as "we want to flag this while there's still time to align both efforts," not as a criticism of either the guidance or the redesign — it's a natural consequence of two different pieces of legislation, drafted somewhat independently, both touching "parcel." This workgroup is arguably the only place positioned to actually reconcile it. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3.
+
+---
+
+## Slide 15 — What Act 170 Also Adds: Three-Way Classification
+
+**Content:**
+- `NRES_RES_FLV`, `NRES_NONRES_FLV`, floor-area-percentage splits (`FLR_PCT_HS`/`FLR_PCT_NR`/`FLR_PCT_NN`) — no analog today beyond a binary homestead flag
+- Effective July 1, 2029, contingent on further legislative action — sequenced behind the dwelling-unit work, not urgent for today
+- Ownership of the underlying policy question (what counts as "nonhomestead residential" vs. "nonhomestead nonresidential" in edge cases) sits with the Tax Department/Legislature, not NEMRC or VCGI
+
+**Speaker notes:** Keep this brief — it's real, but it's 2029 and contingent, and today's time is better spent on the nearer-term dwelling-unit and Active/Inactive items. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3, `VERMONT_CAMA_DATA_STANDARD_DRAFT.md` §4.5.
+
+---
+
+## Slide 16 — Asks of NEMRC, as Grand List Steward
 
 **Content:**
 1. Export a universal Active/Inactive status field for every town, not just TIF towns *(the single highest-priority ask)*
 2. Confirm whether `ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE` can be originated or exposed by the Grand List module
 3. Confirm whether contiguous-parcel combination ever actually crosses town lines in practice
-4. Confirm the CAMA↔Grand List sync mechanism described on slide 7 is still current
+4. Confirm the CAMA↔Grand List sync mechanism described on Slide 7 is still current
 5. Establish a change-request process and typical lead time for adding new export fields
+6. **New**: the NEMRC Standard Import — a fixed, 24-field format that's very likely how *any* CAMA vendor (not just MicroSolve) feeds the Grand List — has no room for a dwelling-count field today. Extending it is a concrete, well-defined mechanical step, worth confirming NEMRC's openness to it directly
 
-**Speaker notes:** This is the distilled list from `OPEN_QUESTIONS_AND_NEMRC_ASKS.md` Part 1, in priority order. Source citations for each item are in that document if NEMRC wants the full context.
+**Speaker notes:** This is the distilled list from `OPEN_QUESTIONS_AND_NEMRC_ASKS.md` Part 1, in priority order. Item 6 is new since this deck was first drafted — frame it as good news, not a new burden: it's a concrete, scoped answer to "how would this actually work," not an open-ended ask. Source citations for each item are in that document if NEMRC wants the full context.
 
 ---
 
-## Slide 15 — Asks of NEMRC, as a CAMA Vendor (MicroSolve)
+## Slide 17 — Asks of NEMRC, as a CAMA Vendor (MicroSolve)
 
 **Content:**
-1. Adopt a canonical dwelling-count field, or confirm none exists and one needs to be built *(MicroSolve appears to be starting further behind on this than the other two vendors examined)*
+1. Adopt a canonical dwelling-count field, or confirm none exists and one needs to be built *(MicroSolve appears to be starting further behind on this than the other two vendors examined — and, per Slide 13, the field now needs to support a habitability determination, not just a count)*
 2. Include the schema-metadata tables (`EXP_DATADICT`/`EXP_CATEG`) in every future extract as standard practice
 3. Confirm the property-class field is always populated from the Tax Department's own code list verbatim
 
@@ -193,7 +222,7 @@
 
 ---
 
-## Slide 16 — Questions Only NEMRC Can Answer (Both Hats at Once)
+## Slide 18 — Questions Only NEMRC Can Answer (Both Hats at Once)
 
 **Content:**
 - Where would a dwelling-count rollup actually be computed — Grand List, CAMA, or both? Only NEMRC controls both candidate systems
@@ -203,20 +232,20 @@
 
 ---
 
-## Slide 17 — Today's Discussion
+## Slide 19 — Today's Discussion
 
 **Content:**
 1. Could `ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE` be originated or exposed by the Grand List module? *(the single biggest structural ask)*
-2. What should count as a "dwelling unit"? *(needed ahead of the CY2027 deadline — the nearest one we have)*
-3. Should the Grand List export finally carry Active/Inactive status for every town?
+2. Should the Grand List export finally carry Active/Inactive status for every town?
+3. **Which "parcel" does the dwelling-unit count actually belong to** — the new sellable-lot `PARCEL`, or the Administrative Parcel the Tax Department's own guidance describes? *(Slide 14 — needed ahead of the CY2027 deadline)*
 4. Do cross-town parcels need explicit handling in the new model, and if so, whose call is that?
 5. Sequencing: does the 2028 parcel-definition change roll out independently of the 2029 classification work, or together?
 
-**Speaker notes:** These five are deliberately a mix of NEMRC-specific asks and joint policy calls — pick based on how the room's energy is going rather than forcing all five. Not expecting resolution today on any of them.
+**Speaker notes:** These five are deliberately a mix of NEMRC-specific asks and joint policy calls — pick based on how the room's energy is going rather than forcing all five. Item 3 replaces what was previously "what should count as a dwelling unit" — that question is now resolved, but it surfaced a sharper one. Not expecting resolution today on any of these.
 
 ---
 
-## Slide 18 — What's Next
+## Slide 20 — What's Next
 
 **Content:**
 - Schema-level detail (exact population logic for `SPAN`/`ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE`) is in progress — not ready for this meeting
@@ -228,7 +257,7 @@
 
 ---
 
-## Slide 19 — Discussion
+## Slide 21 — Discussion
 
 **Content:**
 - Open floor
