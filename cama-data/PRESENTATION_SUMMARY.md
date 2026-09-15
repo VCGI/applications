@@ -6,7 +6,7 @@
 
 *Tone note for delivery: this is a collaborative fact-finding effort, not an audit. Findings described as "gaps" below are gaps in the current, decades-old design — not criticisms of products or of any person in the room.*
 
-*Revision note (this pass): updated to reflect the Tax Department's published "Dwelling Unit Determination" guidance (Aug 13, 2026) — the old single "Dwellings and Classification" slide said the dwelling-unit definition "isn't defined yet," which is now out of date, and the guidance surfaced a more significant finding than the definition itself. Split into three slides (13–15: definition now settled; the parcel-definition wrinkle it surfaces; the still-2029/contingent three-way classification) to give the new material room without burying it. Also lightly incorporated two other findings added since the outline was first drafted: the VTPIE↔NEMRC sync mechanism (Slide 7) and the NEMRC Standard Import spec as the likely vendor-agnostic path into the Grand List (Slide 16). Total slide count grew from 19 to 21 — still comfortably a ~30-minute talk (roughly 1.4 min/slide on average, several of which are quick).*
+*Revision note (this pass, 2026-09-15): this meeting was actually delivered on 2026-09-16 as `20260916_Parcel_Definition_Workgroup_NEMRC.pdf` ([reference/](reference/)), with several changes and additions relative to the last-drafted outline. This revision brings this summary back into sync with what was actually presented, rather than the prior plan: (1) TIF-parcel export scoping is now stated precisely as "parcels within a TIF district," not "TIF-district towns" (Slide 9), including a new VCGI estimate that ~70% of towns get no Active/Inactive signal from this channel at all; (2) the dwelling-unit habitability-determination question is no longer an open tension — the Tax Department confirmed directly that a single field, gated by the habitability determination, is sufficient (Slide 15); (3) a new four-way property-type framework (Type A/B/C/D) introduced at the meeting is added as Slide 8; (4) a new "Fix #3" slide (Slide 14) covers SPAN remaining the statewide unique identifier, with both changing SPAN and surveying town boundaries stated as explicitly out of scope; (5) VCGI's own recommendation to bundle dwelling-unit work with the parcel redesign is added as Slide 16; (6) the timing/sequencing question (Slide 17) is reframed as a cost tradeoff, not a yes/no; (7) new NEMRC asks (review the draft data standard) and a closing action item ("NEMRC get back to us on implementation") are added to Slides 19 and 23. Slide count grew from 21 to 24.*
 
 ---
 
@@ -15,7 +15,7 @@
 **Content:**
 - Vermont Parcel & CAMA Data Modernization
 - Current-State Findings & Open Questions
-- Parcel Definition Workgroup — [date]
+- Parcel Definition Workgroup — September 16, 2026
 - VCGI · NEMRC · Vermont Department of Taxes
 
 ---
@@ -41,7 +41,7 @@
 - Result: no single, common baseline for "how much of what land is where," statewide
 - Acts 164 and 170 (2026) require these systems to work together more precisely, on a series of deadlines running through 2031
 
-**Speaker notes:** This slide is deliberately framed as a structural/historical condition, not anyone's fault. Source: readme.md's "Why Modernize" section, citing VCGI's own Act 68 (2024) report's call for a municipal boundary survey. This is also the direct root cause of two later findings (cross-town parcels, Slide 10).
+**Speaker notes:** This slide is deliberately framed as a structural/historical condition, not anyone's fault. Source: readme.md's "Why Modernize" section, citing VCGI's own Act 68 (2024) report's call for a municipal boundary survey. This is also the direct root cause of two later findings (cross-town parcels, Slide 11; and the explicit out-of-scope framing on Slide 14).
 
 ---
 
@@ -95,19 +95,39 @@
 
 ---
 
-## Slide 8 — Confirmed Gap #1: Inactive-Parcel Status Mostly Isn't Exported
+## Slide 8 — Thinking Spatially: Four Property Types
 
 **Content:**
-- The Grand List module's own screen tracks Active/Inactive status on every parcel, in every town
-- But the annual export to the Tax Department only carries that status for towns with a TIF district (~20 of ~260 towns)
-- For the rest, VCGI's own voluntarily-collected GIS layer is actually the **more complete statewide source** of inactive-parcel status
-- This is very likely an export-scope fix, not a new data-tracking requirement
+- A four-way framework for organizing every property configuration this effort has to handle:
 
-**Speaker notes:** This is the single highest-priority item in the whole draft data standard. Emphasize "the data already exists in your system — this is about what gets exported," since that's the most actionable framing for NEMRC. Source: `NEMRC_GRANDLIST_EXPORT_AS_BUILT.md` §7, `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 7.
+| Type | Lots | Owners | Tax bills | Units | Everyday name |
+|---|---|---|---|---|---|
+| **A** | 1 | 1 | 1 | 1 | "Basic" — the simple case |
+| **B** | 1 | 1 | 1 | 2+ | Apartment / ADU |
+| **C** | 2+ | 1 | 1 | — | "Horizontal"/surface combination — today's "inactives" |
+| **D** | 1 (common) | 2+ | 2+ | 1+ | "Vertical"/stacked — condo, MHU, timeshare — today's "unlandeds" |
+
+- Types A and B can potentially be treated as the same condition, depending on how unit counts are handled
+- Types C and D are where current data management has the most variation, and need the most improvement
+
+**Speaker notes:** This framework is new since the outline was first drafted and organizes the three "gap" and "fix" slides that follow — worth introducing here so the audience has the vocabulary before the gaps are named. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.2.
 
 ---
 
-## Slide 9 — Confirmed Gap #2: Condos Have No Unit-to-Common-Land Link, Anywhere
+## Slide 9 — Confirmed Gap #1: Inactive-Parcel Status Mostly Isn't Exported
+
+**Content:**
+- The Grand List module's own screen tracks Active/Inactive status on every parcel, in every town
+- But the annual export to the Tax Department only carries that status for parcels **physically within a TIF district** — not even every parcel of a TIF-district town, let alone statewide
+- VCGI estimates this leaves roughly **~70% of towns** with no Active/Inactive signal from this channel at all
+- For the rest, VCGI's own voluntarily-collected GIS layer is actually the **more complete statewide source** of inactive-parcel status
+- This is very likely an export-scope fix, not a new data-tracking requirement
+
+**Speaker notes:** Precision matters here — this is narrower than "non-TIF towns don't get this." Even a TIF town like Killington has most of its own parcels sitting outside its own TIF district (the district itself: 31 parcels total, a small fraction of the town's full inventory) — so those parcels get no status from this channel either. The ~70% figure is VCGI's own estimate, not independently re-derived elsewhere in this documentation — worth confirming its basis if asked. This is the single highest-priority item in the whole draft data standard; emphasize "the data already exists in your system — this is about what gets exported," since that's the most actionable framing for NEMRC. Source: `NEMRC_GRANDLIST_EXPORT_AS_BUILT.md` §7, `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 7.
+
+---
+
+## Slide 10 — Confirmed Gap #2: Condos Have No Unit-to-Common-Land Link, Anywhere
 
 **Content:**
 - Reviewed MicroSolve's own condominium valuation system directly, cross-checked against a real town's data
@@ -115,39 +135,39 @@
 - The one grouping concept that exists ("Neighborhood Code") is a pure valuation-rate lookup key, not a parcel or legal relationship
 - Same gap exists on the GIS/Grand-List side today
 
-**Speaker notes:** This is the clearest, most concrete illustration of what the proposed `GROUNDSPAN` field would actually require: **new construction, not relabeling something that already exists**, on both the CAMA side and the GIS/Grand-List side. Worth saying plainly — this isn't a criticism of the condo system, which was never designed to do this job. Source: `MSOL_AS_BUILT.md` §11.
+**Speaker notes:** This is the clearest, most concrete illustration of what the proposed `GROUNDSPAN` field would actually require: **new construction, not relabeling something that already exists**, on both the CAMA side and the GIS/Grand-List side. Worth saying plainly — this isn't a criticism of the condo system, which was never designed to do this job. This is Type D from Slide 8. Source: `MSOL_AS_BUILT.md` §11.
 
 ---
 
-## Slide 10 — Confirmed Gap #3: Cross-Town Parcels Have No Formal Handling
+## Slide 11 — Confirmed Gap #3: Cross-Town Parcels Have No Formal Handling
 
 **Content:**
 - Two distinct situations, both currently handled ad hoc:
   - One physical parcel whose deeded boundary crosses a town line — each town assesses only its own portion, with no link between the two towns' records
   - Two legally separate parcels (one per town) that a lister might consider "contiguous" — whether this is ever actually combined in practice is unconfirmed
 - Root cause: the same missing statewide municipal boundary survey from Slide 3
-- SPAN is town-scoped today, and stays that way under the proposed model too
+- SPAN is town-scoped today, and stays that way under the proposed model too, with additional "ESITE derivatives" mentioned as part of this ongoing challenge
 
-**Speaker notes:** This is a genuine open policy question, not something IT alone can resolve — flagged as such in the docs. Don't expect or push for an answer today; the goal is making sure it's on the radar before it becomes a surprise later. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 8, §1.5.
+**Speaker notes:** This is a genuine open policy question, not something IT alone can resolve — flagged as such in the docs. Don't expect or push for an answer today; the goal is making sure it's on the radar before it becomes a surprise later. The "ESITE derivatives" phrase is carried over as-delivered — it isn't spelled out further in the source material, so don't assert an interpretation live; it's worth asking the Tax Department/VCGI directly what it refers to. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §5 item 8, §1.5, §6.1, §7 item 24.
 
 ---
 
-## Slide 11 — The Proposed Model: Parcel vs. Administrative Parcel
+## Slide 12 — Fix #1 & Fix #2: Parcel vs. Administrative Parcel
 
 **Content:**
 - **Parcel** — a separate, sellable lot; matches Act 164's new mapping-purpose definition
 - **Administrative Parcel** — contiguous ownership, used for billing/Current Use; essentially today's "Active parcel," renamed and formalized
-- New relational fields: `KIND`, `TYPE`, `ADMINSPAN` (links contiguous sub-lots to their billing parent), `GROUNDSPAN` (links unlanded units to their common ground), `TAXBILL`, `PARCLCOUNT`
+- New relational fields: `KIND`, `TYPE`, `ADMINSPAN` (links contiguous sub-lots to their billing parent — **Fix #1**, covering Types A/B/C), `GROUNDSPAN` (links unlanded units to their common ground — **Fix #2**, covering Type D), `TAXBILL`, `PARCLCOUNT`
 - Status: a proposal under active discussion from the July 27, 2026 workgroup session — not yet an adopted standard
 
 **Speaker notes:** Say clearly that field names/domains are a working draft, not something being locked in today. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.1, §6.3.
 
 ---
 
-## Slide 12 — A Worked Example
+## Slide 13 — A Worked Example
 
 **Content:**
-- One lot, one owner, six-unit apartment building:
+- One lot, one owner, six-unit apartment building (Type A/B from Slide 8):
 
 | KIND | TYPE | ADMINSPAN | SPAN | PARCLCOUNT | DWELLINGS | TAXBILL |
 |---|---|---|---|---|---|---|
@@ -156,37 +176,61 @@
 
 - Two records for one physical lot: the mapping record (`PARCEL`) and the billing record (`ADMINPARCL`) — only the billing record generates a tax bill
 
-**Speaker notes:** Keep this on screen a moment — it's the clearest single illustration of the whole redesign. More worked examples (condo stacking, multi-lot combination) exist in the full documentation if the discussion wants to go deeper. Note for later: this simple example is *why* Slide 14's parcel-definition wrinkle is easy to miss — `DWELLINGS` lines up cleanly here because there's exactly one `PARCEL` per `ADMINPARCL`. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.2.
+**Speaker notes:** Keep this on screen a moment — it's the clearest single illustration of the whole redesign. More worked examples (condo stacking, multi-lot combination — Types C and D) exist in the full documentation if the discussion wants to go deeper. Note for later: this simple example is *why* Slide 17's parcel-definition wrinkle is easy to miss — `DWELLINGS` lines up cleanly here because there's exactly one `PARCEL` per `ADMINPARCL`. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.2.
 
 ---
 
-## Slide 13 — Dwelling Units: The Legal Definition Is Now Settled
+## Slide 14 — Fix #3: SPAN Stays the Statewide Unique Identifier
+
+**Content:**
+- `ADMINSPAN` and `GROUNDSPAN` are explicitly **derivatives** of SPAN, not replacements for it
+- SPAN keeps its existing town-school district-sequence format, and its role as the statewide unique property identifier, unchanged
+- Two things stated as explicitly **out of scope** for this effort: changing SPAN's own structure, and fixing/surveying town boundaries with a modern survey
+- The town-boundary problem is the same root cause named on Slide 3 — naming it out of scope here draws a clear line around what this workgroup is and isn't trying to solve
+
+**Speaker notes:** Worth stating plainly, since it's easy to conflate "modernizing the parcel model" with "fixing the underlying municipal-boundary problem." This effort is explicitly the former only — the latter remains a real, longstanding, separate need. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.1.
+
+---
+
+## Slide 15 — Dwelling Units: Guidance from Tax, Now Settled
 
 **Content:**
 - The Tax Department published its own guidance August 13, 2026 — what was previously this effort's single biggest open definitional question is now resolved
 - A dwelling unit needs: its own separate entrance; habitability facilities (sleeping, cooking, sanitary); and — the hard part — to be **fit for year-round habitation** (adequate heating, weatherization, usable year-round plumbing, reasonable year-round access)
 - Explicitly independent of zoning/permitting, and of Homestead status — a camp can be declared a Homestead without qualifying as a "dwelling unit"
+- **Confirmed directly by the Tax Department: one field is sufficient.** The habitability determination is the *gate* on whether a unit increments the count — "+1" if met, nothing if unmet. No second field records the determination itself.
 - The guidance also confirms **CAMA, not the Grand List module, is the intended source** of this field — transmitted "as part of the existing CAMA upload"
-- Two things that phrase doesn't resolve: *which* upload channel it means, and whether a simple unit count can ever satisfy a test that requires a habitability *determination*, not just a count
+- Still open: *which* upload channel that phrase actually means (§5404(b) statutory extract, or the vendor-agnostic NEMRC Standard Import)
 
-**Speaker notes:** Lead with the good news — this closes out a real, longstanding open question, and it's worth acknowledging that plainly. Then pivot to the "but": neither of the two things this raises (which channel; count vs. determination) is this workgroup's to solve today, but both are concrete enough to become homework items. The bigger, more strategically important wrinkle is next. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3, Tax Department "Dwelling Unit Determination" (Aug 13, 2026).
+**Speaker notes:** Lead with the good news — this closes out a real, longstanding open question on both counts (definition, *and* whether a second field is needed), and it's worth acknowledging that plainly. The remaining open item is narrower and more mechanical than it used to be: which channel, and how each vendor's data entry actually applies the habitability gate before a unit gets counted. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3, Tax Department "Dwelling Unit Determination" (Aug 13, 2026).
 
 ---
 
-## Slide 14 — A New Wrinkle: Which "Parcel" Gets the Dwelling Count?
+## Slide 16 — VCGI's View: Bundle This With the Parcel Redesign
+
+**Content:**
+- VCGI's own recommendation, stated directly to the workgroup: changes to Grand List/CAMA needed to track dwelling units should **dovetail with** the other structural changes already proposed here (`ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE`) — not roll out as a standalone, separately-timed change
+- Rationale: building `DWELLINGS` now against today's parcel concept risks re-keying or recounting it again in a few years, once the Parcel/Administrative Parcel redesign lands
+- Not yet agreed to by NEMRC or the Tax Department — presented here as VCGI's position, for reaction and discussion
+
+**Speaker notes:** Frame as an ask for the room's reaction, not a decision already made — this is exactly the kind of question this workgroup exists to work through together. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3.
+
+---
+
+## Slide 17 — Dwelling Counts: Which "Parcel"?
 
 **Content:**
 - The Tax Department's own guidance defines "parcel," for this purpose, as *"all contiguous land under the same ownership"*
 - That's the **old** definition — not the new "separate, sellable lot" `PARCEL` this whole redesign is built around
 - Read plainly: dwelling units are meant to be counted per **Administrative Parcel** (the billing entity), not the new mapping-purpose `PARCEL`
-- Works cleanly for the simple case on Slide 12 — genuinely unclear for a combined Administrative Parcel aggregating several underlying sellable lots
-- Act 170's dwelling-unit provision and Act 164's parcel-definition split don't appear to have been explicitly reconciled with each other on this specific point
+- Works cleanly for the simple case on Slide 13 — genuinely unclear for a combined Administrative Parcel aggregating several underlying sellable lots
+- **The sharper question (see Slide 16): not just "does this roll out with or separate from the 2029 classification work," but a cost/timing tradeoff** — build now against today's concept, or coordinate with the redesign so the work isn't done twice
 
 **Speaker notes:** This is the slide worth slowing down for. Frame it as "we want to flag this while there's still time to align both efforts," not as a criticism of either the guidance or the redesign — it's a natural consequence of two different pieces of legislation, drafted somewhat independently, both touching "parcel." This workgroup is arguably the only place positioned to actually reconcile it. Source: `SPAN_PARCEL_GRANDLIST_MODEL.md` §6.3.
 
 ---
 
-## Slide 15 — What Act 170 Also Adds: Three-Way Classification
+## Slide 18 — What Act 170 Also Adds: Three-Way Classification
 
 **Content:**
 - `NRES_RES_FLV`, `NRES_NONRES_FLV`, floor-area-percentage splits (`FLR_PCT_HS`/`FLR_PCT_NR`/`FLR_PCT_NN`) — no analog today beyond a binary homestead flag
@@ -197,24 +241,25 @@
 
 ---
 
-## Slide 16 — Asks of NEMRC, as Grand List Steward
+## Slide 19 — Asks of NEMRC, as Grand List Steward
 
 **Content:**
-1. Export a universal Active/Inactive status field for every town, not just TIF towns *(the single highest-priority ask)*
+1. Export a universal Active/Inactive status field for every parcel, statewide — not just parcels within a TIF district *(the single highest-priority ask)*
 2. Confirm whether `ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE` can be originated or exposed by the Grand List module
 3. Confirm whether contiguous-parcel combination ever actually crosses town lines in practice
 4. Confirm the CAMA↔Grand List sync mechanism described on Slide 7 is still current
 5. Establish a change-request process and typical lead time for adding new export fields
-6. **New**: the NEMRC Standard Import — a fixed, 24-field format that's very likely how *any* CAMA vendor (not just MicroSolve) feeds the Grand List — has no room for a dwelling-count field today. Extending it is a concrete, well-defined mechanical step, worth confirming NEMRC's openness to it directly
+6. The NEMRC Standard Import — a fixed, 24-field format that's very likely how *any* CAMA vendor (not just MicroSolve) feeds the Grand List — has no room for a dwelling-count field today. Extending it is a concrete, well-defined mechanical step, worth confirming NEMRC's openness to it directly
+7. **New**: review the proposed [Vermont CAMA data standard](VERMONT_CAMA_DATA_STANDARD_DRAFT.md) directly and come to a future meeting ready to discuss it
 
-**Speaker notes:** This is the distilled list from `OPEN_QUESTIONS_AND_NEMRC_ASKS.md` Part 1, in priority order. Item 6 is new since this deck was first drafted — frame it as good news, not a new burden: it's a concrete, scoped answer to "how would this actually work," not an open-ended ask. Source citations for each item are in that document if NEMRC wants the full context.
+**Speaker notes:** This is the distilled list from `OPEN_QUESTIONS_AND_NEMRC_ASKS.md` Part 1, in priority order. Item 7 is the direct ask made at this meeting — frame it as "here's the homework," concretely scoped rather than open-ended. Source citations for each item are in that document if NEMRC wants the full context.
 
 ---
 
-## Slide 17 — Asks of NEMRC, as a CAMA Vendor (MicroSolve)
+## Slide 20 — Asks of NEMRC, as a CAMA Vendor (MicroSolve)
 
 **Content:**
-1. Adopt a canonical dwelling-count field, or confirm none exists and one needs to be built *(MicroSolve appears to be starting further behind on this than the other two vendors examined — and, per Slide 13, the field now needs to support a habitability determination, not just a count)*
+1. Adopt a canonical dwelling-count field, or confirm none exists and one needs to be built *(MicroSolve appears to be starting further behind on this than the other two vendors examined — and, per Slide 15, the field now needs to apply a habitability gate, not just count)*
 2. Include the schema-metadata tables (`EXP_DATADICT`/`EXP_CATEG`) in every future extract as standard practice
 3. Confirm the property-class field is always populated from the Tax Department's own code list verbatim
 
@@ -222,7 +267,7 @@
 
 ---
 
-## Slide 18 — Questions Only NEMRC Can Answer (Both Hats at Once)
+## Slide 21 — Questions Only NEMRC Can Answer (Both Hats at Once)
 
 **Content:**
 - Where would a dwelling-count rollup actually be computed — Grand List, CAMA, or both? Only NEMRC controls both candidate systems
@@ -232,32 +277,34 @@
 
 ---
 
-## Slide 19 — Today's Discussion
+## Slide 22 — Today's Discussion
 
 **Content:**
 1. Could `ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE` be originated or exposed by the Grand List module? *(the single biggest structural ask)*
-2. Should the Grand List export finally carry Active/Inactive status for every town?
-3. **Which "parcel" does the dwelling-unit count actually belong to** — the new sellable-lot `PARCEL`, or the Administrative Parcel the Tax Department's own guidance describes? *(Slide 14 — needed ahead of the CY2027 deadline)*
+2. Should the Grand List export finally carry Active/Inactive status for every parcel, statewide — not just parcels within a TIF district?
+3. **Which "parcel" does the dwelling-unit count actually belong to** — the new sellable-lot `PARCEL`, or the Administrative Parcel the Tax Department's own guidance describes? *(Slide 17 — needed ahead of the CY2027 deadline)*
 4. Do cross-town parcels need explicit handling in the new model, and if so, whose call is that?
-5. Sequencing: does the 2028 parcel-definition change roll out independently of the 2029 classification work, or together?
+5. **Timing tradeoff, not just sequencing**: build `DWELLINGS` now against today's parcel concept, or coordinate with the Parcel/Administrative Parcel redesign so it isn't re-keyed later? *(VCGI's own recommendation is to bundle these — Slide 16)*
 
 **Speaker notes:** These five are deliberately a mix of NEMRC-specific asks and joint policy calls — pick based on how the room's energy is going rather than forcing all five. Item 3 replaces what was previously "what should count as a dwelling unit" — that question is now resolved, but it surfaced a sharper one. Not expecting resolution today on any of these.
 
 ---
 
-## Slide 20 — What's Next
+## Slide 23 — What's Next
 
 **Content:**
 - Schema-level detail (exact population logic for `SPAN`/`ADMINSPAN`/`GROUNDSPAN`/`KIND`/`TYPE`) is in progress — not ready for this meeting
 - A separate session with the non-NEMRC CAMA vendors (Aumentum/ProVal, Vision, Catalis/AssessPro) is planned
 - This is expected to take more than one meeting — today's goal is a shared factual baseline and a short takeaway list, not final answers
 - Full documentation (as-built findings, full open-questions list, draft data standard) available to all parties on request
+- **Action item: NEMRC to review the proposed Vermont CAMA data standard ahead of the next meeting**
+- **Closing action item: NEMRC to get back to the Tax Department and VCGI with its thoughts on implementation**
 
-**Speaker notes:** Good closing note to manage expectations and signal this is a genuine ongoing collaboration, not a one-shot ask.
+**Speaker notes:** Good closing note to manage expectations and signal this is a genuine ongoing collaboration, not a one-shot ask. The two action items are the concrete takeaway to make sure gets tracked between now and the next meeting.
 
 ---
 
-## Slide 21 — Discussion
+## Slide 24 — Discussion
 
 **Content:**
 - Open floor
