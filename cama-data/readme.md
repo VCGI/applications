@@ -4,11 +4,11 @@
 
 ## Why Modernize
 
-Who owns which lands where? With what details? For several reasons these seemingly simple questions remain complicated or difficult to answer across all of Vermont. Challenges in answering them are due to Vermont's history as a New England State with:
-- [at times](https://archive.org/details/statepapersofverv1verm/), [centuries-old](https://archive.org/details/statepapersofver00verm/), [documentation](https://archive.org/details/statepapersofver0000verm_n8r9/) of [where boundaries are](https://archive.org/details/newhampshiregran00newh/);
+Who owns which lands where? With what details? For several reasons these seemingly simple questions remain difficult to answer across all of Vermont. Challenges in answering them are due to Vermont's history as a New England State with:
+- [at times](https://archive.org/details/statepapersofverv1verm/), [centuries-old](https://archive.org/details/statepapersofver00verm/), vague [documentation](https://archive.org/details/statepapersofver0000verm_n8r9/) of [where boundaries are](https://archive.org/details/newhampshiregran00newh/);
 - hundreds of small municipalities being responsible for authoritative [land records management](https://vmcta.org/Vermont_Land_Records_Online) and access;
 - a parcel definition based on Tax bill and program administration rather than one that reflects and indexes with underlying legal land records;
-- no coordinated effort ever developed to [fully resolve the extents of its jurisdictions](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md#support-survey-of-municipal-boundaries-andor-corner-points); and
+- no coordinated effort ever developed to [fully resolve the extents and shared bounds of its jurisdictions](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md#support-survey-of-municipal-boundaries-andor-corner-points); and
 - widely varying technology orientations and resulting practices.
 
 > [!IMPORTANT]
@@ -57,7 +57,7 @@ This repository is an attempt to document how these systems *actually* work toda
 
 ## Legislative Timeline
 
-*Rows link to the more complete technical discussion. This table is meant to orient, not replace that detail. Cross-checked against a review by the Tax Department's policy advisor on July 30, 2026.*
+*Rows link to a more thorough technical discussion. This table is meant to orient, not replace that detail. Cross-checked against a review by the Tax Department's policy advisor on July 30, 2026.*
 
 | When | What Happens | Statute | Why It Matters |
 |---|---|---|---|
