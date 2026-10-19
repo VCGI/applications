@@ -51,7 +51,7 @@ VCGI's contributions to the Act 68 of 2024 report already recommended, in genera
 
 ### Quick-reference field index
 
-*All 60 proposed fields, field name and phase only, for a fast first read. Full descriptions, types, domains, and source/precedent citations follow in §4.1–§4.8 below — use this table to find the field, then jump to its §.*
+*All 60 proposed fields, field name and phase only. Full descriptions, types, domains, and source/precedent citations follow in §4.1–§4.8 below — use this table to find the field, then jump to its §.*
 
 | Field(s) | Phase | What it is | § |
 |---|---|---|---|
