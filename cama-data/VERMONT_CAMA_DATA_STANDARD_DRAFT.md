@@ -1,21 +1,42 @@
 # Vermont CAMA Data Standard — Preliminary Draft
 
-*Status: a preliminary, VCGI-authored synthesis — not an adopted standard, not yet reviewed by the Tax Department, NEMRC, or the other CAMA vendors. Intended as a concrete starting point for that review, and as candidate input to PVR's rulemaking authority over "standards for the collection and recordation of parcel data" and "requirements relating to information technology, including standards for data software contracts and computer-assisted mass appraisal systems" ([Act 170 §3417](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf); see [SPAN_PARCEL_GRANDLIST_MODEL.md §6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417)).*
+*A preliminary, VCGI-authored synthesis informed by vendor sample data. Not an adopted standard, not yet reviewed by the Tax Department, NEMRC, or the other CAMA vendors. Intended as a starting point for that review, and as candidate input to PVR's rulemaking authority over "standards for the collection and recordation of parcel data" and "requirements relating to information technology, including standards for data software contracts and computer-assisted mass appraisal systems" ([Act 170 §3417](https://legislature.vermont.gov/Documents/2026/Docs/ACTS/ACT170/ACT170%20As%20Enacted.pdf); see [SPAN_PARCEL_GRANDLIST_MODEL.md §6.5](SPAN_PARCEL_GRANDLIST_MODEL.md#65-regional-assessment-districts-and-pvrs-rulemaking-mandate-act-170-3417)).*
 
-*Built from every source already assembled in this repository: the real vendor extracts documented in [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) (NEMRC MicroSolve), [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) (Aumentum ProVal), and [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) (Catalis AssessPro); the NEMRC Grand List Module's real export to the Tax Department, documented in [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md); the confirmed, live schema of VCGI's published statewide parcel layers and the statewide `GRANDLIST` table, documented in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §3–§4; the proposed Act 164/170 `KIND`/`TYPE`/`ADMINSPAN`/`GROUNDSPAN`/`TAXBILL`/`PARCLCOUNT`/`DWELLINGS`/`FLR_PCT_*` model, documented in that same file's §6; findings from [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md); and VCGI's own first-pass CAMA data standard proposal, [Recommendation 3 of the Act 68 of 2024 parcels report](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md#recommendation-3-implement-vermont-cama-data-standard-and-require-submittal-to-state) (submitted 2024-12-12), which this draft builds on and extends rather than replaces.*
+*Built from every source already assembled in this repository:
+
+- the vendor extracts documented in [MSOL_AS_BUILT.md](MSOL_AS_BUILT.md) (NEMRC MicroSolve),
+
+- [PROVAL_AS_BUILT.md](PROVAL_AS_BUILT.md) (Aumentum ProVal),
+
+- [ASSESSPRO_AS_BUILT.md](ASSESSPRO_AS_BUILT.md) (Catalis AssessPro);
+
+- the NEMRC Grand List Module's real export to the Tax Department, documented in [NEMRC_GRANDLIST_EXPORT_AS_BUILT.md](NEMRC_GRANDLIST_EXPORT_AS_BUILT.md);
+
+- the live schema of VCGI's published statewide parcel layers and the statewide `GRANDLIST` table, documented in [SPAN_PARCEL_GRANDLIST_MODEL.md](SPAN_PARCEL_GRANDLIST_MODEL.md) §3–§4;
+
+- the proposed Act 164/170 `KIND`/`TYPE`/`ADMINSPAN`/`GROUNDSPAN`/`TAXBILL`/`PARCLCOUNT`/`DWELLINGS`/`FLR_PCT_*` model, documented in that same file's §6;
+- findings from [VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md); and
+
+- VCGI's own first-pass CAMA data standard proposal, [Recommendation 3 of the Act 68 of 2024 parcels report](https://github.com/VCGI/publications/blob/main/Act68_2024/Act68-2024-Parcels-VCGI_As_Submitted_20241212.md#recommendation-3-implement-vermont-cama-data-standard-and-require-submittal-to-state) (submitted 2024-12-12), which this draft builds on and extends rather than replaces.*
 
 ---
 
 ## 1. Purpose and relationship to the Act 68 of 2024 proposal
 
-VCGI's contributions to the Act 68 of 2024 report already recommended, in general terms, that Vermont adopt a CAMA data standard and require regular vendor submittal, and proposed a first-phase schema (its own Table 1: `SPAN`, `YearBuilt`, `YearReno`, `TotFinSqFt`, `Heat1ID`/`Heat1Pct`, `Heat2ID`/`Heat2Pct`, `TotRooms`, `Bdrms`, `FullBths`, `ThrQtBths`, `HalfBths`, `Ktchns`, `PctCmplt`, `UnitCnt`, `StoryCnt`, `UnlndCode`) plus a two-letter unlanded-structure prefix system (its Table 2: `CO`, `CA`, `MH`, `SA`, `WT`). That proposal was necessarily abstract — it predates the vendor extracts, the real NEMRC Grand List export sample, the confirmed live published-layer schema, and the Act 164/170 workgroup's structural redesign, all of which have since been directly examined in this repository.
+VCGI's contributions to the Act 68 of 2024 report already recommended, in general terms, that Vermont adopt a CAMA data standard and require regular vendor submittal, and proposed a first-phase schema (its own Table 1: `SPAN`, `YearBuilt`, `YearReno`, `TotFinSqFt`, `Heat1ID`/`Heat1Pct`, `Heat2ID`/`Heat2Pct`, `TotRooms`, `Bdrms`, `FullBths`, `ThrQtBths`, `HalfBths`, `Ktchns`, `PctCmplt`, `UnitCnt`, `StoryCnt`, `UnlndCode`) plus a two-letter unlanded-structure prefix system (its Table 2: `CO`, `CA`, `MH`, `SA`, `WT`). That proposal was necessarily abstract. It predates integrated analysis of the vendor extracts, the NEMRC Grand List export sample, the published-layer schema, and the Act 164/170 workgroup's structural redesign, all of which have since been examined in this repository.
 
-**This document does not replace that proposal — it carries it forward, field for field, into a fuller schema now that real evidence exists to check it against**, and folds in three things the 2024 proposal couldn't have anticipated: (1) the Act 164/170 structural fields (`KIND`/`TYPE`/`ADMINSPAN`/`GROUNDSPAN`/`TAXBILL`/`PARCLCOUNT`), (2) confirmed, real gaps and inconsistencies found by directly examining vendor and NEMRC data (e.g., three different, mutually inconsistent category-code abbreviation systems already in live use), and (3) fields identified as necessary in the Tax Department's own 2020–2024 VTPIE CAMA Requirements planning that were never built but remain relevant regardless of that project's status (e.g., a universal Active/Inactive `Status` field, `NumberofDwellings`, Safe-At-Home address suppression).
+**This document does not replace that proposal, rather it carries it forward into a schema in which real evidence exists to check it against**, and folds in three things the 2024 proposal couldn't have anticipated:
+
+1. the Act 164/170 structural fields (`KIND`/`TYPE`/`ADMINSPAN`/`GROUNDSPAN`/`TAXBILL`/`PARCLCOUNT`),
+
+2. confirmed, real gaps and inconsistencies found by directly examining vendor and NEMRC data (e.g., three different, mutually inconsistent category-code abbreviation systems already in live use), and
+
+3. fields identified as necessary in the Tax Department's own 2020–2024 VTPIE CAMA Requirements planning that were never built but remain relevant regardless of that project's status (e.g., a universal Active/Inactive `Status` field, `NumberofDwellings`, Safe-At-Home address suppression).
 
 ## 2. Design principles
 
-1. **Ground every field in real, confirmed evidence** — either an existing field already in production use by at least one VT CAMA vendor or the NEMRC Grand List module, or an explicit, named legislative requirement (Act 164/170), or a specific, cited gap already found in this documentation effort. No field here is speculative.
-2. **One canonical name and domain per concept.** Multiple sources already documented use different names/abbreviations for the same underlying concept (category codes have three variants; owner-residency codes use both `N` and `NS` for the same value). This standard picks one canonical name/domain per concept and documents the variants it supersedes, rather than adding a fourth variant.
+1. **Ground every field in confirmed evidence.** Either an existing field already in production used by at least one VT CAMA vendor or the NEMRC Grand List module, or an explicit, named legislative requirement (Act 164/170), or a specific, cited gap already found in this documentation. No field here is speculative.
+2. **One canonical name and domain per concept.** Multiple sources already documented using different names/abbreviations for the same underlying concept (category codes have three variants; owner-residency codes use both `N` and `NS` for the same value). This standard picks one canonical name/domain per concept and documents the variants it supersedes, rather than adding a fourth variant.
 3. **Phase what's actually urgent separately from what depends on later legislative triggers.** Fields required to satisfy the existing, already-effective [32 V.S.A. §5404(b)](https://legislature.vermont.gov/statutes/section/32/135/05404) extract requirement and the 2028 Act 164 parcel-definition change are Phase 1. Fields that only make sense once Act 170's contingent 2029 classification rollout takes effect are Phase 2.
 4. **Prefer adopting a field already proven in production somewhere in Vermont over inventing a new one.** Where a vendor-native field already does most of the job (e.g., ProVal's `ResLivingUnits`, NEMRC's own provenance/edit-lineage fields already used on the published GIS layer), this standard recommends adopting it rather than requiring a parallel, redundant field.
 5. **Don't require what the current pipeline has already shown doesn't work.** Several fields already documented as "not well maintained" or structurally unreliable (`RESCODE`, `LOCAPROP`, TIF aggregate totals that commingle active/inactive values) are called out explicitly, with a recommended fix baked into the standard itself rather than silently carried forward.
@@ -182,13 +203,13 @@ Three different abbreviation systems for the same underlying 14–16 category co
 
 **Carry forward the "Other" category's existing rule:** per the VTPIE document's own note, a parcel coded "Other" (13) must also carry the real category it should be equalized against — this standard's `CATCODE` field should support that as a documented business rule (a secondary equalization-target category), not silently drop it, since a real production record (Killington, `CATCODE=O`) was already found using this category without a confirmed secondary value ([VTPIE analysis §3.4](VTPIE/VTPIE_CAMA_REQUIREMENTS_PARCEL_ANALYSIS.md#34-the-o-other-category-rule-and-a-live-example-of-exactly-this-scenario)).
 
-## 7. Submittal mechanism
+## 7. Submittals
 
 The Act 68 2024 proposal recommended either a "read-only, credentialed API service endpoint" or, absent that, monthly flat-file uploads, with VCGI compiling data from all four vendors. **This can now be refined with an already-working precedent**: NEMRC's CAMA data already reaches VCGI today via a real, functioning **Globalscape FTP** arrangement — NEMRC uploads to its own `CAMA-NEMRC` folder, virtually tied to VCGI's `CAMA\NEMRC` folder, syncing near-instantaneously ([SPAN_PARCEL_GRANDLIST_MODEL.md §1.4](SPAN_PARCEL_GRANDLIST_MODEL.md#14-the-cama-extract-submission-channel-32-vsa--5404b-and-globalscape-ftp)). **Recommendation: extend this same Globalscape arrangement to Aumentum/ProVal, Vision, and Catalis/AssessPro**, each in their own vendor-specific folder, rather than building a new API from scratch — it's simpler to extend a mechanism already proven to work for one of the four vendors than to stand up a new one for all four. Whether this is workable for the other three vendors is unconfirmed and worth asking directly (already an open question in [SPAN_PARCEL_GRANDLIST_MODEL.md §7 item 12](SPAN_PARCEL_GRANDLIST_MODEL.md#7-open-questions-for-the-ongoing-workgroup)).
 
 This submittal requirement is also the direct technical implementation of the already-effective **32 V.S.A. §5404(b)** extract requirement — this standard is, in effect, a candidate specification for what that statutorily-required extract should actually contain, an open item the statute itself leaves unspecified.
 
-## 8. Data-quality guidance baked into the standard
+## 8. Data-quality guidance
 
 Several fields already confirmed as unreliable in production should not simply be carried forward unexamined into a new standard:
 
