@@ -49,6 +49,63 @@ VCGI's contributions to the Act 68 of 2024 report already recommended, in genera
 
 ## 4. The proposed schema
 
+### Quick-reference field index
+
+*All 60 proposed fields, field name and phase only, for a fast first read. Full descriptions, types, domains, and source/precedent citations follow in §4.1–§4.8 below — use this table to find the field, then jump to its §.*
+
+| Field(s) | Phase | What it is | § |
+|---|---|---|---|
+| `SPAN` | 1 | Unique statewide parcel identifier | 4.1 |
+| `PARCID` | 1 | Town-internal parcel/account ID | 4.1 |
+| `LOCALID` | 1 | Placeholder for whatever local ID a town actually uses | 4.1 |
+| `KIND` | 1 | Physical mapping entity vs. tax-billing entity | 4.1 |
+| `TYPE` | 1 | Sub-type of the multi-record condition | 4.1 |
+| `ADMINSPAN` | 1 | Parent key, horizontal (contiguous multi-lot) conditions | 4.1 |
+| `GROUNDSPAN` | 1 | Foreign key, vertical (stacked/condo) conditions | 4.1 |
+| `TAXBILL` | 1 | Does this record generate a tax bill | 4.1 |
+| `PARCLCOUNT` | 1 | Count of separate, sellable lots represented | 4.1 |
+| `STATUS` | 1 | Active/Inactive, on every record, every town | 4.1 |
+| `TAX_STATUS` | 1 | Taxable status (separate/orthogonal from `STATUS`) | 4.1 |
+| `OWNER1`, `OWNER2` | 1 | Owner name(s) | 4.2 |
+| `RESCODE` | 1 | Owner-residency code | 4.2 |
+| `MAILADDR1`, `MAILADDR2`, `MAILCITY`, `MAILSTATE`, `MAILZIP` | 1 | Owner mailing address | 4.2 |
+| `OWNER_SUPPRESSED` | 1 (privacy/urgent — always) | Address-confidentiality flag (Safe At Home) | 4.2 |
+| `BILLADDR1`, `BILLADDR2`, `BILLCITY`, `BILLSTATE`, `BILLZIP` | 1 | Billing address, only if distinct from mailing | 4.2 |
+| `SITUSADDR1`, `SITUSADDR2`, `SITUSCITY`, `SITUSSTATE`, `SITUSZIP` | 1 | Structured, five-part situs (E-911) address | 4.2 |
+| `DESCPROP` | 1 | Legal/physical property description | 4.3 |
+| `CATCODE` | 1 | Property category, canonical 16-category list | 4.3 |
+| `ACRES` | 1 | Total listed acreage | 4.3 |
+| `REAL_FLV`, `LAND_LV`, `IMPRV_LV` | 1 | Real estate / land / improvement value | 4.3 |
+| `LASTREAPPRAISAL` | 1 | Date of the parcel's/town's last reappraisal | 4.3 |
+| `YEARBUILT` | 1 | Actual year built | 4.4 |
+| `YEARRENO` | 1 | Year of most recent renovation | 4.4 |
+| `TOTFINSQFT` | 1 | Total finished square footage | 4.4 |
+| `HEAT1ID`, `HEAT1PCT` | 1 | Primary heat/cool source and usage % | 4.4 |
+| `HEAT2ID`, `HEAT2PCT` | 1 | Secondary heat/cool source and usage % | 4.4 |
+| `TOTROOMS`, `BDRMS`, `FULLBTHS`, `THRQTBTHS`, `HALFBTHS`, `KTCHNS` | 1 | Room/bath/kitchen counts | 4.4 |
+| `PCTCMPLT` | 1 | Percent of structure complete | 4.4 |
+| `STORYCNT` | 1 | Story count | 4.4 |
+| `UNLNDCODE` | 1 | Unlanded-structure type prefix, if applicable | 4.4 |
+| `MOBILEREGNUM`, `MOBILESERIALNUM`, `MOBILEMODEL`, `MOBILEMFR` | 1 (only if `UNLNDCODE=MH`) | Mobile/manufactured-home identification | 4.4 |
+| `UNITCNT` | 1 | Count of inhabitable units — resolves `DWELLINGS` | 4.4 |
+| `HSTED_FLV` | 2 | Homestead full listed value | 4.5 |
+| `NRES_RES_FLV` | 2 | Nonhomestead residential full listed value | 4.5 |
+| `NRES_NONRES_FLV` | 2 | Nonhomestead nonresidential full listed value | 4.5 |
+| `FLR_PCT_HS`, `FLR_PCT_NR`, `FLR_PCT_NN` | 2 | Percent of floor space by classification | 4.5 |
+| `HSDECL` | 2 | Homestead declared | 4.5 |
+| `CRHOUSPCT` | 2 | Covenant-restricted housing percent | 4.5 |
+| `EXPCODE_SPEC` | 1 | Special exemption code | 4.6 |
+| `EXPCODE_STND` | 1 | Standard exemption code | 4.6 |
+| `EXPSTATUTE` | 1 | Exemption's statutory citation | 4.6 |
+| `EXP_END` | 1 | Exemption ending date | 4.6 |
+| `VETEXAMT` | 1 | Veterans exemption amount | 4.6 |
+| `EQUIPVAL` | 1 (towns w/ personal property tax) / 2 (detail otherwise) | Equipment value (personal property) | 4.7 |
+| `EQUIPCODE` | 1 / 2 | Equipment code | 4.7 |
+| `INVENVAL` | 1 / 2 | Inventory value | 4.7 |
+| `TAXYEAR` | 1 | Tax year of the record | 4.8 |
+| `INSURANCEVALUEINDICATOR` | 1 | Insurance vs. assessed valuation basis | 4.8 |
+| `SOURCENAME`, `SOURCETYPE`, `SOURCEDATE`, `EDITMETHOD`, `EDITOR`, `EDITDATE`, `EDITNOTE` | 1 | Data provenance / edit lineage | 4.8 |
+
 ### 4.1 Identification & structural/relational fields (Phase 1)
 
 | Field | Description | Type (length) | Domain/Example | Nullable | Source/precedent |
