@@ -27,11 +27,11 @@ VCGI's contributions to the Act 68 of 2024 report already recommended, in genera
 
 **This document does not replace that proposal, rather it carries it forward into a schema in which real evidence exists to check it against**, and folds in three things the 2024 proposal couldn't have anticipated:
 
-1. the Act 164/170 structural fields (`KIND`/`TYPE`/`ADMINSPAN`/`GROUNDSPAN`/`TAXBILL`/`PARCLCOUNT`),
+1. The Act 164/170 structural fields (`KIND`/`TYPE`/`ADMINSPAN`/`GROUNDSPAN`/`TAXBILL`/`PARCLCOUNT`),
 
-2. confirmed, real gaps and inconsistencies found by directly examining vendor and NEMRC data (e.g., three different, mutually inconsistent category-code abbreviation systems already in live use), and
+2. Confirmed gaps and inconsistencies found by examining vendor and NEMRC data (e.g., three different, mutually inconsistent category-code abbreviation systems already in live use), and
 
-3. fields identified as necessary in the Tax Department's own 2020–2024 VTPIE CAMA Requirements planning that were never built but remain relevant regardless of that project's status (e.g., a universal Active/Inactive `Status` field, `NumberofDwellings`, Safe-At-Home address suppression).
+3. Fields identified as necessary in the Tax Department's own 2020–2024 VTPIE CAMA Requirements planning that were never built but remain relevant regardless of that project's status (e.g., a universal Active/Inactive `Status` field, `NumberofDwellings`, Safe-At-Home address suppression).
 
 ## 2. Design principles
 
@@ -43,9 +43,9 @@ VCGI's contributions to the Act 68 of 2024 report already recommended, in genera
 
 ## 3. Phasing
 
-- **Phase 1 (near-term — aligned with the already-effective §5404(b) extract requirement and Act 164's April 1, 2028 parcel-definition change):** all structural/relational fields, identification, ownership/address, property description/category, building/improvement detail, exemption codes, status/taxable-status, and data-provenance fields (§5.1–§5.4, §5.6, §5.8 below).
-- **Phase 2 (contingent — aligned with Act 170's July 1, 2029 three-way classification, itself contingent on further legislative action):** the classification/floor-area fields (§5.5) and personal-property detail beyond what Phase 1 already needs for basic exemption handling (§5.7).
-- Fields flagged **"privacy/urgent — recommend Phase 1 regardless of legislative timeline"** (Safe-At-Home suppression) are called out as such, since they concern real people's safety, not a legislative trigger date.
+- **Phase 1 (Near-term. Aligned with the already-effective §5404(b) extract requirement and Act 164's April 1, 2028 parcel-definition change):** all structural/relational fields, identification, ownership/address, property description/category, building/improvement detail, exemption codes, status/taxable-status, and data-provenance fields (§5.1–§5.4, §5.6, §5.8 below).
+- **Phase 2 (Contingent. Aligned with Act 170's July 1, 2029 three-way classification, itself contingent on further legislative action):** the classification/floor-area fields (§5.5) and personal-property detail beyond what Phase 1 already needs for basic exemption handling (§5.7).
+- Fields flagged **"privacy/urgent. Recommended for Phase 1 regardless of legislative timeline"** (Safe-At-Home suppression) are called out as such, since they concern people's safety, not a legislative trigger date.
 
 ## 4. The proposed schema
 
